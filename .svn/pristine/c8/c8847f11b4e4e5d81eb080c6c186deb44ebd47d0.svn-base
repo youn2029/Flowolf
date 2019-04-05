@@ -1,0 +1,161 @@
+
+package kr.or.dev.timeline.todo.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.TimeLine;
+import kr.or.dev.timeline.emoticon_user.model.EmoticonUserVO;
+import kr.or.dev.timeline.emoticon_user.service.EmoticonUserServiceInf;
+import kr.or.dev.timeline.reply.service.ReplyServiceInf;
+import kr.or.dev.timeline.todo.dao.TodoDaoInf;
+import kr.or.dev.timeline.todo.model.TodoVO;
+import kr.or.dev.timeline.todo_item.dao.TodoItemDaoInf;
+import kr.or.dev.timeline.todo_item.model.TodoItemVO;
+
+import org.springframework.stereotype.Service;
+
+@Service("todoService")
+public class TodoService implements TodoServiceInf {
+	
+	// 할일
+	@Resource(name="todoDao")
+	private TodoDaoInf todoDao;
+	
+	// 할일 항목
+	@Resource(name="todoItemDao")
+	private TodoItemDaoInf tiDao;
+	
+	// 댓글
+	@Resource(name="repService")
+	private ReplyServiceInf repService;
+	
+	// 이모티콘 사용자
+	@Resource(name="emoUserService")
+	private EmoticonUserServiceInf emoUserService;
+
+	/**
+	* Method : insertTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todoVo
+	* @return
+	* Method 설명 : 할일 등록
+	*/
+	@Override
+	public int insertTodo(TodoVO todoVo) {
+		return todoDao.insertTodo(todoVo);
+	}
+
+	/**
+	* Method : updateTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todoVo
+	* @return
+	* Method 설명 : 할일 수정
+	*/
+	@Override
+	public int updateTodo(TodoVO todoVo) {
+		return todoDao.updateTodo(todoVo);
+	}
+
+	/**
+	* Method : deleteTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todo_no
+	* @return
+	* Method 설명 : 할일 삭제 처리
+	*/
+	@Override
+	public int deleteTodo(int todo_no) {
+		return todoDao.deleteTodo(todo_no);
+	}
+
+	/**
+	* Method : getTodoDetail
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todo_no
+	* @return
+	* Method 설명 : 할일 상세 조회
+	*/
+	@Override
+	public TodoVO getTodoDetail(int todo_no) {
+		return todoDao.getTodoDetail(todo_no);
+	}
+
+	/**
+	* Method : getTodoProList
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 할일 조회
+	*/
+	@Override
+	public List<TimeLine> getTodoProList(int pro_no) {
+		
+		// timeLine List
+		List<TimeLine> tlTodoList = new ArrayList<TimeLine>();
+		
+		// 할일 List
+		List<TodoVO> todoList = todoDao.getTodoProList(pro_no);
+		
+		for (TodoVO todoVo : todoList) {
+			
+			TimeLine tl = new TimeLine();			
+			
+			// 할일 목록 List
+			List<TodoItemVO> tiList = tiDao.getTiList(todoVo.getTodo_no());
+			
+			// paramMap
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("timeline_col", "todo_no");
+			paramMap.put("timeline_no", todoVo.getTodo_no());
+			
+			// 해당 글의 댓글 Map
+			Map<String, Object> repMap = repService.getRepList(paramMap);
+			
+			// 해당 글의 이모티콘 유저 List
+			List<EmoticonUserVO> emoUserList = emoUserService.getEmoUserList(paramMap);
+						
+			tl.setTodoVo(todoVo);					// 할일 Vo
+			tl.setTiList(tiList);					// 할일 항목 List
+			tl.setMem_id(todoVo.getMem_id());		// 작성자ID
+			tl.setMem_nick(todoVo.getMem_nick());	// 작성자Nick
+			tl.setTime(todoVo.getTodo_time());		// 작성일
+			tl.setRepMap(repMap);					// 댓글 Map
+			tl.setEmoUserList(emoUserList);			// 이모티콘 유저 List
+			
+			tlTodoList.add(tl);
+		}
+		
+		return tlTodoList;
+	}
+
+	/**
+	* Method : getTodoSearchList
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 할일 검색 조회
+	*/
+	@Override
+	public List<TodoVO> getTodoSearchList(Map<String, String> searchMap) {
+		return todoDao.getTodoSearchList(searchMap);
+	}
+
+}

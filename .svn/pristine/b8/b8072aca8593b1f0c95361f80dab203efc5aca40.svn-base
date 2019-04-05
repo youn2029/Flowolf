@@ -1,0 +1,559 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maxium-scale=1.0, minimum-scale=1.0, width=device-width"/>
+		<title>FLOWOLF</title>
+		
+		<!-- font-awesome css -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+		
+		<!-- kakao login js -->
+		<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+		
+		<!-- bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		
+		<!-- bootstrap-theme CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		
+		<!-- bootstrap JS -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		
+		<!-- jquery 3.3.1 -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		
+		<!-- 정규식 -->
+		<script src="<%=request.getContextPath() %>/js/regEx.js"></script>
+		
+		<!-- custom style -->
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/common.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_color.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_font.min.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_margin.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_padding.css">	
+		
+		<!-- alert box css -->
+		<style type="text/css">
+		.alert-box {display:none;width:100%;top:45px;left:0;padding:10px;font-size:14px;color:#676767;border:1px solid #777;border-radius:5px;z-index:9999}
+		</style>
+		
+	</head>
+	<body>
+	
+		<!-- body-wrap-full:s -->
+		<div class="body-wrap-full">
+			<!-- body-wrap-basic:s -->
+			<div class="body-wrap-basic login-wrap">
+				
+				<!-- logo -->
+				<div class="login-logo marbtm-30">
+					<img src="/image/logo_b.png">
+				</div>
+				
+				<!-- login nav -->
+				<ul class="login-nav">
+					<li class="sign-up-link default-back-color">회원가입</li>
+					<li class="find-id-link back-color-green">아이디</li>
+					<li class="find-pw-link back-color-red">비밀번호</li>
+				</ul>
+				
+				<!-- page script -->
+				<script type="text/javascript">
+				$(function(){
+					
+					// set
+					var $bodyWrap = $(".body-wrap-full")
+						, $loginNav = $bodyWrap.find("ul.login-nav")
+						, $signUpLink = $loginNav.find("li.sign-up-link")
+						, $findIdLink = $loginNav.find("li.find-id-link")
+						, $findPwLink = $loginNav.find("li.find-pw-link")
+						, $logo = $bodyWrap.find(".login-logo img")
+						, $loginForm = $bodyWrap.find(".login-form")
+						, $signUpForm = $bodyWrap.find(".sign-up-form")
+						, $findIdForm = $bodyWrap.find(".find-id-form")
+						, $findPwForm = $bodyWrap.find(".find-pw-form");
+					
+					// logo click
+					$logo.on("click", function(){
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","block");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","none");
+					});
+					
+					// sign-up lick
+					$signUpLink.on("click", function() {
+						$signUpLink.animate({left:'20px'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","block");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","none");
+					});
+					
+					// find-id lick
+					$findIdLink.on("click", function() {
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'20px'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","block");
+						$findPwForm.css("display","none");
+					});
+					
+					// find-pw lick
+					$findPwLink.on("click", function() {
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'20px'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","block");
+					});
+				});
+				
+				function alertPop(id, text){
+					var alertBox = $(id).next(".alert-box");
+					alertBox.html(text);
+					alertBox.fadeIn();
+					setTimeout(function(){alertBox.fadeOut()}, 4000);
+					$(id).focus();
+				}
+				</script>
+				
+				<!-- login form wrap box:s -->
+				<div class="login-box border-box">
+				
+					<!-- login:s -->
+					<form name="" action="/login/login" class="login-form">
+						<!-- id input -->
+						<div class="input-box dis-block border-box">
+							<input type="text" id="mem_id" name="mem_id" placeholder="이메일 아이디">
+						</div>
+						
+						<!-- password input -->
+						<div class="input-box dis-block martop-20 border-box">
+							<input type="password" name="mem_pw" placeholder="비밀번호">
+						</div>
+
+						<!-- remember id -->
+						<div class="remember-box martop-20">
+							<input type="checkbox" id="rememberId" name="rememberId">
+							<label for="rememberId">아이디 기억</label>
+						</div>
+						
+						<!-- remember id script -->
+						<script type="text/javascript">
+						
+							function getCookie(name){
+					    		var cookies = document.cookie;
+					    		
+					    		var cookieArr = cookies.split("; ");
+					    		var cookieResult = "";
+					    		
+					    		for(var i in cookieArr){
+					    			var cookie = cookieArr[i];
+					    			var cookieNameValue = cookie.split("=");
+					    			
+					    			var cookieName = cookieNameValue[0];
+					    			var cookieValue = cookieNameValue[1];
+					    			
+					    			if(name == cookieName){
+					    				cookieResult = cookieValue;
+					    				break;
+					    			}
+					    		}
+					    		return cookieResult;
+					    	}
+					    	
+					    	// 쿠키 추가
+					    	function setCookie(cookieName, cookieValue, expires){
+					    		var dt = new Date();
+					    		dt.setDate(dt.getDate() + parseInt(expires));
+					    		document.cookie = cookieName + "=" + cookieValue + "; path=/; expires=" + dt.toGMTString();
+					    	}
+					    	
+					    	// 쿠키 삭제
+					    	function deleteCookie(cookieName){
+						    	setCookie(cookieName, "", -1);	
+					    	}
+					    	
+					    	// 문서 로딩 완료후 실행
+					    	$(function(){
+					    		if(getCookie("rememberId") == "y"){
+						    		// userId input에 userId cookie 값을 설정
+						    		$(".login-form #mem_id").val(getCookie("mem_id"));
+						    		$("#rememberId").attr("checked", true);
+						    		$("#rememberId").val(getCookie("rememberId"));
+						    	}	
+					    		
+					    		// rememberId 체크박스 클릭이벤트
+					    		$("#rememberId").on("click", function(){
+					    			if($(this).is(":checked")){
+					    				// rememberMe cookie 설정
+					    				setCookie("rememberId", "y", 30);
+					    				setCookie("mem_id", $(".login-form #mem_id").val(), 30);
+					    			}else{
+					    				// 쿠키 제거
+					    				deleteCookie("rememberId");
+					    			}
+					    		});
+					    	});
+						</script>
+						
+						<!-- login btn -->
+						<button type="submit" name="loginBtn" class="login-btn dis-block martop-50 default-back-color">로그인</button>
+						
+						<!-- basic login script -->
+						<script type="text/javascript">
+						</script>	
+											
+						<!-- kakao login btn -->
+						<!-- 기본스크립트만 넣어놨으니 아래수정 후에 작업완료되면 이 주석은 지워주세요 -->
+						<a href="#" id="kakao-login-btn" class="login-btn login-kakao martop-10">
+							<i class="login-icon icon-talk">icon-talk</i>
+							카카오계정으로 로그인
+						</a>						
+						
+						<!-- kakao login script -->
+						<script type='text/javascript'>							
+						//<![CDATA[
+						    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+						    Kakao.init('YOUR APP KEY');
+						    // 카카오 로그인 버튼을 생성합니다.
+						    Kakao.Auth.createLoginButton({
+						    	container: '#kakao-login-btn',
+						    	success: function(authObj) {
+						    		alert(JSON.stringify(authObj));
+						    	},
+						    	fail: function(err) {
+						    		alert(JSON.stringify(err));
+						    	}
+							});
+						//]]>
+						</script>
+						
+						<!-- google login btn -->
+						<a href="#" class="login-btn login-google martop-10">
+							<i class="login-icon icon-google">icon-google</i>
+							구글계정으로 로그인
+						</a>
+						
+						<!-- google login scripte -->
+						<script type="text/javascript">
+						</script>
+					</form>
+					
+					<!-- login:f -->
+					
+					<!-- sign up:s -->					
+					<form name="signUp" action="/login/singUp" class="sign-up-form" style="display:none">
+					
+						<!-- profile photo -->
+						<div class="photo-box">
+							<!-- img box -->
+							<div class="img-box">
+								<i class="icon-circle"></i>
+								<img src="/image/user-pic-sample.png" class="profile-pic">
+							</div>
+							
+							<!-- file btn -->
+							<div class="file-btn-box">
+								<i class="fa fa-camera upload-btn"></i>
+								<input type="file" name="mem_pic_name" class="photo-upload" accept=".png, .jpg, .jpeg, .gif">
+							</div>
+						</div>
+						
+						<!-- photo image change script //-->
+						<!-- 건들지 마세요 -->
+						<script type="text/javascript">
+						$(document).ready(function() {
+						    var readURL = function(input) {
+						        if (input.files && input.files[0]) {
+						            var reader = new FileReader();
+		
+						            reader.onload = function (e) {
+						                $('.profile-pic').attr('src', e.target.result);
+						            }
+						            reader.readAsDataURL(input.files[0]);
+						        }
+						    }
+		
+						    $(".photo-upload").on('change', function(){
+						        readURL(this);
+						    });
+						    
+						    $(".upload-btn").on('click', function() {
+						       $(".photo-upload").click();
+						    });
+						});
+						</script>
+						<!--// photo image change script -->
+						
+						<!-- name input -->						
+						<div class="input-box dis-block martop-30 border-box">
+							<input type="text" id="mem_name" name="mem_name" placeholder="이름"> <!-- required-->
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+						</div>
+						
+						<!-- email id input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_id" name="mem_id" placeholder="이메일 아이디">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+							<a id="Id_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a>
+						</div>
+						
+						<!-- password input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="password" id="mem_pw" name="mem_pw" placeholder="비밀번호">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+						</div>
+						
+						<!-- password check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="password" id=pwChk name="pwChk" placeholder="비밀번호 확인">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+						</div>
+						
+						<!-- nick name input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_nick" name="mem_nick" placeholder="닉네임">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+							<a id="nick_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone" name="mem_phone" placeholder="핸드폰 번호">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+						
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="phoneChkNum" name="phoneChkNum" placeholder="인증번호">
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<input type="button" id="singUp" name="singUp" value="회원가입" class="submit-btn default-back-color martop-30">
+						
+						<script type="text/javascript">
+						$(function() {
+							$("input#singUp").on("click", function(){
+								
+								// name
+								if($(".sign-up-form #mem_name").val().length == 0){
+									alertPop(".sign-up-form #mem_name", "이름을 입력해주세요");
+									return false;
+								}else if(!nameReg.test($(".sign-up-form #mem_name").val())){
+									alertPop(".sign-up-form #mem_name", "이름을 정확히 입력해주세요");
+									return false;
+								}
+								
+								// Id(Email)
+								if($(".sign-up-form #mem_id").val().length == 0){
+									alertPop(".sign-up-form #mem_id", "아이디를 입력해주세요");
+									return false;
+								}else if(!idReg.test($(".sign-up-form #mem_id").val())){
+									alertPop(".sign-up-form #mem_id", "아이디를 정확히 입력해주세요");
+									return false;
+								}
+								
+								// Id 중복체크
+								
+								// Password
+								if($(".sign-up-form #mem_pw").val().length == 0){
+									alertPop(".sign-up-form #mem_pw", "비밀번호를 입력해주세요");
+									return false;
+								}else if(!pwReg.test($(".sign-up-form #mem_pw").val())){
+									alertPop(".sign-up-form #mem_pw", "비밀번호를 정확히 입력해주세요");
+									return false;
+								}							
+								
+								// Password Check
+								if($(".sign-up-form #pwChk").val().length == 0){
+									alertPop(".sign-up-form #pwChk", "비밀번호 확인을 입력해주세요");
+									return false;
+								}else if($(".sign-up-form #mem_pw").val() != $(".sign-up-form #pwChk").val()){
+									alertPop(".sign-up-form #pwChk", "비밀번호 확인을 정확히 입력해주세요");
+									return false;
+								}
+								
+								// nick
+								if($(".sign-up-form #mem_nick").val().length == 0){
+									alertPop(".sign-up-form #mem_nick", "닉네임을 입력해주세요");
+									return false;
+								}else if(!nickReg.test($(".sign-up-form #mem_nick").val())){
+									alertPop(".sign-up-form #mem_nick", "닉네임을 정확히 입력해주세요");
+									return false;
+								}
+								
+								// nick 중복체크
+								
+								// phone
+								if($(".sign-up-form #mem_phone").val().length == 0){
+									alertPop(".sign-up-form #mem_phone", "핸드폰번호를 입력해주세요");
+									return false;
+								}else if(!phoneReg.test($(".sign-up-form #mem_phone").val())){
+									alertPop(".sign-up-form #mem_phone", "핸드폰번호를 정확히 입력해주세요");
+									return false;
+								}
+								
+								// phone number send
+								var phoneNumReg = Math.floor(Math.random()*99000-(88000-1)+88000); // 인증번호
+								
+								// phone Number
+								if($(".sign-up-form #phoneChkNum").val().length == 0){
+									alertPop(".sign-up-form #phoneChkNum", "인증번호를 입력해주세요");
+									return false;
+								}else if($(".sign-up-form #phoneChkNum").val() == 0){
+									alertPop(".sign-up-form #mem_phone", "핸드폰번호를 정확히 입력해주세요");
+									return false;
+								}								
+							});							
+						});	
+						</script>
+						
+						
+					</form>
+					<!-- sign up:f -->
+					
+					
+					<!-- 아이디 찾기 -->
+					<!-- find id:s -->
+					<form action="findId" class="find-id-form" style="display:none">
+						<!-- name input -->
+						<div class="input-box dis-block border-box">
+							<input type="text" id="mem_name" name="mem_name" placeholder="이름">
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone" name="mem_phone" placeholder="핸드폰 번호">
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+				
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" name="phoneChkNum" placeholder="인증번호">
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<input type="button" id="findIdSubmit" name="findIdbtn" value="아이디 찾기" class="submit-btn default-back-color martop-30">
+					</form>	
+					<!-- find id:f -->
+					
+					<!-- find password:s -->
+					<form action="findPw" class="find-pw-form" style="display:none">
+						<!-- name input -->
+						<div class="input-box dis-block border-box">
+							<input id="mem_name" type="text" name="mem_name" placeholder="이름">
+						</div>
+						
+						<!-- id input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input id="mem_id" type="text" name="mem_id" placeholder="이메일 아이디">
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone" name="mem_phone" placeholder="핸드폰 번호">
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+						
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" name=phoneChkNum placeholder="인증번호">
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<!-- <input type="submit" name="findPwSubmit" value="비밀번호 찾기" class="submit-btn default-back-color martop-30"> -->
+						<a href="#newPwSet" class="submit-btn find-pw-btn default-back-color martop-30">비밀번호 찾기</a>
+						
+					</form>
+					
+					<!-- find password:f -->
+					
+					<!-- copyright -->
+					<div class="dn-copy martop-20">&copy;Copyright 2018 #DEV. All Rights Reserved.</div>
+					
+				</div>
+				<!-- login form wrap box:f -->
+				
+			</div>
+			<!-- body-wrap-basic:f -->
+			
+			<!-- 새 비밀번호 입력 레이어 팝업:s -->
+			<div class="dim-layer">
+				<div class="dimBg"></div>
+				
+				<div id="newPwSet" class="pop-layer">
+					<form action="">
+						<!-- pop header -->
+			    		<header class="pop-top border-box">
+			    			새 비밀번호 설정
+			    			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+			    		</header>
+			    		
+			    		<!-- pop con -->
+				   		<section class="pop-con border-box">
+				   			<label class="dis-block">
+				   				새 비밀번호
+					   			<input type="password" name="" id="password" class="pop-input martop-5" style="padding:0" placeholder="특수문자, 영문 대/소문자, 숫자포함 8-16자" required="required">
+				   			</label>
+				   			<label class="dis-block martop-15">
+				   				새 비밀번호 확인
+					   			<input type="password" name="" id="passwordCheck" class="pop-input martop-5" style="padding:0" placeholder="새 비밀번호 입력확인" required="required">
+				   			</label>
+						</section>
+						
+						<!-- pop footer -->
+						<footer class="pop-footer border-box">
+							<input type="button" name="" class="pop-btn default-btn btn-close" value="취소">
+							<input type="submit" name="" class="pop-btn submit-btn marleft-5 back-color-pupple-l" value="저장">
+						</footer>
+					</form>
+				</div>
+				
+			</div>
+			<!-- 새 비밀번호 입력 레이어 팝업:f -->
+			<script src="<%=request.getContextPath() %>/js/layerPop.js"></script> <!-- layer pop-up js -->
+			<script type="text/javascript">
+			$(function(){
+				// 팝업 닫기버튼 클릭시 값 초기화
+				$(".btn-close").on("click", function(){
+					$("input.pop-input").val('');
+				});
+			});
+			</script>
+			
+		</div>
+		<!-- body-wrap-full:f -->
+
+	</body>
+</html>

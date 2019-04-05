@@ -1,0 +1,5 @@
+/********************************************************************
+font size (px to em / 1 - 32) / #DEV(Kim ji su) / 2018.08.28
+********************************************************************/
+.size-1 {font-size:0.063em} .size-2 {font-size:0.125em} .size-3 {font-size:0.188em} .size-4 {font-size:0.250em} .size-5 {font-size:0.313em} .size-6 {font-size:0.375em} .size-7 {font-size:0.438em} .size-8 {font-size:0.500em} .size-9 {font-size:0.563em} .size-10 {font-size:0.625em} .size-11 {font-size:0.688em} .size-12 {font-size:0.750em} .size-13 {font-size:0.813em} .size-14 {font-size:0.875em} .size-15 {font-size:0.938em} .size-16 {font-size:1em} .size-17 {font-size:1.063em} .size-18 {font-size:1.125em} .size-19 {font-size:1.188em} .size-20 {font-size:1.25em} .size-21 {font-size:1.313em} .size-22 {font-size:1.375em} .size-23 {font-size:1.375em} .size-24 {font-size:1.438em} .size-24 {font-size:1.5em} .size-25 {font-size:1.563em} .size-26 {font-size:1.625em} .size-27 {font-size:1.688em} .size-28 {font-size:1.750em} .size-29 {font-size:1.813em} .size-30 {font-size:1.875em} .size-31 {font-size:1.938em} .size-32 {font-size:2em}
+

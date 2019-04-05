@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatFile">
+	
+	<select id="getChatFileList" parameterType="Integer" resultType="chatFileVo">
+		SELECT c.chat_file_no,
+				c.chat_file_time,
+				c.chat_file_name,
+				c.chat_file_path,
+				c.chat_file_upload,
+				c.chat_no,
+				c.mem_id,
+        		(select mem_nick from member where mem_id = c.mem_id) as mem_nick,
+       			substr(chat_file_name, '-3') as type 
+			FROM chat_file c WHERE chat_no = #{chat_no}
+	</select>
+	
+	<insert id="insertChatFile" parameterType="chatFileVo">
+		INSERT INTO chat_file (chat_file_no,
+								chat_file_time,
+								chat_file_name,
+								chat_file_path,
+								chat_file_upload,
+								chat_no,
+								mem_id) 
+						VALUES (#{chat_file_no},
+								sysdate,
+								#{chat_file_name},
+								#{chat_file_path},
+								#{chat_file_upload},
+								#{chat_no},
+								#{mem_id})
+	</insert>
+	
+	<select id="getChatFileDetail" parameterType="Integer" resultType="chatFileVo">
+		SELECT to_char(a.chat_file_time,'MM/DD AM HH:MI') time
+				, chat_file_name
+				, a.mem_id
+		  FROM chat_file a, chat b
+		  WHERE a.chat_file_no = #{chat_file_no}
+        	AND a.chat_no = b.chat_no 
+		  ORDER BY a.chat_file_no
+	</select>
+	
+	<select id="getChatFileSeq" resultType="Integer">
+		select chat_file_no_seq.nextval from dual
+	</select>
+
+
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<!-- user:s -->
+
+		<!-- basic layout -->
+		<definition name="basicLayout" template="/WEB-INF/views/tiles/basicLayout.jsp">
+			<put-attribute name="aside" value="/WEB-INF/views/tiles/aside.jsp"/>
+			<put-attribute name="top" value="/WEB-INF/views/tiles/top.jsp"/>
+			<put-attribute name="content" value=""/>
+			<put-attribute name="layerPopCon" value="/WEB-INF/views/tiles/layerPopCon.jsp"/>      
+		</definition>
+		
+		<!-- main -->
+		<definition name="main" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/main.jsp"></put-attribute>
+		</definition>
+		
+		<!-- project -->
+		<definition name="project" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/project.jsp"></put-attribute>
+		</definition>
+		
+		<!-- member edit -->
+		<definition name="memEdit" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/memEdit.jsp"></put-attribute>
+		</definition>
+		
+		<!-- projectList -->
+		<definition name="projectList" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/group/projectList.jsp"></put-attribute>
+		</definition>
+		
+		<!-- task all -->
+		<definition name="taskAll" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/collection/taskAll.jsp"></put-attribute>
+		</definition>
+		
+		<!-- full calendar : all -->
+		<definition name="allCalendar" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/schedule/fullCalendar.jsp"></put-attribute>
+		</definition>
+		
+		<!-- full calendar : project -->
+		<definition name="proCalendar" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/schedule/profullCalendar.jsp"></put-attribute>
+		</definition>
+		
+		<!-- postList -->
+		<definition name="postList" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/post/postList.jsp"></put-attribute>
+		</definition>
+		
+		<!-- postInsert -->
+		<definition name="postInsert" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/post/postInsert.jsp"></put-attribute>
+		</definition>
+		
+		<!-- postDetail -->
+		<definition name="postDetail" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/post/postDetail.jsp"></put-attribute>
+		</definition>
+		
+		<!-- postUpdate -->
+		<definition name="postUpdate" extends="basicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/post/postUpdate.jsp"></put-attribute>
+		</definition>
+		
+	<!-- user:f -->
+
+	<!-- management:s -->
+
+		<!-- basic layout -->
+		<definition name="adminBasicLayout" template="/WEB-INF/views/tiles/adm/admin_basicLayout.jsp">
+			<put-attribute name="aside" value="/WEB-INF/views/tiles/adm/admin_aside.jsp"/>
+			<put-attribute name="top" value="/WEB-INF/views/tiles/adm/admin_top.jsp"/>
+			<put-attribute name="content" value=""/>
+		</definition>
+		
+		<!-- adminMain -->
+		<definition name="adminMain" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_main.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin member list edit -->
+		<definition name="adminMemberlist" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_memList.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin project kind edit -->
+		<definition name="adminProjectEdit" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_proEdit.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin member chart -->
+		<definition name="adminMemberChart" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_memChart.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin post list -->
+		<definition name="adminPostList" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_postList.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin post detail -->
+		<definition name="adminPostDetail" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_postDetail.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin post insert -->
+		<definition name="adminPostInsert" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_postInsert.jsp"></put-attribute>
+		</definition>
+		
+		<!-- admin post update -->
+		<definition name="adminPostUpdate" extends="adminBasicLayout">
+			<put-attribute name="content" value="/WEB-INF/views/adm/admin_postUpdate.jsp"></put-attribute>
+		</definition>
+		
+	<!-- management:f -->
+   
+</tiles-definitions>
+
+<!--
+   kr.or.ddit.mvc.web.TilesController
+   
+   localhost:8180/tiles/main
+   
+   public String tilesMain(){
+      return "";   // tiles definition name
+   }
+-->

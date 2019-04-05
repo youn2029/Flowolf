@@ -1,0 +1,48 @@
+package kr.or.dev.group.box.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.box.dao.BoxDaoInf;
+import kr.or.dev.group.box.model.BoxVO;
+
+@Repository("boxService")
+public class BoxService implements BoxServiceInf {
+	
+	@Resource(name="boxDao")
+	private BoxDaoInf boxDao;
+
+	@Override
+	public List<BoxVO> getBoxMyList(String mem_id) {
+		return boxDao.getBoxMyList(mem_id);
+	}
+
+	@Override
+	public int insertBox(BoxVO boxVo) {
+		return boxDao.insertBox(boxVo);
+	}
+
+	@Override
+	public int updateBox(BoxVO boxVo) {
+		return boxDao.updateBox(boxVo);
+	}
+
+	@Override
+	public int deleteBox(int box_no) {
+		return boxDao.deleteBox(box_no);
+	}
+
+	@Override
+	public BoxVO getBoxDetail(int box_no) {
+		return boxDao.getBoxDetail(box_no);
+	}
+
+	@Override
+	public int getBoxMaxIndex(String mem_id) {
+		return boxDao.getBoxMaxIndex(mem_id);
+	}
+
+}

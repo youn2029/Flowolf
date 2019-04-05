@@ -1,0 +1,150 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<div class="timeline-article con-schedule">
+	<div class="container">
+		
+		<div class="schedule-header">
+			<dl>
+				<dt class="maright-15">
+					<span class="dis-block font-thin size-20 color-red text-center">09월</span>
+					<strong class="dis-block font-bold size-40 color-black text-center">16</strong>
+				</dt>
+				<dd class="font-bold size-20 color-black">일정 제목입니다.</dd>
+				<dd class="martop-10 font-bold size-16 color-black">2018-09-16 14:13 ~ 2018-09-19 15:00</dd>
+			</dl>
+		</div>
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<div class="dis-block marbtm-15">대한민국 대전 중구 대흥동 영민빌딩관리사무소 <a href="" target="_blank" class="marleft-15">지도보기</a></div>
+					<div id="googleMap" class="dis-block">
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+						googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!! googleMap here!!
+					</div>
+				</dd>
+			</dl>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					일정 메모 내용입니다
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15" style="border:0">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					10분전 미리알림
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+</div>
+
+
+	
+<!-- 일정 수정:s -->
+<form action="" class="article-edit-form">
+
+	<!-- article edit box:s -->
+	<div class="article-edit-box">
+	
+		<!-- 일정제목:s -->
+		<div class="input-box">
+			<input type="text" class="font-bold size-18" placeholder="일정 제목을 입력하세요." required="required">
+		</div>
+		<!-- 일정제목:f -->
+		
+		<!-- 일정 시간 설정:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="far fa-clock"></i></dt>
+				<dd>
+					<input type="text"
+					placeholder="시작날짜,시간과 종료날짜,시간을 선택해주세요(2018-01-01 00:00 ~ 2018-01-31 23:59)"
+					data-range="true"
+					data-multiple-dates-separator=" ~ "
+					data-timepicker="true"
+					data-time-format='hh:ii'
+					data-language='ko'
+					class="datepicker-here"
+					style="width:100%"/>
+				</dd>
+			</dl>
+		</div>
+		<!-- 일정 시간 설정:f -->
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<input type="text" placeholder="장소를 입력하세요.">
+				</dd>
+			</dl>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					<textarea rows="2" cols="" placeholder="메모를 입력하세요."></textarea>
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					<select>
+						<option value="alarm-none">없음</option>
+						<option value="alarm-min-10">10분전 미리알림</option>
+						<option value="alarm-min-30">30분전 미리알림</option>
+						<option value="alarm-hour-1">1시간전 미리알림</option>
+						<option value="alarm-hour-2">2시간전 미리알림</option>
+						<option value="alarm-hour-3">3시간전 미리알림</option>
+						<option value="alarm-day-1">1일전</option>
+						<option value="alarm-day-2">2일전</option>
+						<option value="alarm-day-7">7일전</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+	<!-- article edit box:f -->
+	
+	<!-- article edit dn:s -->
+	<div class="article-edit-dn">		
+		<!-- submit & cancel 버튼 -->
+		<input type="submit" value="수정하기" class="article-submit-btn font-bold size-16 color-white text-center default-back-color">
+		<input type="button" value="취소" onclick="fn_editCancel(this)" 
+		class="article-submit-btn maright-10 font-bold size-16 color-gray text-center back-color-white"
+		style="border:1px solid #ddd">
+	</div>
+	<!-- article edit dn:f -->
+</form>
+<!-- 일정 수정:f -->

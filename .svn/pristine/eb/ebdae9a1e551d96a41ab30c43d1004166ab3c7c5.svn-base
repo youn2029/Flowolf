@@ -1,0 +1,141 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<section class="content full-calendar">
+	<div class="project-wrap">
+
+		<!-- full calendar left content : s -->
+		<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 padleft-0 full-calendar-left">
+			<form action="/schd/callCalendar">
+				<select name="selectColor" onchange="getSelectValue(this.form);">
+					<option value="red">red</option>
+					<option value="black">black</option>
+					<option value="gray">gray</option>
+					<option value="#2c4359">#2c4359</option>
+					<option value="#ff6b7f">#ff6b7f</option>
+					<option value="#93c3cd">#93c3cd</option>
+				</select>
+				<input type="submit" value="check">
+			</form>
+			<div id="calendar"></div>
+		</div>
+		<!-- full calendar left content : f -->
+		
+			
+		<!-- full calendar right content : s -->
+		<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 padright-0 full-calendar-right">
+			
+			<strong class="dis-block marbtm-18 padleft-10 font-thin size-20 color-gray">일정</strong>
+			
+			<ul class="schd-edit marbtm-20">
+				<li>
+					<input type="checkbox" id="myInsertSchd" name="myInsertSchd" class="custom-check-input schd-my-check">
+					<label for="myInsertSchd">내가 등록한 일정</label>
+				</li>
+				<li>
+					<input type="checkbox" id="inviteSchd" name="inviteSchd" class="custom-check-input schd-invite-check">
+					<label for="inviteSchd">초대받은 일정</label>
+				</li>
+			</ul>
+			
+			<strong class="dis-block marbtm-18 padleft-10 font-thin size-20 color-gray">업무</strong>
+			
+			<ul class="schd-edit marbtm-0" style="border-bottom:0">
+				<li>
+					<input type="radio" name="taskSchd" id="myTaskSchd" class="custom-radio-input schd-radio schd-my-radio">
+					<label for="myTaskSchd">내업무</label>
+				</li>
+				<li>
+					<input type="radio" name="taskSchd" id="reTaskSchd" class="custom-radio-input schd-radio schd-re-radio">
+					<label for="reTaskSchd">요청한 업무</label>
+				</li>
+				<li>
+					<input type="radio" name="taskSchd" id="allTaskSchd" class="custom-radio-input schd-radio schd-all-radio">
+					<label for="allTaskSchd">전체 업무</label>
+				</li>
+			</ul>
+			
+		</div>
+		<!-- full calendar right content : f -->
+	</div>
+</section>
+
+<link href='https://code.jquery.com/ui/1.12.1/themes/hot-sneaks/jquery-ui.css' rel="stylesheet"/>
+<link href='<%=request.getContextPath() %>/js/fullcalendar.css' rel='stylesheet' />
+<link href='<%=request.getContextPath() %>/js/fullcalendar.print.css' rel='stylesheet' media='print' />
+
+<script src='<%=request.getContextPath()%>/js/moment.min.js'></script>
+<script src='<%=request.getContextPath()%>/js/fullcalendar.min.js'></script>
+<script src='<%=request.getContextPath()%>/js/ko.js'></script>
+
+
+<script type="text/javascript">
+//해당 회원의 모든 일정 불러오는 jsp
+$(function(){
+	$("#calendar").fullCalendar({
+		header:{ //헤더부분에 뜨는 메뉴 설정
+			left : "month, agendaWeek agendaDay",
+			center: "title",
+			right:"today, prevYear,prev,next,nextYear" 
+		},
+		buttonText:{
+			prevYear:new moment().year() -1,
+			nextYear:new moment().year() +1
+		},
+		viewRender:function(view){
+			var y = moment($('#calendar').fullCalendar('getDate')).year();
+			$(".fc-prevYear-button").text(y-1);
+			$(".fc-nextYear-button").text(y+1);
+		},
+		themeSystem:"jquery-ui",
+		//ajax로 즉각바꾸기
+		events : function( start, end, timezone, callback) {
+			var mem_id = "${mem_id}";
+			console.log(mem_id);
+			$.ajax({
+	              url: '/schd/searchSchedule',
+	              type: 'POST',
+	              dataType: 'json',//서버로부터 받을 data 타입
+	              data : 
+	            	  {
+	            	  "member_id" : "${mem_id}"
+	            	  },// 서버로 전송할 data
+	              success: function(data) {
+	                  var events = [];
+	                  if(!!data.scheduleList){
+	                      $.map(data.scheduleList, function(r) {
+	                    	  console.log('start');
+	                          events.push({
+	                              id: r.schd_no,
+	                              title: r.schd_title,
+	                              start: r.schd_start_time,
+	                              end: r.schd_end_time,
+	                              color : '${color}',
+	                              textColor: 'white',
+	                          });
+	                      });
+	                  }
+	                  callback(events);
+	              },
+	              error:function(request, textStatus, errorThrown){
+	                alert('error: ' + textStatus);
+	              }
+	          });
+		},
+		 eventClick: function(event) {
+			 if (event.title) {
+				 alert(event.title);
+			    }
+	     },
+		selectable: true,
+	});
+});
+
+// --------------------
+function getSelectValue(frm) {
+	frm.textValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].text;
+	frm.optionValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].value;
+}
+</script>

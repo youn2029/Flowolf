@@ -1,0 +1,99 @@
+package kr.or.dev.timeline.todo.model;
+
+import java.util.Date;
+
+public class TodoVO {
+
+	private int todo_no;				// 할일번호
+	private String todo_title;			// 제목
+	private Date todo_time;				// 작성일시
+	private int todo_rate;				// 진행률
+	private String todo_del_chk;		// 삭제여부
+	private String todo_fix_chk;		// 고정유무
+	private Date todo_fix_date;			// 고정일
+	private int pro_no;					// 프로젝트 번호	
+	private String mem_id;				// 작성자ID
+	private String mem_nick;			// 작성자Nick
+
+	public int getTodo_no() {
+		return todo_no;
+	}
+
+	public void setTodo_no(int todo_no) {
+		this.todo_no = todo_no;
+	}
+
+	public String getTodo_title() {
+		return todo_title;
+	}
+
+	public void setTodo_title(String todo_title) {
+		this.todo_title = todo_title;
+	}
+
+	// Date
+	public Date getTodo_time() {
+		return todo_time;
+	}
+
+	public void setTodo_time(Date todo_time) {
+		this.todo_time = todo_time;
+	}
+
+	public int getTodo_rate() {
+		return todo_rate;
+	}
+
+	public void setTodo_rate(int todo_rate) {
+		this.todo_rate = todo_rate;
+	}
+
+	public String getTodo_del_chk() {
+		return todo_del_chk;
+	}
+
+	public void setTodo_del_chk(String todo_del_chk) {
+		this.todo_del_chk = todo_del_chk;
+	}
+
+	public String getTodo_fix_chk() {
+		return todo_fix_chk;
+	}
+
+	public void setTodo_fix_chk(String todo_fix_chk) {
+		this.todo_fix_chk = todo_fix_chk;
+	}
+
+	public Date getTodo_fix_date() {
+		return todo_fix_date;
+	}
+
+	public void setTodo_fix_date(Date todo_fix_date) {
+		this.todo_fix_date = todo_fix_date;
+	}
+
+	public int getPro_no() {
+		return pro_no;
+	}
+
+	public void setPro_no(int pro_no) {
+		this.pro_no = pro_no;
+	}
+
+	public String getMem_id() {
+		return mem_id;
+	}
+
+	public void setMem_id(String mem_id) {
+		this.mem_id = mem_id;
+	}
+
+	public String getMem_nick() {
+		return mem_nick;
+	}
+
+	public void setMem_nick(String mem_nick) {
+		this.mem_nick = mem_nick;
+	}
+	
+}

@@ -1,0 +1,34 @@
+package kr.or.dev.group.important.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.important.dao.ImportantDaoInf;
+import kr.or.dev.group.important.model.ImportantVO;
+import kr.or.dev.group.project.model.ProjectVO;
+
+@Repository("impService")
+public class ImportantService implements ImportantServiceInf {
+	
+	@Resource(name="impDao")
+	private ImportantDaoInf impDao;
+
+	@Override
+	public List<ProjectVO> getImpProList(String mem_id) {
+		return impDao.getImpProList(mem_id);
+	}
+
+	@Override
+	public int insertImp(ImportantVO impVo) {
+		return impDao.insertImp(impVo);
+	}
+
+	@Override
+	public int deleteImpR(ImportantVO impVo) {
+		return impDao.deleteImpR(impVo);
+	}
+
+}

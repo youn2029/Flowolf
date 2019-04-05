@@ -1,0 +1,105 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>FLOWOLF INVITE</title>
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" href="<%=request.getContextPath() %>/image/favicon.ico">
+		
+		<!-- font-awesome CSS -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+		
+		<!-- bootstrap CSS -->
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.min.css">
+		
+		<!-- bootstrap-theme CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		
+		<!-- jQuery 3.3.1 -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		
+		<!-- jQuery UI JS -->
+		<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		
+		<!-- jQuery UI CSS -->
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+		
+		<!-- custom style -->
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/common.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_color.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_font.min.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_margin.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_padding.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_chat_icon_popup.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_collection.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_post.css">
+		
+		<style type="text/css">
+		body {background-color:#f2f2f2}
+		.invite-wrap {position:relative;display:block;width:400px;height:100vh;margin:0 auto}
+		.invite-box {position:absolute;height:410px;left:0;right:0;top:50%}
+		
+		.invite-con {width:100%;padding:20px;background-color:#fff;border:1px solid #ccc}
+		.invite-con .invite-pro-title {display:block;width:100%;margin-bottom:20px;padding:0 0 15px 0;text-align:center;border-bottom:1px solid #ddd}
+		.invite-con .invite-user-pic {position:relative;width:60px;margin:0 auto}
+		.invite-con .invite-link-btn {display:block;width:100%;padding:15px 0;border-radius:5px}
+		</style>
+	</head>
+	<body>
+		
+		<!-- invite wrap : s -->
+		<div class="invite-wrap">
+		
+			<!-- invite box : s -->
+			<div class="invite-box">
+			
+				<!-- invite top : s -->
+				<div class="invite-top text-center">
+					<img src="/image/flowolf_logo_m.png">
+				</div>
+				<!-- invite top : f -->
+				
+				<!-- invite con : s -->
+				<div class="invite-con martop-30">
+				
+					<!-- project title -->
+					<div class="invite-pro-title">${proVo.pro_name }</div>
+					
+					<!-- user profile img -->
+					<div class="invite-user-pic">
+						<i class="icon-circle circle-m"></i>
+						<img src="" onerror="this.src='/image/user-pic-sample.png'" width="60">
+					</div>
+					
+					<!-- invite info -->
+					<p class="martop-20 size-16 text-center">
+						<strong class="size-18 color-black">${memVo.mem_nick }</strong> 님이 프로젝트에 초대합니다.<br>
+						<span class="size-14">(<span class="font-bold color-pupple-l">${proUserCnt }명</span>이 프로젝트에 참여중입니다.)</span>
+					</p>
+					
+					<!-- invite button -->
+					<a href="http://localhost:8180/login/view?pro_no=${proVo.pro_no }&apply=${memVo.mem_id }&mem_nick=${memVo.mem_nick }" class="invite-link-btn martop-20 color-white back-color-pupple-l text-center">바로 시작하기</a>
+				</div>
+				<!-- invite con : f -->
+				
+			</div>
+			<!-- invite box : f -->
+			
+		</div>
+		<!-- invite wrap : f -->
+		
+		<script type="text/javascript">
+		$(function(){
+			// 높이 재배치
+			var height = $(".invite-box").height();
+			var result = -(height / 2) - 30;
+			$(".invite-box").css("margin-top", result+"px");
+		});
+		</script>
+	
+	</body>
+</html>

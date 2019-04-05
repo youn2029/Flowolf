@@ -1,0 +1,830 @@
+/*******************************************
+* FLOWOLF CUSTOM JS
+* 팀명 : #DEV
+* 최초작성일 : 2018-09-10
+* 작성자 : UA(Kim ji su)
+*******************************************/
+
+
+/*******************************************
+* 
+* Category : Alert
+* 
+*******************************************/
+function alertCustom(text, className){
+	var alertBox = $('.alert');
+	
+	alertBox.html(text);
+	alertBox.addClass(className);
+	alertBox.css('margin-left', -(alertBox.outerWidth()/2));
+	alertBox.fadeIn();
+	setTimeout(function(){alertBox.fadeOut()}, 1000);
+}
+
+
+/*******************************************
+* 
+* Category : Navigation Bar(aside MenuBar)
+* 
+*******************************************/ 
+
+/*******************************************
+* Note : navigation mouse hover event
+* 설명 : aside navigation(메뉴) 중 'MY FOLRDER'에
+* 		각 메뉴에 mouseOver & mouseOut시 'edit-box' show() & hide()
+*******************************************/ 
+function navOver(nav){
+	var item = $(nav);
+	item.find("div.edit-btn").show();
+}
+
+function navOut(nav){
+	var item = $(nav);
+	item.find("div.edit-btn").hide();
+}
+
+
+/*******************************************
+* 
+* Category : Project Important check
+* 
+*******************************************/ 
+function fn_importantChk(el){
+	var item = $(el);
+	
+	if(item.hasClass("color-gray-l")){
+		item.removeClass("color-gray-l");
+		item.addClass("color-yellow");
+	} else {
+		item.removeClass("color-yellow");
+		item.addClass("color-gray-l");
+	}
+}
+
+
+
+
+/*******************************************
+* 
+* Category : Project Title
+* 
+*******************************************/
+
+
+/*******************************************
+* Note : color edit box show & hide
+* 설명 : 프로젝트 색상 설정 박스 보이기 & 감추기
+*******************************************/
+function fn_editColor(el){
+	var item = $(el);
+	var editColorBox = item.siblings(".edit-color-box");
+	var editProjectBox = item.parent("li").siblings("li").children(".edit-pro-box");
+	
+	if(editColorBox.css("display") == "block"){
+		editColorBox.fadeOut();
+	} else {
+		editColorBox.fadeIn();
+	}
+	
+}
+
+
+/*******************************************
+* Note : project edit box show & hide
+* 설명 : 프로젝트 설정 박스 보이기 & 감추기
+*******************************************/
+function fn_editProject(el){
+	var item = $(el);
+	var editProjectBox = item.siblings(".edit-pro-box");
+	var editColorBox = item.parent("li").siblings("li").children(".edit-color-box");
+	
+	if(editProjectBox.css("display") == "block"){
+		editProjectBox.fadeOut();
+	} else {
+		editProjectBox.fadeIn();
+	}
+
+}
+
+
+/*******************************************
+* 
+* Category : Project - task(업무)
+* 
+*******************************************/
+
+
+/*******************************************
+* Note : task state change
+* 설명 : 업무상태 설정 - 해당 업무상태 선택시, 각 업무상태에 맞게 색상 변경 클래스 추가
+*******************************************/
+function fn_checkTaskState(el){
+	var item = $(el);
+	var stateList = item.parent('.task-state-list');
+	
+	stateList.find('label').removeClass('checked');
+	item.addClass('checked');
+}
+
+/*******************************************
+* Note : edit task state
+* 설명 : 업무상태 수정 - 해당 업무상태 선택시,
+* 		수정여부 확인 팝업창을 띄워준 후
+* 		각 업무상태에 맞게 색상 변경 클래스 추가
+*******************************************/
+function fn_editTaskState(el){
+	var item = $(el);
+	var stateList = item.parent('.task-state-list');
+	var editConfirm = item.siblings('#editConfirm');
+	var layerPopCon = $("#editTaskState");
+	
+	layer_popup(layerPopCon);
+
+	layerPopCon.find("#editYes").on("click", function(){
+    	stateList.find('label').removeClass('checked');
+    	item.addClass('checked');
+    	alertCustom('상태값이 변경되었습니다', 'alert-warning');
+	});
+	
+}
+
+/*******************************************
+* Note : task manager input focus
+* 설명 : 업무담당자 input태그에 focus되었을 시에
+* 		업무담당자(프로젝트 참여자) 리스트가 노출된다
+*******************************************/
+function fn_taskManagerFocus(el){
+
+	var item = $(el);
+	var projectUserList = item.siblings(".pro-user-list");
+	
+	projectUserList.fadeIn();
+	item.blur(function(){
+		projectUserList.fadeOut();
+	});
+	
+}
+
+
+/*******************************************
+* Note : task manager select
+* 설명 : 업무담당자(프로젝트 참여자) 리스트에서 담당자를 선택했을 때
+* 		담당자리스트에 담당자 추가
+*******************************************/
+function fn_taskManagerSelect(el){
+	var item = $(el);
+	var src = item.find('img').attr('src');
+	var name = item.find('.user-id').text();
+	var taskUserList = item.parent().siblings('.task-user-list');
+	
+	if(taskUserList.find('div').hasClass('name-'+name)){
+		alert('이미 선택된 참여자를 다시 추가할 수 없습니다.');
+	} else {
+		taskUserList.addClass('martop-10');
+		taskUserList.append(
+			"<div class=\"name-tag name-" + name + "\">"
+				+ "<img src=\"" + src + "\" onerror=\"this.src='/image/user-pic-sample.png'\" width=\"24\">"
+				+ "<strong class=\"marleft-10\">" + name + "</strong>"
+				+ "<i class=\"fas fa-times-circle marleft-15\"></i>"
+				+ "<input type=\"hidden\" name=\"task-manager\" value=\"" + name + "\">"
+			+ "</div>"
+		);
+		
+		// 추가된 담당자 삭제
+		$(".name-tag").find("i").click(function(){
+			$(this).parent("div").remove();
+		});
+	}
+}
+
+/*******************************************
+* Note : task start & end date reset
+* 설명 : 업무시작일 및 종료일 값 초기화
+*******************************************/
+function fn_dateReset(el){
+	var item = $(el);
+	var dateInput = item.siblings('input.datepicker-here');
+	
+	dateInput.val('');
+}
+
+/*******************************************
+* Note : task progress bar select
+* 설명 : 작업진척도 progress bar에서 진척도 선택시
+*******************************************/
+function fn_progressSelect(el){
+	var item = $(el);
+	var pcntInfo = item.children('span').text();
+	var pcntResult = (100 - pcntInfo) + "%";
+	var workPercent = item.siblings('.work-percent');
+	var pcntBar = item.siblings('.pcnt-bar');
+	
+	workPercent.html(pcntInfo + "%");
+	pcntBar.css('right', pcntResult);
+	
+	if(pcntInfo >= 60){
+		workPercent.addClass("color-white");
+		workPercent.removeClass("color-black");
+	} else {
+		workPercent.removeClass("color-white");
+		workPercent.addClass("color-black");
+	}
+	
+}
+
+/*******************************************
+* Note : task progress bar select edit
+* 설명 : '타임라인' 작업진척도 progress bar에서 진척도 선택시(수정)
+*******************************************/
+
+/*******************************************
+* Note : task rank list box show & hide(input)
+* 설명 : input태그에 focus되었을 때, 업무 우선순위 리스트 박스 show & hide
+*******************************************/
+function fn_taskRankFocus(el){
+	var item = $(el);
+	var taskRankList = item.siblings('.task-rank-list');
+	
+	taskRankList.fadeIn();
+	item.on('blur', function(){
+		taskRankList.fadeOut();
+	});
+}
+
+/*******************************************
+* Note : task rank list box show & hide(span)
+* 설명 : span태그 클릭시 input태그에 focus처리,
+* 		업무 우선순위 리스트 박스 show & hide
+*******************************************/
+function fn_taskRankClick(el){
+	var item = $(el);
+	var taskRankInput = item.siblings('.task-rank-input');
+	
+	taskRankInput.focus();
+}
+
+
+/*******************************************
+* Note : task rank select function
+* 설명 : 업무 우선순위 선택시 선택한 우선순위 표시
+*******************************************/
+function fn_taskRankSelect(el){
+	var item = $(el);
+	var iconClass = item.find('i').attr('class').split(' ')[2];
+	var taskRank = item.parent('ul').siblings('span.task-rank');
+	
+	taskRank.css('right', '0');
+	taskRank.html(
+		"<i class=\"flow-icon rank-icon " + iconClass + "\"></i>"
+		+ item.text()
+		+ "<i class=\"fas fa-times-circle marleft-15 color-gray\" style=\"cursor:pointer\"></i>"
+		+ "<input type=\"hidden\" name=\"task-rank\" value=\"" + item.text() + "\">"
+	);
+	
+	taskRank.find("i.fas.fa-times-circle").on("click", function(){
+		taskRank.html('');
+		taskRank.css("right", "100%");
+	});
+}
+
+
+/*******************************************
+* Note : task add item box show
+* 설명 : '추가항목입력' 버튼 클릭시 추가항목 박스 보이기
+*******************************************/
+function fn_addItem(el){
+	var item = $(el);
+	var addItemBox = item.siblings('.add-item-box');
+
+	item.fadeOut("fast");
+	addItemBox.fadeIn();
+}
+
+
+/*******************************************
+* 
+* Category : Project - to do (할일) / vote (투표)
+* 
+*******************************************/
+
+
+/*******************************************
+* Note : remove to-do line
+* 설명 : '-'버튼 클릭시 해당 to-do 삭제
+*******************************************/
+function removeTodo(el){
+	var item = $(el);
+	var inputBox = item.parent("dt").parent("dl").parent("div");
+	var length = inputBox.find("dl").length;
+
+	item.parents("dl").remove();
+	length -= 1;
+}
+
+
+/*******************************************
+* Note : TO DO add to-do button clicked
+* 설명 : '할일 추가'버튼 클릭시 '할 일'내용을 복제하여 아래에 추가한다.
+*******************************************/
+function fn_addTodo(el){
+	
+	var item = $(el);
+	var inputBox = $(el).parent("div").siblings(".input-box");
+	var length = inputBox.find("dl").length;
+	
+	if(length < 5){
+		
+		// 0번째 복사 >> 마지막으로 붙혀넣기
+		$(".con-todo dl").eq(0).clone().appendTo(".todo-box").addClass("eq-"+todoLength);
+		
+		// date pick box hide & date-picker remove
+		$(".date-pick-box").hide();
+		$(".con-todo dl").last().find(".date-pick-box").find(".datepicker-inline").remove();
+		
+		// user list box hide
+		$(".pro-user-list").hide();
+		
+		// date reset
+		$(".con-todo dl").last().find("#dateResult").html('');
+		$(".con-todo dl").last().find("#dateResult").addClass('flow-icon todo-icon icon-calendar-plus').css("width", "20px");
+		
+		// user(manager) select button reset
+		$(".con-todo dl").last().find(".user-add-btn i.icon-circle").addClass("dis-none");
+		$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").addClass("flow-icon todo-icon icon-user-plus");
+		$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").css({
+			"display" : "",
+			"width" : "",
+			"height" : "",
+			"margin-left" : "",
+			"background" : "",
+			"background-size" : "",
+			"background-positoin" : ""
+		});
+		
+		// 할일 내용 개수 + 1
+		length += 1;
+	} else {
+		alert("할일은 5개까지만 등록 가능합니다.");
+	}
+}
+
+
+
+/*******************************************
+* Note : Enter or Tab key event
+* 설명 : '할일' 및 '투표' input 에서 Enter or Tab 키를 눌렀을 때,
+* 		'할일' 및 '투표' 내용을 복제하여 아래에 추가한다.
+*******************************************/
+function fn_keyDown(event, el){
+	var key = event.keyCode;
+	var inputBox = $(el).parent("dd").parent("dl").parent("div");
+	var cloneItem = inputBox.children("dl").eq(0);
+	var length = inputBox.find("dl").length;
+	
+	if(key == "13" || key == "9") { // Enter or Tab 키 입력시
+		event.preventDefault(); // Enter 키 값 초기화(submit event reset)
+		
+		if(length < 5){
+			
+			// 0번째 복사 >> 마지막으로 붙혀넣기
+			cloneItem.clone().appendTo(inputBox);
+			
+			// 내용 reset
+			inputBox.find("dl").last().find("input[type=text]").val('');
+			
+			if(inputBox.hasClass("todo-box")){
+				// date pick box hide & date-picker remove
+				$(".date-pick-box").hide();
+				$(".con-todo dl").last().find(".date-pick-box").find(".datepicker-inline").remove();
+				
+				// user list box hide
+				$(".pro-user-list").hide();
+				
+				// date reset
+				$(".con-todo dl").last().find("#dateResult").html('');
+				$(".con-todo dl").last().find("#dateResult").addClass('flow-icon todo-icon icon-calendar-plus').css("width", "20px");
+				
+				// user(manager) select button reset
+				$(".con-todo dl").last().find(".user-add-btn i.icon-circle").addClass("dis-none");
+				$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").addClass("flow-icon todo-icon icon-user-plus");
+				$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").css({
+					"display" : "",
+					"width" : "",
+					"height" : "",
+					"margin-left" : "",
+					"background" : "",
+					"background-size" : "",
+					"background-positoin" : ""
+				});
+			}
+			
+			// 내용 개수 + 1
+			length += 1;
+			
+		} else {
+			if(inputBox.hasClass("todo-box")){
+				alert("할일은 5개까지만 등록 가능합니다.");
+			} else if(inputBox.hasClass("vote-box")){
+				alert("투표는 5개까지만 등록 가능합니다.");
+			}
+		}
+	}
+}
+
+
+/*******************************************
+* Note : Date-picker
+* 설명 : '할 일' 달력아이콘을 눌렀을 때, 노출되는 Date-picker의 Option 설정
+*******************************************/
+
+// Create start date
+var start = new Date();
+
+function datePick(el){
+	
+	var item = $(el);
+	var datePickBox = item.siblings("div.date-pick-box");
+	var userList = $(".pro-user-list");
+	var dapePickBoxAll = $(".date-pick-box").not(datePickBox);
+	
+	if(datePickBox.css("display") == "none") {
+		datePickBox.fadeIn();
+		dapePickBoxAll.fadeOut();
+		userList.fadeOut();
+	} else {
+		datePickBox.fadeOut();
+	}
+	
+	datePickBox.find(".datepicker--time").addClass("dis-none");
+	
+	datePickBox.children(".datepicker-here").datepicker({
+		timepicker: false,
+		language: 'ko',
+		startDate: start,
+		dateFormat: 'mm/dd',
+		minHours: 23,
+		minMinutes: 59,
+		onSelect: function (fd, d, picker) {
+			// Do nothing if selection was cleared
+			if (!d) {
+				item.addClass("flow-icon todo-icon icon-calendar-plus").css("width", "20px").html('');
+			} else {
+				item.html(fd);
+				
+				item.removeClass("flow-icon todo-icon icon-calendar-plus");
+				if(start > d){
+					item.removeClass("color-gray").addClass("color-red").css("width", "40px");
+				} else {
+					item.removeClass("color-red").addClass("color-gray").css("width", "40px");
+				}
+				
+				datePickBox.fadeOut();
+			}
+		}
+	});
+}
+
+
+/*******************************************
+* Note : user(manager) add button clicked
+* 설명 : '할 일' 내용에서 담당자 추가 버튼(아이콘)을 클릭했을 때,
+* 		프로젝트 참가자 리스트가 보여진다.
+*******************************************/
+function addUser(el){
+	var item = $(el);
+	var userList = item.parent("div").siblings(".pro-user-list");
+	var userListAll = $(".pro-user-list").not(userList);
+	var datePickBox = item.parents(".todo-icon-box").find(".date-pick-box");
+	
+	userListAll.hide();
+	
+	if(userList.css("display") == "none"){
+		userList.fadeIn();
+		datePickBox.fadeOut();
+	} else {
+		userList.fadeOut();
+	}
+			
+}
+
+
+/*******************************************
+* Note : user(manager) clicked
+* 설명 : '할 일' 내용에서 담당자 선택시
+* 		선택한 담당자의 프로필사진이 담당자 추가 버튼(아이콘)에
+* 		background-image로 들어간다.
+*******************************************/
+
+function userSelect(el){
+	var item = $(el);
+	var userList = item.parents(".pro-user-list");
+	var iconCircle = userList.siblings("div.user-add-btn").children("i.icon-circle");
+	var userImgPlace = iconCircle.siblings("i");
+	var userImgSrc = item.children(".pro-user-photo").children("img").attr("src");
+	
+	iconCircle.removeClass("dis-none");	// 사진 이미지 원형으로 보이게 해주는 태그를 보이게 한 후,
+	userImgPlace.removeClass();	// 유저의 이미지가 들어갈 태그에 클래스들을 지워주고,
+	userImgPlace.css({
+		"display" : "block",
+		"overflow" : "hidden",
+		"width" : "24px",
+		"height" : "24px",
+		"background" : "url('" + userImgSrc + "') no-repeat",
+		"background-size" : "cover",
+		"background-position" : "center"
+	});	// 유저의 이미지가 들어가도록 style을 넣어준 후,
+	userList.fadeOut();	// 유저목록을 감춘다
+}
+
+
+/*******************************************
+* 
+* Category : Project timeline
+* 
+*******************************************/ 
+
+/*******************************************
+* Note : mouseOver color
+* 설명 : 마우스오버시 색상변경(default-color : 진한파란색)
+*******************************************/
+function fn_overColor(el){
+	$(el).removeClass("color-gray");
+	$(el).addClass("default-color");
+}
+
+/*******************************************
+* Note : mouseOut color
+* 설명 : 마우스아웃시 색상변경(color-gray : 회색)
+*******************************************/
+function fn_outColor(el){
+	$(el).removeClass("default-color");
+	$(el).addClass("color-gray");
+}
+
+
+/*******************************************
+* Note : box show & hide
+* 설명 : 클릭시 같은 라인에 있는 박스 보이고 감추기
+*******************************************/
+function fn_showBox(el){
+	var item = $(el);
+	var box = item.siblings("div");
+	
+	if(box.css("display") == "none"){
+		box.fadeIn();
+	} else {
+		box.fadeOut();
+	}
+}
+
+/*******************************************
+* Note : emoticon click function
+* 설명 : 이모티콘 클릭시 선택한 이모티콘 이미지 적용
+*******************************************/
+function fn_emoticon(el){
+	var item = $(el);	// emoticon li
+	var emoticonBtn = item.parent('ul').parent('div').siblings('div.emoticon-btn');	// emoticon default btn
+	var emoticonAfterBtn = item.parent('ul').parent('div').siblings('.emoticon-after-btn');	// emoticon after btn
+	var emoticonImg = item.children('img');
+	var emoticonTxt = item.children('span').text();
+	//var likeResult = $(".like-result");
+	
+	// 이모티콘 버튼을 선택한 이모티콘의 이미지와 텍스트로 변경
+	emoticonBtn.hide();
+	emoticonAfterBtn.show();
+	emoticonAfterBtn.children('img').attr('src', emoticonImg.attr('src'));
+	emoticonAfterBtn.children('span').html(emoticonTxt);
+	
+	// 이모티콘 버튼 위 '좋아요 OOO외 0명' 공간에 선택한 이모티콘 이미지배치
+	//likeResult.show();
+	//likeResult.prepend("<img src=\"" + emoticonImg.attr('src') + "\" width=\"20\" class=\"maright-10\">");
+	//likeResult.children('img').attr('src', emoticonImg.attr('src'));
+	
+}
+
+
+/*******************************************
+* Note : emoticon result button
+* 설명 : 이모티콘 선택시 '이모티콘 리스트 버튼' show(),
+* 		선택한 이모티콘이 들어간 버튼 hide()
+*******************************************/
+function fn_emoResultBtn(el){
+	var item = $(el);
+	var emoticonBtn = item.siblings('div.emoticon-btn');	// emoticon default btn
+	
+	item.hide();
+	emoticonBtn.show();
+}
+
+
+/*******************************************
+* Note : click change color
+* 설명 : '담아두기', '좋아요' 클릭시 색상 변경 및 text 변경
+*******************************************/
+function fn_likeChange(el){
+	var item = $(el);
+	var text = item.children('span').text().split(' ')[0];
+	
+	if(item.hasClass('default-color')){
+		item.removeClass('default-color');
+		item.children('span').text(text);
+	} else {
+		item.addClass('default-color');
+		item.children('span').text(text + " 취소");
+	}
+}
+
+
+/*******************************************
+* Note : textarea auto height
+* 설명 : textarea 높이값 자동으로 늘어나도록 하는 기능
+* 		(limit - 높이 최대값)
+*******************************************/
+function autoTextarea(obj, start, limit) {
+    obj.style.height = start;
+    if (limit >= obj.scrollHeight){
+    	obj.style.height = (obj.scrollHeight)+"px";
+    } else {
+    	obj.style.height = (20+limit)+"px";
+    }
+}
+
+/*******************************************
+* Note : todo check box color change
+* 설명 : '할일' 체크박스 선택시 체크아이콘 색상변경
+*******************************************/
+var emptyValue = 0;
+var todoCnt = 0;
+function fn_checkBoxLabel(el){
+	var item = $(el);
+	var checkBox = item.children('input');
+	var checkIcon = item.children('i');
+	var pcntTxt = parseInt(item.children('span').text());
+	var range = item.parents('.todo-content').siblings('.todo-progress-bar').children('.todo-range');
+	var endCount = item.parents('.todo-content').siblings('.todo-info').find('.todo-finish-cnt');
+	var pcntCount = item.parents('.todo-content').siblings('.todo-info').children('.todo-percent-cnt');
+	var todoText = item.parent().siblings('dd');
+	
+	// if문안에 ajax처리해주세요
+	if(checkBox.is(':checked')){
+		emptyValue += pcntTxt;
+		todoCnt += 1;
+		
+		checkIcon.removeClass('color-gray-l');
+		checkIcon.addClass('default-color');
+
+		endCount.html(todoCnt);
+		pcntCount.html(emptyValue + '%');
+		range.css('width', emptyValue + '%');
+		todoText.addClass('todo-success');
+		return false;
+		
+	} else {
+		emptyValue -= pcntTxt;
+		todoCnt -= 1;
+		
+		checkIcon.removeClass('default-color');
+		checkIcon.addClass('color-gray-l');
+
+		endCount.html(todoCnt);
+		pcntCount.html(emptyValue + '%');
+		range.css('width', emptyValue + '%');
+		todoText.removeClass('todo-success');
+		return false;
+	}
+}
+
+
+/*******************************************
+* Note : vote submit
+* 설명 : '투표하기' 버튼 클릭시 처리
+*******************************************/
+function fn_voteSubmit(el){
+	var item = $(el);
+	var conVote = item.parents('.con-vote');
+	var voteRadio = conVote.find('input[type=radio]');
+	voteRadio.each(function(){
+		voteRadio.disabled = true;
+	});
+}
+
+
+/*******************************************
+* Note : article edit
+* 설명 : 게시글 수정버튼 클릭시
+*******************************************/
+function fn_editArticle(el){
+	var item = $(el);
+	var timelineHeader = item.parents(".timeline-header");	// timeline header
+	var timelineContent = timelineHeader.siblings(".timeline-content");	// timeline content
+	var timelineFooter = timelineHeader.siblings(".timeline-footer");	// timeline footer
+	var timelineEditForm = timelineContent.children(".article-edit-form");	// timeline edit form
+	var timelineEditBox = timelineEditForm.children(".article-edit-box");	// timeline edit box
+	var timelineEditDn = timelineEditForm.children(".article-edit-dn");		// timeline edit dn
+	var timelineArticle = timelineContent.children('.timeline-article');	// timeline article
+	
+	timelineHeader.hide();
+	timelineFooter.hide();
+	
+	timelineArticle.hide();
+	timelineEditForm.fadeIn();
+	
+	timelineEditBox.children('textarea').focus();
+	timelineEditDn.fadeIn();
+
+}
+
+/*******************************************
+* Note : article edit cancel
+* 설명 : 게시글 수정 취소 버튼 클릭시
+*******************************************/
+function fn_editCancel(el){
+	var item = $(el);
+	var timelineEditForm = item.parent().parent("form");
+	var timelineArticle = timelineEditForm.siblings(".timeline-article");
+	var timelineHeader = timelineArticle.parent().siblings(".timeline-header");
+	var timelineFooter = timelineArticle.parent().siblings(".timeline-footer");
+	
+	timelineEditForm.hide();
+	
+	timelineHeader.fadeIn();
+	timelineFooter.fadeIn();
+	timelineArticle.fadeIn();
+	
+}
+
+
+/*******************************************
+* Note : comment edit button clicked
+* 설명 : '댓글' 수정 버튼 클릭시 이벤트 발생
+*******************************************/
+function fn_commentEdit(el){
+	var item = $(el);
+	var commentUserInfo = item.parent().siblings('.comment-user-info');
+	var commentTxt = item.parent().siblings('.article-txt');
+	var commentEditBtn = item.parent();
+	var commentEditBox = item.parent().siblings('.comment-edit-box');
+	var editTextarea = commentEditBox.find('textarea');
+	
+	commentUserInfo.hide();
+	commentTxt.hide();
+	commentEditBtn.hide();
+	commentEditBox.show();
+	editTextarea.val(commentTxt.find('pre').text()).focus();
+	editTextarea.focus();
+}
+
+/*******************************************
+* Note : comment edit key event
+* 설명 : '댓글' 수정시 키보드를 눌렀을 때 이벤트 처리
+*******************************************/
+function fn_keyDownEsc(event, el){
+	var key = event.keyCode;
+	var item = $(el);
+	
+	var commentEditBox = item.parents('.comment-edit-box');
+	var commentUserInfo = item.parent().parent().parent().siblings('.comment-user-info');
+	var commentTxt = item.parent().parent().parent().siblings('.article-txt');
+	var commentEditBtn = item.parent().parent().parent().siblings('.comment-edit-btn');
+	
+	
+	if((key == "13" && !event.shiftKey) || key == "9") {	// Enter or Tab 키 입력시
+		
+		event.preventDefault(); // Enter 키 값 초기화(submit event reset)
+		item.parent('form').submit();
+		
+	} else if((key=="13" && event.shiftKey) || (key=="13" && event.ctrlKey)){
+		
+		event.preventDefault(); // Enter 키 값 초기화(submit event reset)
+		var str = item.value().replace(/(?:\r\n|\r|\n)/g, '<br />');
+		item.value = str;
+		
+	} else if(key == "27") {	// ESC 키 입력시
+		
+		event.preventDefault(); // Enter 키 값 초기화(submit event reset)
+		
+		commentEditBox.hide();
+		commentUserInfo.show();
+		commentTxt.show();
+		commentEditBtn.show();
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

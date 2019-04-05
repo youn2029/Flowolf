@@ -1,0 +1,34 @@
+package kr.or.dev.user.partner.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.partner.dao.PartnerDaoInf;
+import kr.or.dev.user.partner.model.PartnerVO;
+
+@Service("ptnService")
+public class PartnerService implements PartnerServiceInf {
+	
+	@Resource(name="ptnDao")
+	private PartnerDaoInf ptnDao;
+
+	@Override
+	public int insertPtn(PartnerVO ptnVo) {
+		return ptnDao.insertPtn(ptnVo);
+	}
+
+	@Override
+	public int updatePtn(PartnerVO ptnVo) {
+		return ptnDao.updatePtn(ptnVo);
+	}
+
+	@Override
+	public List<PartnerVO> getPtnMyList(String mem_id) {
+		return ptnDao.getPtnMyList(mem_id);
+	}
+
+}

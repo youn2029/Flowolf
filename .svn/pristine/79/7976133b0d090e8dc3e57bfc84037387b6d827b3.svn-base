@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<div class="timeline-article">
+	<!-- 내용:s -->
+	<div class="article-txt">
+		<pre>여기다 내용을 입력하면 됩니다</pre>
+	</div>
+	<!-- 내용:f -->
+	
+	<!-- 이미지:s -->
+	<div class="article-img martop-20" style="background-image:url('/image/design_basic.png')">
+	</div>
+	<!-- 이미지:f -->
+	
+	<!-- 파일리스트:s -->
+	<div class="article-file martop-20">
+	</div>
+	<!-- 파일리스트:f -->
+</div>
+
+	
+<!-- 일반 게시글 수정:s -->
+<form action="" class="article-edit-form">
+	<div class="article-edit-box">
+		<textarea rows="5" cols="50" placeholder="글을 작성하세요."
+		onkeyup="autoTextarea(this, 120, 500)" required="required"></textarea>
+		
+		<!-- 이미지 목록이 나올부분 -->
+		<div class="upload-img-list">
+		</div>
+		
+		<!-- 첨부파일 목록이 나올부분 -->
+		<div class="upload-file-list">
+		</div>
+	</div>
+	<div class="article-edit-dn">
+		<!-- 파일첨부 -->
+		<label for="articleEditFile" class="float-left maright-20 marbtm-0 font-thin size-18">
+			<i class="fas fa-paperclip maright-10"></i>파일첨부
+		</label>
+		<input type="file" id="articleEditFile" class="dis-none" onchange="fileUpload(this)">
+		
+		<!-- 이미지첨부 -->
+		<label for="articleEditImg" class="float-left marbtm-0 font-thin size-18">
+			<i class="fas fa-camera maright-10"></i>이미지첨부
+		</label>
+		<input type="file" id="articleEditImg" class="dis-none" onchange="imgUpload(this)" accept="image/*">
+		
+		<!-- submit & cancel 버튼 -->
+		<input type="submit" value="수정하기" class="article-submit-btn font-bold size-16 color-white text-center default-back-color">
+		<input type="button" value="취소" onclick="fn_editCancel(this)" 
+		class="article-submit-btn maright-10 font-bold size-16 color-gray text-center back-color-white"
+		style="border:1px solid #ddd">
+	</div>
+</form>
+<!-- 일반 게시글 수정:f -->
+			

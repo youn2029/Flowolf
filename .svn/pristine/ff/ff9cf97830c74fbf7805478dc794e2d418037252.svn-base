@@ -1,0 +1,182 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+
+<form action="/schd/lastTest">
+
+	<!-- tab-con-box:s -->
+	<div class="tab-con-box">
+		<!-- 일정제목:s -->
+		<div class="input-box">
+			<input type="text" class="font-bold size-18" name="schd_title" placeholder="일정 제목을 입력하세요." required="required">
+		</div>
+		<!-- 일정제목:f -->
+		
+		<!-- 일정 시간 설정:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="far fa-clock"></i></dt>
+				<dd>
+					<input type="text"
+					data-range="true"
+					data-multiple-dates-separator="   -   "
+					placeholder="시작날짜 - 종료날짜"
+					class="datepicker-here"
+					id="datetime"
+					name="datetime"
+					style="width:100%"/>
+				</dd>
+			</dl>
+		</div>
+		<!-- 일정 시간 설정:f -->
+		<script>
+		$('.datepicker-here').datepicker({
+			timepicker : true,
+			language: 'ko',
+			startMinute : 0,
+			maxMinutes : 50,
+			minutesStep :10
+		})
+		</script>
+		
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<input id="searchInput" name ="schd_loc" class="controls" type="text" placeholder="장소를입력하세요" style="width:90%">
+					<div id="map"></div>
+					<input type="hidden" id="lat" name="lat"> 
+					<input type="hidden" id="lon" name="lon">
+				</dd>
+			</dl>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					<textarea rows="2" cols="" placeholder="메모를 입력하세요." name="schd_memo"></textarea>
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					<select name="schd_alarm" onchange="getSelectValue(this.form);">
+						<option value="0">없음</option>
+						<option value="10">10분전 미리알림</option>
+						<option value="30">30분전 미리알림</option>
+						<option value="60">1시간전 미리알림</option>
+						<option value="120">2시간전 미리알림</option>
+						<option value="180">3시간전 미리알림</option>
+						<option value="1440">1일전</option>
+						<option value="2880">2일전</option>
+						<option value="10080">7일전</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+		
+	</div>
+	<!-- tab-con-box:f -->
+	
+	<!-- tab-dn-box:s -->
+	<div class="tab-dn-box">
+		<!-- 올리기(submit) 버튼 -->
+		
+		<input type="submit" value="올리기" class="article-submit-btn float-right font-bold size-18 color-white text-center default-back-color">
+	</div>
+	<!-- tab-dn-box:f -->
+	
+</form>
+<script>
+	function getSelectValue(frm) {
+		frm.textValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].text;
+		frm.optionValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].value;
+	}
+</script>   
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZQp-a9d_ERML490nevVLhA3qWQ2KdGkM
+	&libraries=places&callback=initMap" async defer></script> 
+<script>
+function initMap() {
+	var map = new google.maps.Map(document.getElementById('map'), {
+		center : {
+			lat : -33.8688,
+			lng : 151.2195
+		},
+		zoom : 13
+	});
+	var input = document.getElementById('searchInput');
+	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+	var autocomplete = new google.maps.places.Autocomplete(input);
+	autocomplete.bindTo('bounds', map);
+
+	var infowindow = new google.maps.InfoWindow();
+	var marker = new google.maps.Marker({
+		map : map,
+		anchorPoint : new google.maps.Point(0, -29)
+	});
+
+	autocomplete.addListener(
+		'place_changed',
+		function() {
+			infowindow.close();
+			marker.setVisible(false);
+			var place = autocomplete.getPlace();
+			if (!place.geometry) {
+				window.alert("장소를 선택해주세요");
+				return;
+			}
+
+			// 지역정보가 있으면 맵에 표시하기
+			if (place.geometry.viewport) {
+				map.fitBounds(place.geometry.viewport);
+			} else {
+				map.setCenter(place.geometry.location);
+				map.setZoom(17);
+			}
+			marker.setIcon(({
+				url : place.icon,
+				size : new google.maps.Size(71, 71),
+				origin : new google.maps.Point(0, 0),
+				anchor : new google.maps.Point(17, 34),
+				scaledSize : new google.maps.Size(35, 35)
+			}));
+			marker.setPosition(place.geometry.location);
+			marker.setVisible(true);
+
+			var address = '';
+			if (place.address_components) {
+				address = [
+						(place.address_components[0]
+								&& place.address_components[0].short_name || ''),
+						(place.address_components[1]
+								&& place.address_components[1].short_name || ''),
+						(place.address_components[2]
+								&& place.address_components[2].short_name || '') ]
+						.join(' ');
+			}
+
+			infowindow.setContent('<div><strong>'
+					+ place.name + '</strong><br>'
+					+ address);
+			infowindow.open(map, marker);
+
+			$('#location').val(place.formatted_address);
+			$('#lat').val(place.geometry.location.lat());
+			$('#lon').val(place.geometry.location.lng());
+			
+		});
+}
+
+</script>

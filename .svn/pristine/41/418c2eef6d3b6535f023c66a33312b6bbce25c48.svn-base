@@ -1,0 +1,53 @@
+package kr.or.dev.timeline.reply.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.timeline.reply.model.ReplyVO;
+
+public interface ReplyDaoInf {
+	
+	/**
+	* Method : insertRep
+	* 최초작성일 : 2018. 9. 26.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 댓글 등록
+	*/
+	int insertRep(Map<String, Object> paramMap);
+	
+	/**
+	* Method : updateRep
+	* 최초작성일 : 2018. 9. 26.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param repVo
+	* @return
+	* Method 설명 : 댓글 수정
+	*/
+	int updateRep(ReplyVO repVo);
+	
+	/**
+	* Method : deleteRep
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param rep_no
+	* @return
+	* Method 설명 : 댓글 삭제처리
+	*/
+	int deleteRep(int rep_no);
+	
+	/**
+	* Method : getRepList
+	* 최초작성일 : 2018. 9. 26.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 해당 글의 댓글 조회
+	*/
+	List<ReplyVO> getRepList(Map<String, Object> paramMap);
+}

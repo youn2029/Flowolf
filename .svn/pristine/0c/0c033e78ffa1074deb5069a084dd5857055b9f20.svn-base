@@ -1,0 +1,86 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<form action="">
+
+	<!-- tab-con-box:s -->
+	<div class="tab-con-box">
+		<!-- 할일제목:s -->
+		<div class="input-box">
+			<input type="text" class="font-bold size-18" placeholder="할일 제목을 입력하세요.(선택)">
+		</div>
+		<!-- 할일제목:f -->
+		
+		<!-- 할일 내용:s -->
+		<div class="input-box todo-box">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-minus-circle color-red cursor-point" onclick="removeTodo(this)"></i></dt>
+				<dd class="posi-re">
+					<!-- 할일 내용 입력 input -->
+					<input type="text" class="todo-input" placeholder="할일 입력(Enter or Tab 입력시 아래에 할일 입력 추가됨)" onkeydown="fn_keyDown(event, this)" required="required">
+					
+					<!-- 날짜, 담당자 아이콘박스 -->
+					<div class="todo-icon-box">
+						
+						<!-- todo date : 날짜추가 -->
+						<div class="posi-re dis-inblock float-left maright-15">
+							<i onclick="datePick(this)" id="dateResult" class="flow-icon todo-icon icon-calendar-plus cursor-point"></i>
+							<div class="date-pick-box">
+								<div class="datepicker-here"></div>
+							</div>
+						</div>
+						
+						<!-- todo add manager : 담당자추가 -->
+						<div class="posi-re dis-inblock float-left todo-add-manager">
+						
+							<!-- 담당자 추가 버튼 -->
+							<div class="user-add-btn posi-re cursor-point">
+								<i class="icon-circle circle-xs dis-none"></i>
+								<i class="flow-icon todo-icon icon-user-plus" onclick="addUser(this)"></i>
+							</div>
+					
+							<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):s -->
+							<div class="pro-user-list">
+								<!-- 아래 ".pro-user-info"를 foreach 돌리면 됨 -->
+								<div class="pro-user-info" onclick="userSelect(this)">
+									<div class="pro-user-photo maright-10">
+										<i class="icon-circle circle-s"></i>
+										<img src="/image/user-pic-sample.png" onerror="this.src='/image/user-pic-sample.png'" width="40">
+									</div>
+									<span class="user-id">아이디</span>
+								</div>
+								<div class="pro-user-info" onclick="userSelect(this)">
+									<div class="pro-user-photo maright-10">
+										<i class="icon-circle circle-s"></i>
+										<img src="/image/user-pic-sample.png" onerror="this.src='/image/user-pic-sample.png'" width="40">
+									</div>
+									<span class="user-id">아이디2</span>
+								</div>
+							</div>
+							<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):f -->
+					
+						</div>
+					</div>
+				</dd>
+			</dl>
+		</div>
+		<!-- 할일 내용:f -->
+		
+		<div class="input-box martop-15">
+			<a href="#addTodo" class="color-black" onclick="fn_addTodo(this)"><i class="fas fa-plus maright-15 default-color"></i>할일 추가</a>
+		</div>
+	</div>
+	<!-- tab-con-box:f -->
+	
+	<!-- tab-dn-box:s -->
+	<div class="tab-dn-box">
+		<!-- 올리기(submit) 버튼 -->
+		<input type="submit" value="올리기" class="article-submit-btn float-right font-bold size-18 color-white text-center default-back-color">
+	</div>
+	<!-- tab-dn-box:f -->
+	
+	
+</form>
+
+
+

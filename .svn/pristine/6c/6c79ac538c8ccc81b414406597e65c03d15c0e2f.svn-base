@@ -1,0 +1,341 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    
+<section class="content">
+
+	<!-- task all content : s -->
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	
+		<!-- task all title -->
+		<strong class="dis-block marbtm-20 size-20 color-gray">전체 업무(${taskList.size() })</strong>
+		
+		<!-- task select toggle navigation button -->
+		<a href="#taskAllCollapse" class="task-all-collapse" data-toggle="collapse" aria-expanded="false" aria-controls="taskAllCollapse">
+			<i class="fas fa-list-ul maright-10"></i> 보기설정
+		</a>
+		
+		<!-- task all select -->
+		<div id="taskAllCollapse" class="task-collapse-box collapse marbtm-20">
+		
+			<!-- 업무구분 -->
+			<div class="coll-select-box">
+				<strong class="size-18 default-color">업무구분</strong>
+				<ul>
+					<li>
+						<input type="radio" name="allTaskKind" id="taskAll-my" class="custom-radio-input schd-radio"
+						onchange="fn_checkTaskList(this)" data-id="${memVo.mem_nick }">
+						<label for="taskAll-my">내 업무</label>
+					</li>
+					<li>
+						<input type="radio" name="allTaskKind" id="taskAll-re" class="custom-radio-input schd-radio"
+						onchange="fn_checkTaskList(this)" data-id="${memVo.mem_nick }">
+						<label for="taskAll-re">요청한 업무</label>
+					</li>
+					<li>
+						<input type="radio" name="allTaskKind" id="taskAll-all" class="custom-radio-input schd-radio"
+						onchange="fn_checkTaskList(this)" checked>
+						<label for="taskAll-all">전체 업무</label>
+					</li>
+				</ul>
+			</div>
+			
+			<script type="text/javascript">
+			// 내 업무, 요청한 업무, 전체 업무 check function
+			function fn_checkTaskList(el){
+				var item = $(el);
+				var dataId = item.attr('data-id');
+				var manager = $('.table').find('.task-manager');
+				var managerUser = manager.children('span');
+				var writer = $('.table').find('.task-writer');
+				
+				$('.table tbody tr').css('display', 'none');	// 전체 tr 숨기기
+				
+				// 내 업무 체크시
+				if(item.attr('id')=='taskAll-my') {
+					managerUser.each(function(i, e){
+						if(managerUser.eq(i).text() == dataId 
+								&& managerUser.eq(i).parent().parent('tr').css('display') == 'none'){
+							managerUser.eq(i).parent().parent('tr').show();
+						}
+					});
+				} else if(item.attr('id') == 'taskAll-re'){	// 요청한 업무 체크시
+					writer.each(function(i, e){
+						if(writer.eq(i).text() == dataId
+								&& writer.eq(i).parent().css('display') == 'none'){
+							writer.eq(i).parent().show();
+						}
+					});
+				} else {
+					$('.table tbody tr').show();
+				}
+				
+			}
+			</script>
+		
+			<!-- 상태 -->
+			<div class="coll-select-box martop-15">
+				<strong class="size-18 default-color">상태</strong>
+				<ul>
+					<li>
+						<input type="checkbox" id="taskAll-state-request" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-state-request">요청</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-state-progress" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-state-progress">진행</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-state-feedback" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-state-feedback">피드백</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-state-success" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-state-success">완료</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-state-hold" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-state-hold">보류</label>
+					</li>
+				</ul>
+			</div>
+		
+			<!-- 우선순위 -->
+			<div class="coll-select-box martop-15">
+				<strong class="size-18 default-color">우선순위</strong>
+				<ul>
+					<li>
+						<input type="checkbox" id="taskAll-pri-emergency" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-pri-emergency">긴급</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-pri-high" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-pri-high">높음</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-pri-normal" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-pri-normal">보통</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-pri-low" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-pri-low">낮음</label>
+					</li>
+					<li>
+						<input type="checkbox" id="taskAll-pri-null" onchange="fn_checkTaskAll(this)" class="custom-check-input" checked>
+						<label for="taskAll-pri-null">없음</label>
+					</li>
+				</ul>
+			</div>
+		
+			<!-- 시작일 -->
+			<div class="coll-select-box martop-15">
+				<strong class="size-18 default-color">시작일</strong>
+				<ul>
+					<li>
+						<input type="radio" name="startDate" id="taskAll-start-date" class="custom-radio-input schd-radio" 
+						onchange="fn_checkStartDate(this)" checked>
+						<label for="taskAll-start-date">전체</label>
+					</li>
+					<li>
+						<input type="radio" name="startDate" id="taskAll-start-today" class="custom-radio-input schd-radio" 
+						onchange="fn_checkStartDate(this)">
+						<label for="taskAll-start-today">오늘</label>
+					</li>
+					<li>
+						<input type="radio" name="startDate" id="taskAll-start-week" class="custom-radio-input schd-radio" 
+						onchange="fn_checkStartDate(this)">
+						<label for="taskAll-start-week">이번주</label>
+					</li>
+					<li>
+						<input type="radio" name="startDate" id="taskAll-start-month" class="custom-radio-input schd-radio" 
+						onchange="fn_checkStartDate(this)">
+						<label for="taskAll-start-month">이번달</label>
+					</li>
+					<li>
+						<input type="radio" name="startDate" id="taskAll-start-null" class="custom-radio-input schd-radio" 
+						onchange="fn_checkStartDate(this)">
+						<label for="taskAll-start-null">날짜미정</label>
+					</li>
+				</ul>
+			</div>
+		
+			<!-- 마감일 -->
+			<div class="coll-select-box martop-15" style="padding:0;border:0">
+				<strong class="size-18 default-color">마감일</strong>
+				<ul>
+					<li>
+						<input type="radio" name="endDate" id="taskAll-end-date" class="custom-radio-input schd-radio" 
+						onchange="fn_checkEndDate(this)" checked>
+						<label for="taskAll-end-date">전체</label>
+					</li>
+					<li>
+						<input type="radio" name="endDate" id="taskAll-end-today" class="custom-radio-input schd-radio" 
+						onchange="fn_checkEndDate(this)">
+						<label for="taskAll-end-today">오늘까지</label>
+					</li>
+					<li>
+						<input type="radio" name="endDate" id="taskAll-end-week" class="custom-radio-input schd-radio" 
+						onchange="fn_checkEndDate(this)">
+						<label for="taskAll-end-week">이번주까지</label>
+					</li>
+					<li>
+						<input type="radio" name="endDate" id="taskAll-end-month" class="custom-radio-input schd-radio" 
+						onchange="fn_checkEndDate(this)">
+						<label for="taskAll-end-month">이번달까지</label>
+					</li>
+					<li>
+						<input type="radio" name="endDate" id="taskAll-end-null" class="custom-radio-input schd-radio" 
+						onchange="fn_checkEndDate(this)">
+						<label for="taskAll-end-null">날짜미정</label>
+					</li>
+				</ul>
+			</div>
+			
+		</div>
+	
+		<!-- collection content wrap : s -->
+		<div class="collection-con-wrap">
+			
+			<table class="table marbtm-0 text-center">
+				<colgroup>
+					<col width="5%">
+					<col width="8%">
+					<col width="10%">
+					<col width="35%">
+					<col width="10%">
+					<col width="10%">
+					<col width="7%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr>
+						<td>번호</td>
+						<td>상태</td>
+						<td>우선순위</td>
+						<td>제목</td>
+						<td>진척도</td>
+						<td>담당자</td>
+						<td>작성자</td>
+						<td>마감일</td>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${taskList }" var="taskMap" varStatus="status">
+					<tr>
+						<td>${status.count}</td>
+						<td>
+							<c:choose>
+								<c:when test="${taskMap['taskVo'].task_state == '요청' }">
+									<c:set var="stateClass" value="back-color-blue-l"/>
+									<c:set var="dataId" value="taskAll-state-request"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_state == '진행' }">
+									<c:set var="stateClass" value="back-color-green-l"/>
+									<c:set var="dataId" value="taskAll-state-progress"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_state == '피드백' }">
+									<c:set var="stateClass" value="back-color-orange"/>
+									<c:set var="dataId" value="taskAll-state-feedback"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_state == '완료' }">
+									<c:set var="stateClass" value="default-back-color"/>
+									<c:set var="dataId" value="taskAll-state-success"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_state == '보류' }">
+									<c:set var="stateClass" value="back-color-gray"/>
+									<c:set var="dataId" value="taskAll-state-hold"/>
+								</c:when>
+							</c:choose>
+							<span class="task-state-box ${stateClass }" data-id="${dataId }">${taskMap['taskVo'].task_state }</span>
+						</td>
+						<td>
+							<c:choose>
+								<c:when test="${taskMap['taskVo'].task_priority == '긴급' }">
+									<c:set var="priClass" value="icon-emer"/>
+									<c:set var="dataId" value="taskAll-pri-emergency"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_priority == '높음' }">
+									<c:set var="priClass" value="icon-high"/>
+									<c:set var="dataId" value="taskAll-pri-high"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_priority == '보통' }">
+									<c:set var="priClass" value="icon-basic"/>
+									<c:set var="dataId" value="taskAll-pri-normal"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_priority == '낮음' }">
+									<c:set var="priClass" value="icon-low"/>
+									<c:set var="dataId" value="taskAll-pri-low"/>
+								</c:when>
+								<c:when test="${taskMap['taskVo'].task_priority == null }">
+									<c:set var="dataId" value="taskAll-pri-null"/>
+								</c:when>
+							</c:choose>
+							<c:choose>
+								<c:when test="${taskMap['taskVo'].task_priority != null }">
+									<span class="task-all-rank flow-icon ${priClass }" data-id="${dataId }">${taskMap['taskVo'].task_priority }</span>
+								</c:when>
+								<c:otherwise>
+									<span data-id="${dataId }">-</span>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td class="task-td-con">
+							<span class="dis-block size-16 color-black">${taskMap['taskVo'].task_title }</span>
+							<span class="dis-block size-12 color-gray">${taskMap['taskVo'].pro_name }</span>
+						</td>
+						<td>
+							<div class="task-pcnt-bar task-pcnt-${taskMap['taskVo'].task_rate }"><span>${taskMap['taskVo'].task_rate }%</span></div>
+						</td>
+						<td class="task-manager">
+						<c:choose>
+							<c:when test="${taskMap['taskUserList'].size() == 0 }">
+							-
+							</c:when>
+							<c:when test="${taskMap['taskUserList'].size() == 1 }">
+								${taskMap['taskUserList'][0].mem_nick }
+							</c:when>
+							<c:otherwise>
+								${taskMap['taskUserList'][0].mem_nick }님 외 ${taskMap['taskUserList'].size()-1 }명
+							</c:otherwise>
+						</c:choose>
+						<c:forEach items="${taskMap['taskUserList'] }" var="taskUserVo">
+							<span class="dis-none">${taskUserVo.mem_nick }</span>
+						</c:forEach>
+						</td>
+						<td class="task-writer">${taskMap['taskVo'].mem_nick }</td>
+						<td>
+							<span class="task-start-date dis-none">${taskMap['taskVo'].task_start_date }</span>
+							<span class="task-end-date">${taskMap['taskVo'].task_end_date }</span>
+						</td>
+					</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			
+		</div>
+		<!-- collection content wrap : f -->
+	
+	</div>
+	<!-- task all content : f -->
+	
+	<script type="text/javascript">
+	// 업무 '상태', '우선순위' 체크시 리스트 show & hide
+	function fn_checkTaskAll(el){
+		var item = $(el);
+		var id = item.attr('id');
+		var stateBox = $('.table').find('span');
+		
+		stateBox.each(function(i, e){
+			if(stateBox.eq(i).attr('data-id') == id){
+				if(stateBox.eq(i).parent().parent('tr').css('display') == 'none'){
+					stateBox.eq(i).parent().parent('tr').show();
+				} else {
+					stateBox.eq(i).parent().parent('tr').hide();
+				}
+			}
+		});
+	}
+	</script>
+
+</section>

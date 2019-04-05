@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="todo">
+
+	<!-- 할일 시퀀스 조회 -->
+	<select id="getTodoSeq" resultType="int">
+		SELECT todo_no_seq.nextval
+		  FROM dual
+	</select>
+
+	<!-- 할일 등록 -->
+	<insert id="insertTodo" parameterType="todoVo">
+		INSERT INTO todo (todo_no, todo_title, todo_time, todo_rate, todo_del_chk, todo_fix_chk, pro_no, mem_id)
+			 VALUES (#{todo_no}, #{todo_title}, sysdate, 0, 'n', 'n', #{pro_no}, #{mem_id}) 
+	</insert>
+	
+	<!-- 할일 수정 -->
+	<update id="updateTodo" parameterType="todoVo">
+		UPDATE todo
+		   SET todo_title = #{todo_title}
+		     , todo_rate = #{todo_rate}
+		     , todo_fix_chk = #{todo_fix_chk}
+		 WHERE todo_no = #{todo_no}
+	</update>
+	
+	<!-- 할일 삭제처리 -->
+	<update id="deleteTodo" parameterType="int">
+		UPDATE todo
+		   SET todo_del_chk = 'y'
+		 WHERE todo_no = #{todo_no}
+	</update>
+	
+	<!-- 할일 상세조회 -->
+	<select id="getTodoDetail" parameterType="int" resultType="todoVo">
+		SELECT *
+		  FROM todo
+		 WHERE todo_no = #{todo_no}
+	</select>
+	
+	<!-- 프로젝트의 할일 조회 -->
+	<select id="getTodoProList" parameterType="map" resultType="todoVo">
+		SELECT t.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = t.mem_id) AS mem_nick
+			 , (SELECT co.coll_no
+		          FROM collection co
+		         WHERE co.todo_no = t.todo_no
+		           AND co.mem_id = #{mem_id}) AS coll_chk
+		  FROM todo t
+		 WHERE pro_no = #{pro_no}
+		   AND todo_del_chk = 'n'
+	</select>
+	
+	<!-- 할일 검색 조회 -->
+	<select id="getTodoSearchList" parameterType="map" resultType="todoVo">
+		SELECT t.*
+		     , (SELECT mem_nick 
+		     	  FROM member m 
+		     	 WHERE m.mem_id = t.mem_id) AS mem_nick
+		  FROM todo t
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+		   AND t.todo_del_chk = 'n'
+	</select>
+	
+	<!-- 회원의 담아둔 할일글 리스트 조회 -->
+	<select id="getTodoCollList" parameterType="String" resultType="todoVo">
+		SELECT t.*
+		     , (SELECT mem_nick
+	              FROM member m
+	             WHERE m.mem_id = t.mem_id) AS mem_nick
+			 , c.coll_no AS coll_chk
+			 , (SELECT pro_name
+			 	  FROM project p
+			 	 WHERE p.pro_no = t.pro_no) AS pro_name
+		  FROM todo t
+			 , (SELECT * 
+			 	FROM collection 
+			 	WHERE mem_id = #{mem_id}) c
+		 WHERE t.todo_no = c.todo_no
+		   AND t.todo_del_chk = 'n'
+	</select>
+	
+	<!-- 회원이 작성한 할일글 리스트 조회 -->
+	<select id="getMyTodoList" parameterType="String" resultType="todoVo">
+		SELECT t.*
+			 , (SELECT mem_nick
+				  FROM member m
+				 WHERE m.mem_id = t.mem_id) AS mem_nick
+			 , (SELECT co.coll_no
+		          FROM collection co
+		       	 WHERE co.todo_no = t.todo_no
+		           AND co.mem_id = t.mem_id) AS coll_chk
+		     , (SELECT pro_name
+			 	  FROM project p
+			 	 WHERE p.pro_no = t.pro_no) AS pro_name
+		  FROM todo t
+		 WHERE t.mem_id = #{mem_id}
+		   AND t.todo_del_chk = 'n'
+	</select>
+
+</mapper>

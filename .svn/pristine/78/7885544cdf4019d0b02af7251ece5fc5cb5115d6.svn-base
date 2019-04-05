@@ -1,0 +1,290 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<style>
+/* common */
+.pro-right-box {display:block;background-color:#fff}
+
+/* back(prev) button */
+.pro-prev-btn {display:block;width:100%;height:50px;padding-left:30px;line-height:50px;border:1px solid transparent}
+.pro-prev-btn:hover {border:1px solid #2b3991}
+
+/* 모아보기 */
+ul.pro-gather-nav {display:block;width:100%;height:60px;margin:0}
+ul.pro-gather-nav li {float:left;width:20%}
+ul.pro-gather-nav li a {display:block;width:100%;height:60px;padding-top:12px;text-align:center}
+ul.pro-gather-nav li a:hover {background-color:#f1f2f3}
+
+/* 초대하기, 화상회의, 프로젝트 채팅 버튼 */
+.right-link-btn {display:block;width:100%;height:50px;line-height:50px;text-align:center}
+
+/* 프로젝트 참여자 리스트 */
+.pro-right-user-list {padding:15px;border:1px solid #ccc;border-top:0}
+
+
+/* 초대하기 팝업 */
+#invitePop {width:500px;padding:20px}
+#invitePop header {height:120px;margin-bottom:20px;line-height:120px;background-color:transparent;border-bottom:1px solid #ccc}
+#invitePop header .icon-close {top:0;right:0}
+
+#invitePop section {padding:0}
+#invitePop section .invite-kind-box {height:90px;padding:15px;border:1px solid #ccc;border-radius:10px}
+#invitePop section .invite-kind-box:hover {border-color:#333}
+#invitePop section .invite-kind-box dl,
+#invitePop section .invite-kind-box dl dt,
+#invitePop section .invite-kind-box dl dd {float:left}
+#invitePop section .invite-kind-box dl {width:100%}
+#invitePop section .invite-kind-box dl dt {width:60px;height:60px;line-height:60px;text-align:center;border-radius:100%}
+#invitePop section .invite-kind-box dl dd {
+	width:-webkit-calc(100% - 80px);
+	width:-moz-calc(100% - 80px);
+	width:-o-calc(100% - 80px);
+	width:calc(100% - 80px);
+}
+#invitePop section .invite-kind-box dl dd i.fa-clone {position:absolute;right:0;bottom:0}
+#invitePop section .invite-kind-box dl dd i.fa-clone:hover {color:#333}
+
+/* pop sub */
+.popup-sub-box {display:none}
+
+/* pop sub top */
+.popup-sub-box .pop-top-sub {position:relative;display:block;float:left;width:100%;height:50px;text-align:center}
+.popup-sub-box .pop-top-sub i {position:absolute;overflow:hidden;display:block;top:0;left:0}
+.popup-sub-box .pop-top-sub i.icon-close {left:inherit;right:0;width:16px;height:16px;background-position:-500px -300px}
+
+/* pop sub con */
+.pop-con-sub {display:block;float:left;width:100%}
+.pop-con-sub .select-user-list {display:none;position:relative;padding:15px 0;border-bottom:1px solid #ccc}
+.pop-con-sub .select-user-list .user-all-del {position:absolute;right:0;bottom:15px;color:#999;cursor:pointer}
+.pop-con-sub .select-user-list .user-all-del:hover {color:#2b3991;text-decoration:underline}
+.pop-con-sub .select-user-list .select-user-box {
+	display:inline-block;
+	height:40px;
+	margin:3px;
+	padding:8px 12px;
+	line-height:24px;
+	background-color:#f1f2f3;
+	border-radius:5px
+}
+.pop-con-sub .select-user-list .select-user-box img {vertical-align:top}
+
+.pop-con-sub dl,
+.pop-con-sub dl dt,
+.pop-con-sub dl dd {position:relative;float:left}
+.pop-con-sub dl.pop-user-list {width:100%;height:70px;margin:0;padding:15px 10px;border-bottom:1px solid #ccc}
+.pop-con-sub dl.pop-user-list.select,
+.pop-con-sub dl.pop-user-list:hover {background-color:#f1f2f3}
+.pop-con-sub dl.pop-user-list.select dt i.icon-circle,
+.pop-con-sub dl.pop-user-list:hover dt i.icon-circle {background-position:-300px -150px}
+.pop-con-sub dl.pop-user-list dt {width:40px}
+.pop-con-sub dl.pop-user-list dd {
+	width:-webkit-calc(100% - 50px);
+	width:-moz-calc(100% - 50px);
+	width:-o-calc(100% - 50px);
+	width:calc(100% - 50px);
+}
+.pop-con-sub dl.pop-user-list dd button {
+	position:absolute;
+	right:0;
+	top:5px;
+	height:30px;
+	padding:0 20px;
+	line-height:30px;
+	background-color:#fff;
+	border:1px solid #ccc;
+	border-radius:3px
+}
+.pop-con-sub dl.invite-email-input,
+.pop-con-sub dl.invite-email-input dt,
+.pop-con-sub dl.invite-email-input dd {float:left;height:40px;margin-bottom:0;line-height:40px}
+.pop-con-sub dl.invite-email-input {width:100%}
+.pop-con-sub dl.invite-email-input dt {width:90%}
+.pop-con-sub dl.invite-email-input dt input {width:100%;height:40px;padding:0 10px;border:1px solid #ddd}
+.pop-con-sub dl.invite-email-input dd {width:10%;text-align:center}
+.pop-con-sub textarea {width:100%;height:170px;padding:15px;border:1px solid #ddd}
+
+
+/* pop footer sub */
+.pop-footer-sub {display:block;float:left;width:100%;padding:15px 0;text-align:center}
+.pop-footer-sub .submit-btn {margin:0 auto;padding:8px 30px;border-radius:5px}
+
+</style>
+
+
+<!-- 이전화면으로 -->
+<div class="pro-right-box">
+	<a href="javascript:history.go(-1)" class="pro-prev-btn size-18 default-color">
+		<i class="fas fa-angle-left maright-15"></i> 이전화면
+	</a>
+</div>
+
+<!-- 파일함,업무,일정,할일,투표 -->
+<div class="pro-right-box martop-15">
+	<ul class="pro-gather-nav">
+		<li>
+			<a href="">
+				<i class="fas fa-download color-blue-l"></i>
+				<span class="dis-block size-14 color-gray">파일함</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-laptop colo-green-l"></i>
+				<span class="dis-block size-14 color-gray">업무</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="far fa-calendar-alt color-red"></i>
+				<span class="dis-block size-14 color-gray">일정</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-list-ul color-pupple"></i>
+				<span class="dis-block size-14 color-gray">할일</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-check color-orange"></i>
+				<span class="dis-block size-14 color-gray">투표</span>
+			</a>
+		</li>
+	</ul>
+</div>
+
+<!-- 초대하기 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#invitePop" class="right-link-btn invite-btn default-back-color color-white">
+		<i class="fas fa-user-plus maright-10"></i>초대하기
+	</a>
+</div>
+<!-- 초대하기 button : f -->
+
+<!-- 화상채팅 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#faceChat" class="right-link-btn face-chat-btn back-color-orange color-white">
+		<i class="fas fa-users maright-10"></i>화상회의
+	</a>
+	<script type="text/javascript">
+	$(function(){
+		$(".face-chat-btn").on("click", function(){
+			var ip = "${ip}";
+			window.open("https://" + ip + ":8443/faceChat/faceChat", "faceChat", "width=1000,height=1000,top=100,left=100");
+		});
+	});
+	</script>
+</div>
+<!-- 화상채팅 button : f -->
+
+<!-- 프로젝트 채팅 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#" class="right-link-btn back-color-green-l color-white">
+		<i class="fas fa-comments maright-10"></i>프로젝트 채팅
+	</a>
+</div>
+<!-- 프로젝트 채팅 button : f -->
+
+<!-- 프로젝트 참여자 리스트 : s -->
+<div class="pro-right-box pro-right-user-list">
+	
+	<span class="dis-block color-gray size-16">프로젝트 관리자</span>
+	
+</div>
+<!-- 프로젝트 참여자 리스트 : f -->
+
+
+
+<!-- 초대하기  layer pop up : s -->
+<div class="dim-layer">
+	<div class="dimBg"></div>
+		
+	<div id="invitePop" class="pop-layer">
+	
+   		<!-- pop header -->
+   		<header class="pop-top border-box text-center">
+   			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+   			<strong class="dis-block size-28 color-black text-center">프로젝트 제목</strong>
+   		</header>
+   		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   		
+   			<div class="invite-kind-box back-color-white cursor-point" data-id="invitePartner" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-green-l"><i class="fas fa-building size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">동료 초대</strong>
+		   				<strong class="dis-block size-18 color-gray-l">동료를 초대할 수 있습니다.</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" data-id="inviteProjectMem" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-pupple-l"><i class="fas fa-users size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">프로젝트 참여자</strong>
+		   				<strong class="dis-block size-18 color-gray-l">프로젝트를 함께 했던 사람을 초대할 수 있습니다.</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" data-id="inviteEmail" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-orange"><i class="fas fa-envelope size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">이메일로 초대장 발송</strong>
+		   				<strong class="dis-block size-18 color-gray-l">초대장을 이메일로 발송할 수 있습니다</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" onclick="copyToClipboard('https://....')">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-red"><i class="fas fa-link size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">초대 링크</strong>
+		   				<strong class="dis-block posi-re size-18 color-gray-l">
+		   					<span>https://....</span>
+		   					<i class="fas fa-clone cursor-point" onclick="copyToClipboard('https://....')"></i>
+		   				</strong>
+   					</dd>
+   				</dl>
+   			</div>
+		</section>
+		
+		<!-- 동료초대 :s -->
+		<div id="invitePartner" class="popup-sub-box">
+			<%@include file="/include/pop_invite_partner.jsp" %>
+		</div>
+		<!-- 동료초대 :f -->
+		
+		<!-- 프로젝트 참여자 초대 :s -->
+		<div id="inviteProjectMem" class="popup-sub-box">
+			<%@include file="/include/pop_invite_proMem.jsp" %>
+		</div>
+		<!-- 프로젝트 참여자 :f -->
+		
+		<!-- 이메일 초대 :s -->
+		<div id="inviteEmail" class="popup-sub-box">
+			<%@include file="/include/pop_invite_email.jsp" %>
+		</div>
+		<!-- 이메일 초대 :f -->
+	</div>
+	<!-- 초대하기 List pop : f -->
+	
+</div>
+<!-- 초대하기  layer pop up : f -->
+
+<script type="text/javascript">
+$(function(){
+
+	// 초대하기 
+	$(".invite-btn").click(function(){
+		var $href = $(this).attr('href');
+		layer_popup($href);
+	});
+
+});
+</script>
+

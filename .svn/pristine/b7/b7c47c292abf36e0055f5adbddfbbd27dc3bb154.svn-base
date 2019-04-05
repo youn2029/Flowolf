@@ -1,0 +1,30 @@
+package kr.or.dev.group.kind.web;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RequestMapping("/kind")
+@Controller
+public class KindController {
+
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;
+	
+	@RequestMapping("/insertKind")
+	public String insertKind(KindVO kindVo){
+		int cnt = kindService.insertKind(kindVo);
+		if(cnt > 0){
+			System.out.println("분류명 등록 성공");
+		}else{
+			System.out.println("분류명 등록 실패");
+		}
+		return "redirect:/adm/proEdit";
+	}
+	
+}

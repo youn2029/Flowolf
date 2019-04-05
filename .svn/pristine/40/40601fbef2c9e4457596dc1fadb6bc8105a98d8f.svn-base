@@ -1,0 +1,55 @@
+package kr.or.dev.group.project_user.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+
+@Repository("proUserDao")
+public class ProjectUserDao implements ProjectUserDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public List<ProjectUserVO> getProUserList(int pro_no) {
+		return template.selectList("proUser.getProUserList", pro_no);
+	}
+
+	@Override
+	public int insertProUser(ProjectUserVO proUserVo) {
+		return template.insert("proUser.insertProUser", proUserVo);
+	}
+
+	@Override
+	public int updateProUser(ProjectUserVO proUserVo) {
+		return template.update("proUser.updateProUser", proUserVo);
+	}
+
+	@Override
+	public int deleteProUserR(ProjectUserVO proUserVo) {
+		return template.update("proUser.deleteProUserR", proUserVo);
+	}
+
+	@Override
+	public List<ProjectUserVO> getProUserSearchList(Map<String, String> searchMap) {
+		return template.selectList("proUser.getProUserSearchList", searchMap);
+	}
+
+	@Override
+	public List<ProjectVO> getMyProList(String mem_id) {
+		return template.selectList("proUser.getMyProList", mem_id);
+	}
+
+	@Override
+	public ProjectUserVO getProUserDetail(ProjectUserVO proUserVo) {
+		return template.selectOne("proUser.getProUserDetail", proUserVo);
+	}
+
+}

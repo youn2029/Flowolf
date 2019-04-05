@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="proUser">
+	
+	<!-- 프로젝트 참여자 조회 -->
+	<select id="getProUserList" parameterType="int" resultType="proUserVo">
+		SELECT p.*
+		     , (SELECT mem_nick 
+				  FROM member m 
+				 WHERE m.mem_id = p.mem_id) AS mem_nick
+		  FROM project_user p
+		 WHERE pro_no = #{pro_no}
+	</select>
+	
+	<!-- 프로젝트 참여 (프로젝트 참여자 등록) -->
+	<insert id="insertProUser" parameterType="proUserVo">
+		INSERT INTO project_user (pro_no, mem_id, pro_user_man_chk, pro_user_date, pro_user_color)
+			VALUES (#{pro_no}, #{mem_id}, #{pro_user_man_chk}, sysdate, #{pro_user_color})
+	</insert>
+	
+	<!-- 프로젝트 참여자 수정 (프로젝트 색상 / 관리자 권한) -->
+	<update id="updateProUser" parameterType="proUserVo">
+		UPDATE project_user
+		   SET pro_user_color = #{pro_user_color}
+		 WHERE pro_no = #{pro_no}
+		   AND mem_id = #{mem_id}
+	</update>
+	
+	<!-- 프로젝트 나가기 (프로젝트 참여자 삭제) -->
+	<delete id="deleteProUserR" parameterType="proUserVo">
+		DELETE 
+		  FROM project_user
+		 WHERE pro_no = #{pro_no}
+		   AND mem_id = #{mem_id}		
+	</delete>
+
+	<!-- 프로젝트참여자 검색 조회 -->
+	<select id="getProUserSearchList" parameterType="map" resultType="proUserVo">
+		SELECT p.*
+		     , (SELECT mem_nick 
+		     	  FROM member m 
+		     	 WHERE m.mem_id = p.mem_id) AS mem_nick
+		  FROM project_user p
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+	
+	<!-- 회원의 프로젝트 조회 -->
+	<select id="getMyProList" parameterType="String" resultType="proVo">
+		SELECT p.*
+			 , (SELECT kind_name 
+			 	  FROM kind k 
+			 	 WHERE k.kind_no = p.kind_no) AS kind_name
+		 	 , pro_user_color
+		 	 , (SELECT count(*) 
+		 	 	  FROM dual 
+		 	 	 WHERE EXISTS(SELECT * 
+		 	 	 				FROM important imp 
+		 	 	 			   WHERE imp.pro_no = pu.pro_no 
+		 	 	 			     AND imp.mem_id = #{mem_id})) AS imp_chk
+		  FROM project p
+		  	 , ( SELECT *
+				   FROM project_user
+				  WHERE mem_id = #{mem_id}) pu
+		 WHERE p.pro_no = pu.pro_no
+		   AND p.pro_del_chk = 'n'
+	</select>
+	
+	<select id="getProUserDetail" parameterType="proUserVo" resultType="proUserVo">
+		SELECT *
+		  FROM project_user
+		 WHERE pro_no = #{pro_no}
+		   AND mem_id = #{mem_id}
+	</select>
+
+</mapper>

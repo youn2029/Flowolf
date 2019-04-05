@@ -1,0 +1,86 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<section class="content">
+
+	<!-- file all content : s -->
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	
+		<!-- file all top : s -->
+		<div class="coll-file-top dis-block marbtm-20">
+		
+			<!-- file box title -->
+			<strong class="size-20 color-gray">전체 파일()</strong>
+			
+			<!-- file box search : s -->
+			<div class="file-search-box">
+				<i class="fas fa-search color-gray"></i>
+				<input type="text" id="searchFilter" onkeyup="{ filter(this); return false; }" 
+				onkeypress="javascript:if(event.keyCode==13){ filter(this); return false; }">
+			</div>
+			<!-- file box search : f -->
+		</div>
+	
+		<!-- collection content wrap : s -->
+		<div class="collection-con-wrap files-con-wrap">
+			
+			<table class="table marbtm-0 text-center" style="letter-spacing:0">
+				<colgroup>
+					<col width="5%">
+					<col width="40%">
+					<col width="15%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr>
+						<td>번호</td>
+						<td>파일명</td>
+						<td>프로젝트명</td>
+						<td>작성자</td>
+						<td>등록일</td>
+						<td>파일크기</td>
+						<td>다운로드</td>
+					</tr>
+				</thead>
+				<tbody id="filesTbody">
+					<tr data-name="dog.jpg">
+						<td>1</td>
+						<td class="files-name-td">
+							<i class="dis-inblock file-icon-s file-default"></i>
+							<span class="dis-inblock">dog.jpg</span>
+						</td>
+						<td>프로젝트 명</td>
+						<td>작성자</td>
+						<td>18/10/09</td>
+						<td>34.4 KB</td>
+						<td>
+							<a href="" class="coll-file-down-btn dis-inblock"><i class="fas fa-download"></i></a>
+						</td>
+					</tr>
+					<tr data-name="project.jpg">
+						<td>2</td>
+						<td class="files-name-td">
+							<i class="dis-inblock file-icon-s file-default"></i>
+							<span class="dis-inblock">project.jpg</span>
+						</td>
+						<td>프로젝트 명</td>
+						<td>작성자</td>
+						<td>18/10/09</td>
+						<td>34.4 KB</td>
+						<td>
+							<a href="" class="coll-file-down-btn dis-inblock"><i class="fas fa-download"></i></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</div>
+		<!-- collection content wrap : f -->
+
+	</div>
+	<!-- file all content : f -->
+	
+</section>

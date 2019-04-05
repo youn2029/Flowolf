@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="postRep">
+
+<!-- 게시글의 번호를 매개변수로 받아 해당 게시글의 댓글 리스트 반환 
+	 게시글댓글의 객체를 매개변수로 받아 게시글댓글 등록
+	 게시글댓글의 객체를 매개변수로 받아 게시글댓글 수정
+	 게시글댓글의 번호를 매개변수로 받아 해당 게시글댓글 삭제
+ -->
+ 
+ 	<!-- 댓글 전체리스트조회  -->
+ 	<select id="getPostRepList" parameterType="map" resultType="postRepVo">
+ 		SELECT *
+ 		  FROM POST_REPLY
+ 	</select>
+ 	
+ 	<!-- 댓글 등록 -->
+ 	<insert id="insertPostRep" parameterType="postRepVo">
+		INSERT INTO POST_REPLY ( post_rep_no;			<!-- 댓글 번호 		-->
+								 post_rep_cont;		    <!-- 댓글 내용        -->
+								 post_rep_del_chk;	    <!-- 댓글 삭제여부    --> 
+								 post_rep_date;		    <!-- 댓글 작성일      -->
+								 post_no;			    <!-- 게시글번호	    -->
+							     mem_id;				<!-- 작성자ID     -->
+	                    VALUES ( #{post_rep_no},		
+							     #{post_rep_cont},	
+							     'n',
+							     sysdate,	
+							     #{post_no},			
+							     #{mem_id} )	
+ 	</insert>
+ 	
+ 	<!-- 댓글 수정 (내용)-->
+ 	<update id="updatePostRep" parameterType="postVo">
+ 		UPDATE POST_REPLY
+ 		   SET post_rep_cont=#{post_rep_cont} 
+ 	</update>
+ 	
+ 	<!-- 댓글 삭제 -->
+ 	<update id="deletePostRep" parameterType="int">
+ 		UPDATE POST_REPLY
+ 		   SET post_rep_del_chk ='y'
+ 		 WHERE post_rep_no=#{post_rep_no}
+ 	</update> 	
+ 	
+</mapper>

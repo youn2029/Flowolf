@@ -1,0 +1,153 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<section class="col-md-10 admin-con-wrap">
+	
+	<!-- title -->
+	<div class="dis-block posi-re">
+		<strong class="dis-inblock size-30 color-black">회원관리</strong>
+		<span class="dis-inblock marleft-15 size-18 color-gray">Member Management</span>
+		
+		<!-- search -->
+		<div class="mem-search-box">
+			<form action="">
+				<select class="flow-icon">
+					<option value="all">ALL</option>
+					<option value="userId">ID</option>
+					<option value="userName">이름</option>
+					<option value="userNick">닉네임</option>
+				</select>
+				<input type="text" name="" class="marleft-5" placeholder="검색할 내용을 입력하세요">
+				<button type="submit" class="default-back-color"><i class="fas fa-search color-white"></i></button>
+			</form>
+		</div>
+	</div>
+	
+	
+	<!-- member edit box:s -->
+	<div class="admin-content mem-edit-box martop-20">
+		<dl>
+			<dt class="posi-re">
+				<i class="icon-circle circle-b"></i>
+				<img src="" onerror="this.src='/image/user-pic-sample.png'" width="150">
+			</dt>
+			<dd>
+				<form action="">
+					<table class="table">
+						<colgroup>
+							<col width="25%"><col width="75%">
+						</colgroup>
+						<tr>
+							<td>아이디</td>
+							<td>
+								<input type="text" id="mem_id" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td>비밀번호</td>
+							<td>
+								<input type="password" id="mem_pw" class="mem_pw" value="" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td>이름</td>
+							<td>
+								<input type="text" id="mem_name" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td>닉네임</td>
+							<td>
+								<input type="text" id="mem_nick" readonly>
+							</td>
+						</tr>
+					</table>
+					<table class="table" style="margin-left:5%">
+						<colgroup>
+							<col width="25%"><col width="75%">
+						</colgroup>
+						<tr>
+							<td>가입일</td>
+							<td id="mem_date" style="padding:0 10px"></td>
+						</tr>
+						<tr>
+							<td>휴대폰번호</td>
+							<td>
+								<input type="text" id="mem_phone" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td>가입방법</td>
+							<td id="mem_howjoin" style="padding:0 10px"></td>
+						</tr>
+						<tr>
+							<td>활성화유무</td>
+							<td id="mem_chk" style="padding:0 10px"></td>
+						</tr>
+					</table>
+					
+					<i class="far fa-edit mem-edit-btn cursor-point" onclick="fn_memEditActive(this)"></i><!-- 수정버튼 -->
+					<i class="far fa-times-circle mem-edit-close cursor-point" onclick="fn_memEditClose(this)"></i><!-- 닫기버튼 -->
+					<input type="submit" value="저장" class="mem-edit-save color-white back-color-blue-l"><!-- submit 버튼 -->
+				</form>
+			</dd>
+		</dl>
+	</div>
+	<!-- member edit box:f -->
+		
+	<!-- member list box:s -->
+	<div class="admin-content mem-list-box martop-20">
+		<table class="table table-hover">
+			<colgroup>
+				<col width="5%">
+				<col width="25%">
+				<col width="15%">
+				<col width="15%">
+				<col width="20%">
+				<col width="10%">
+				<col width="10%">
+			</colgroup>
+			<thead>
+				<tr>
+					<td>No</td>
+					<td>아이디</td>
+					<td>이름</td>
+					<td>닉네임</td>
+					<td>가입일</td>
+					<td>가입방법</td>
+					<td>활성화유무</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr onclick="fn_memberInfoInput(this)">
+					<td>1</td>
+					<td class="mem_id">admin@flowolf.com</td>
+					<td class="mem_name">FLOWOLF</td>
+					<td class="mem_nick">GM.FLOWOLF</td>
+					<td class="mem_date">2018-10-22 22:00</td>
+					<td class="mem_howjoin">일반</td>
+					<td class="mem_chk">
+						활성화
+						<input type="hidden" id="mem_pw" class="mem_pw" value="kimjisu">
+						<input type="hidden" id="mem_phone" class="mem_phone"  value="010-4393-0213">
+					</td>
+				</tr>
+				<tr onclick="fn_memberInfoInput(this)">
+					<td>2</td>
+					<td class="mem_id">test@naver.com</td>
+					<td class="mem_name">test</td>
+					<td class="mem_nick">test</td>
+					<td class="mem_date">2018-10-22 22:00</td>
+					<td class="mem_howjoin">카카오</td>
+					<td class="mem_chk">
+						비활성화
+						<input type="hidden" id="mem_pw" class="mem_pw" value="hansonghee">
+						<input type="hidden" id="mem_phone" class="mem_phone" value="010-9876-5432">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- member list box:f -->
+	
+</section>

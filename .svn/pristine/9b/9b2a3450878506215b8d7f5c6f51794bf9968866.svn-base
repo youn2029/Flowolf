@@ -1,0 +1,6 @@
+package kr.or.dev.user.partner.web;
+
+
+public class PartnerController {
+
+}

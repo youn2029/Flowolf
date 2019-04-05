@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fcUser">
+	
+	<select id="getFaceChatUser" parameterType="Integer" resultType="fcUserVo">
+		SELECT * FROM facechat_user WHERE fc_no = #{fc_no}
+	</select>
+	
+	<insert id="insertFaceChatUser" parameterType="fcUserVo">
+		INSERT INTO facechat_user(fc_user_no,
+								 fc_user_date,
+								 mem_id,
+								 fc_no)
+						  VALUES(fc_user_no_seq.nextval,
+								 sysdate,
+								 #{mem_id},
+								 #{fc_no})
+	</insert>
+	
+	<delete id="deleteFaceChatUserR" parameterType="fcUserVo">
+		DELETE facechat_user 
+		 WHERE fc_no = #{fc_no}
+		   AND mem_id = #{mem_id}
+	</delete>
+
+</mapper>

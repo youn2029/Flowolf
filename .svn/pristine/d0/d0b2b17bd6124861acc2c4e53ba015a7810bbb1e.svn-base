@@ -1,0 +1,50 @@
+package kr.or.dev.timeline.task.web;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.task.model.TaskVO;
+import kr.or.dev.timeline.task.service.TaskServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("taskController")
+@RequestMapping("/task")
+public class TaskController {
+	
+	// taskService
+	@Resource(name="taskService")
+	private TaskServiceInf taskService;
+	
+	// task insert
+	@RequestMapping("/insert")
+	public String taskInsert(@RequestParam("task_title") String task_title, 
+			@RequestParam("task_state") String task_state, 
+			@RequestParam("task_cont") String task_cont, 
+			@RequestParam("task_start_date") String task_start_date, 
+			@RequestParam("task_end_date") String task_end_date,
+			@RequestParam("task_rate") int task_rate,
+			@RequestParam("task_priority") String task_priority,
+			@RequestParam("pro_no") int pro_no,
+			@RequestParam("mem_id") String mem_id
+			){
+		
+		// vo에 저장
+		TaskVO taskVo = new TaskVO();
+		taskVo.setTask_title(task_title);
+		taskVo.setTask_state(task_state);
+		taskVo.setTask_cont(task_cont);
+		taskVo.setTask_start_date(task_start_date);
+		taskVo.setTask_end_date(task_end_date);
+		taskVo.setTask_rate(task_rate);
+		taskVo.setTask_priority(task_priority);
+		taskVo.setPro_no(pro_no);
+		taskVo.setMem_id(mem_id);
+		
+		taskService.insertTask(taskVo);
+		
+		return "project";
+	}
+
+}

@@ -1,0 +1,171 @@
+package kr.or.dev.talk.facechat.web;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.talk.facechat.model.FaceChatVO;
+import kr.or.dev.talk.facechat.service.FaceChatServiceInf;
+import kr.or.dev.talk.facechat_user.model.FaceChatUserVO;
+import kr.or.dev.talk.facechat_user.service.FaceChatUserServiceInf;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+@RequestMapping(value="/faceChat")
+@Controller
+public class FaceChatController {
+	
+	// json 데이터로 응답을 보내기 위한 
+	@Autowired
+	MappingJackson2JsonView jsonView;
+	
+	//화상회의
+	@Resource(name="fcService")
+	private FaceChatServiceInf fcService;
+	
+	//화상회의 참여자
+	@Resource(name="fcuService")
+	private FaceChatUserServiceInf fcuService;
+	
+	/**
+	* Method : faceChat
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param model
+	* @param ip
+	* @param mem_id
+	* @param pro_no
+	* @return
+	* Method 설명 : 화상회의 방으로 이동하는 기능
+	*/
+	@RequestMapping(value="/faceChat")
+	public String faceChat(Model model, 
+		@RequestParam("ip") String ip,
+		@RequestParam("mem_id") String mem_id,
+		@RequestParam("pro_no") int pro_no){
+		
+		model.addAttribute("pro_no", pro_no);
+		model.addAttribute("ip", ip);
+		model.addAttribute("mem_id", mem_id);
+		
+		return "faceChat/faceChat";
+	}
+	
+	/**
+	* Method : faceChatMake
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param model
+	* @param fc_ip
+	* @param pro_no
+	* @param mem_id
+	* @return
+	* Method 설명 : 화상회의방과 참여인원을 db에 저장하여 화상회의 방을 생성하는 기능
+	*/
+	@RequestMapping(value="/faceChatMake")
+	public ModelAndView faceChatMake(Model model, 
+			@RequestParam("fc_ip")String fc_ip, 
+			@RequestParam("pro_no") int pro_no, 
+			@RequestParam("mem_id") String mem_id){
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		FaceChatVO fcVo = new FaceChatVO();
+		int fc_no = fcService.getFaceChatSeq();
+		fcVo.setFc_no(fc_no);
+		fcVo.setFc_port(8443);
+		fcVo.setFc_ip(fc_ip);
+		fcVo.setPro_no(pro_no);
+		
+		int cnt = fcService.insertFaceChat(fcVo);
+		
+		if(cnt > 0){
+			System.out.println("성공");
+			
+			FaceChatUserVO faceChatUserVo = new FaceChatUserVO();
+			faceChatUserVo.setFc_no(fc_no);
+			faceChatUserVo.setMem_id(mem_id);
+			int cnt2 = fcuService.insertFaceChatUser(faceChatUserVo);
+
+			FaceChatVO fcvo = fcService.getFaceChatDetail(pro_no);
+			mav.addObject("pro_no", pro_no);
+			mav.addObject("fc_no", fcvo.getFc_no());
+			return mav;
+		}else{
+			
+			mav.setViewName("redirect:/pro/detail?pro_no="+fcVo.getPro_no());
+			return mav;
+		}
+		
+		
+	}
+	
+	/**
+	* Method : faceChatRoom
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param model
+	* @param mem_id
+	* @param pro_no
+	* @return
+	* Method 설명 : 화상회의가 만들어져있는 경우 참여하게 될 화상회의방으로 이동하는 기능 
+	*/
+	@RequestMapping(value="/faceChatRoom")
+	public String faceChatRoom(Model model, 
+		@RequestParam("mem_id") String mem_id,
+		@RequestParam("pro_no") int pro_no){
+		
+		FaceChatVO fcVo = fcService.getFaceChatDetail(pro_no);
+		
+		FaceChatUserVO fcuVo = fcuService.getFaceChatUser(fcVo.getFc_no());
+		
+		FaceChatUserVO faceChatUserVo = new FaceChatUserVO();
+		faceChatUserVo.setFc_no(fcVo.getFc_no());
+		faceChatUserVo.setMem_id(mem_id);
+		
+		fcuService.insertFaceChatUser(faceChatUserVo);
+		
+		model.addAttribute("ptn_id", fcuVo.getMem_id());
+		model.addAttribute("fcVo", fcVo);
+		model.addAttribute("fc_no", fcVo.getFc_no());
+		model.addAttribute("mem_id", mem_id);
+		
+		return "faceChat/faceChatRoom";
+	}
+	
+	/**
+	* Method : delete
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param faceChatUserVo
+	* @return
+	* Method 설명 : 화상회의방 인원중 한명이 하나게 되면  화상회의 방을 db에서 삭제하는 기능
+	*/
+	@RequestMapping("/delete")
+	public ModelAndView delete(FaceChatUserVO faceChatUserVo){
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		int cnt = fcuService.deleteFaceChatUserR(faceChatUserVo);
+		if(cnt > 0){
+			mav.addObject("result", "success");
+			
+			FaceChatUserVO fcuVo = fcuService.getFaceChatUser(faceChatUserVo.getFc_no());
+			if(fcuVo == null){
+				fcService.deleteFaceChatR(faceChatUserVo.getFc_no());
+			}
+		}else{
+			mav.addObject("result", "fail");
+		}
+		
+		return mav;
+	}
+	
+}

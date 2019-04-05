@@ -1,0 +1,177 @@
+package kr.or.dev.user.partner.web;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.alim.model.AlimVO;
+import kr.or.dev.alim.service.AlimServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.partner.model.PartnerVO;
+import kr.or.dev.user.partner.service.PartnerServiceInf;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+@RequestMapping("/ptn")
+@Controller
+public class PartnerController {
+	
+	// json 데이터로 응답을 보내기 위한 
+	@Autowired
+	MappingJackson2JsonView jsonView;
+	
+	// 동료
+	@Resource(name="ptnService")
+	private PartnerServiceInf ptnService;
+	
+	// 알림
+	@Resource(name="alimService")
+	private AlimServiceInf alimService;
+	
+	
+	/**
+	* Method : apply
+	* 최초작성일 : 2018. 10. 7.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param ptnVo
+	* @return
+	* Method 설명 : 친구 신청 및 알림 등록
+	*/
+	@RequestMapping("/apply")
+	public ModelAndView apply(PartnerVO ptnVo){
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		Map<String, Object> map = new HashMap<String, Object>();
+		int ptn_no = ptnService.getPtnSeq();
+		ptnVo.setPtn_no(ptn_no);
+		int cnt = ptnService.insertPtn(ptnVo);
+		if(cnt > 0){
+			System.out.println("친구 신청 성공");
+			map.put("alim_col", "ptn_no");
+			map.put("alim_col_no", ptn_no);
+			map.put("mem_id", ptnVo.getPtn_accept());
+			map.put("apply", ptnVo.getPtn_apply());
+			map.put("alim_cont", ptnVo.getPtn_apply()+"님이 "+ptnVo.getPtn_accept()+"님에게 친구신청 하였습니다.");
+			mav.addObject("cnt", cnt);
+			int cnt2 = alimService.insertAlim(map);
+			if(cnt2 > 0){
+				System.out.println("친구 신청 알림 등록 성공");
+			}else{
+				System.out.println("친구 신청 알림 등록 실패");
+			}
+			
+		}else{
+			System.out.println("친구 신청 실패");
+		}
+		
+		return mav;
+		
+		
+	}
+	
+	/**
+	* Method : accept
+	* 최초작성일 : 2018. 10. 7.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param ptnVo
+	* @param alimVo
+	* @return
+	* Method 설명 : 친구 수락 및 알림 체크 수정
+	*/
+	@RequestMapping("/accept")
+	public ModelAndView accept(PartnerVO ptnVo, @RequestParam("alim_no") int alim_no){
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		
+		AlimVO alimvo = alimService.getAlimDetail(alim_no);
+		
+		int cnt = ptnService.updatePtn(ptnVo);
+		if(cnt > 0){
+			System.out.println("친구 수락 성공");
+			int cnt2 = alimService.deleteAlim(alim_no);
+			if(cnt2 > 0){
+				System.out.println("알림 삭제 성공");
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("alim_col", "ptn_no");
+				map.put("alim_col_no", ptnVo.getPtn_no());
+				map.put("mem_id", alimvo.getMem_id());
+				map.put("apply", alimvo.getMem_id());
+				map.put("alim_cont", alimvo.getApply()+"님의  친구 신청을 수락하였습니다.");
+				alimService.insertAlim(map);
+				Map<String, Object> map2 = new HashMap<String, Object>();
+				map2.put("alim_col", "ptn_no");
+				map2.put("alim_col_no", ptnVo.getPtn_no());
+				map2.put("mem_id", alimvo.getApply());
+				map2.put("apply", alimvo.getMem_id());
+				map2.put("alim_cont", alimvo.getMem_id()+"님이 "+alimvo.getApply()+"님의 친구 신청을 수락하였습니다.");
+				alimService.insertAlim(map2);
+				mav.addObject("cnt", cnt);
+			}else{
+				System.out.println("알림 삭제 실패");
+			}
+		}else{
+			System.out.println("친구 수락 실패");
+		}
+		
+		return mav;
+	}
+	
+	/**
+	* Method : acceptCancel
+	* 최초작성일 : 2018. 10. 7.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param alimVo
+	* @return
+	* Method 설명 : 친구 수락 거절
+	*/
+	@RequestMapping("/acceptCancel")
+	public ModelAndView acceptCancel(PartnerVO ptnVo, @RequestParam("alim_no") int alim_no){
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		
+		AlimVO alimvo = alimService.getAlimDetail(alim_no);
+		
+		int cnt = ptnService.updatePtn(ptnVo);
+		if(cnt > 0){
+			System.out.println("친구 거절 성공");
+			int cnt2 = alimService.deleteAlim(alim_no);
+			if(cnt2 > 0){
+				System.out.println("알림 삭제 성공");
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("alim_col", "ptn_no");
+				map.put("alim_col_no", ptnVo.getPtn_no());
+				map.put("mem_id", alimvo.getMem_id());
+				map.put("apply", alimvo.getMem_id());
+				map.put("alim_cont", alimvo.getApply()+"님의  친구 신청을 거절하였습니다.");
+				alimService.insertAlim(map);
+				Map<String, Object> map2 = new HashMap<String, Object>();
+				map2.put("alim_col", "ptn_no");
+				map2.put("alim_col_no", ptnVo.getPtn_no());
+				map2.put("mem_id", alimvo.getApply());
+				map2.put("apply", alimvo.getMem_id());
+				map2.put("alim_cont", alimvo.getMem_id()+"님이 "+alimvo.getApply()+"님의 친구 신청을 거절하였습니다.");
+				alimService.insertAlim(map2);
+				mav.addObject("cnt", cnt);
+			}else{
+				System.out.println("알림 삭제 실패");
+			}
+		}else{
+			System.out.println("친구 거절 실패");
+		}
+		
+		
+		
+		return mav;
+	}
+	
+}

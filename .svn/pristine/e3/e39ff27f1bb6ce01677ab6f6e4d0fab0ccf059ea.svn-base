@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="taskUser">
+
+	<!-- 업무 지정자 등록 -->
+	<insert id="insertTaskUser" parameterType="taskUserVo">
+		INSERT INTO task_user (task_user_no, task_no, tu_mem_id)
+		VALUES (TASK_USER_NO_SEQ.NEXTVAL, #{task_no}, #{tu_mem_id})
+	</insert>
+	
+	<!-- 업무 지정자 삭제 -->
+	<delete id="deleteTaskUserR" parameterType="int">
+		DELETE FROM task_user
+		 WHERE task_user_no = #{task_user_no}
+	</delete>
+	
+	<!-- 업무글의 지정자 목록 조회 -->
+	<select id="getTaskUserList" parameterType="int" resultType="taskUserVo">
+		SELECT t.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = t.tu_mem_id) AS mem_nick
+		  FROM task_user t
+		 WHERE task_no = #{task_no}
+	</select>
+	
+	<!-- 회원의 업무지정자 조회 -->
+	<select id="getTaskUserMyList" parameterType="string" resultType="taskUserVo">
+		SELECT *
+		  FROM task_user
+		 WHERE tu_mem_id = #{tu_mem_id}
+	</select>
+
+</mapper>

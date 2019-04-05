@@ -1,0 +1,38 @@
+package kr.or.dev.talk.chat_file.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.talk.chat_file.dao.ChatFileDaoInf;
+import kr.or.dev.talk.chat_file.model.ChatFileVO;
+
+@Service("chatFileService")
+public class ChatFileService implements ChatFileServiceInf{
+	
+	@Resource(name="chatFileDao")
+	private ChatFileDaoInf chatFileDao;
+
+	@Override
+	public List<ChatFileVO> getChatFileList(int chat_no) {
+		return chatFileDao.getChatFileList(chat_no);
+	}
+
+	@Override
+	public int insertChatFile(ChatFileVO chatFileVo) {
+		return chatFileDao.insertChatFile(chatFileVo);
+	}
+
+	@Override
+	public ChatFileVO getChatFileDetail(int chat_file_no) {
+		return chatFileDao.getChatFileDetail(chat_file_no);
+	}
+
+	@Override
+	public int getChatFileSeq() {
+		return chatFileDao.getChatFileSeq();
+	}
+
+}

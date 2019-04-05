@@ -1,0 +1,154 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<!-- 이전화면으로 -->
+<div class="dis-block back-color-white text-center cursor-point prev">
+	<br>
+	<h4>이전화면</h4>
+	<br>
+</div>
+
+<!-- 파일함,업무,일정,할일,투표 -->
+<div class="dis-block back-color-white martop-15 text-center">
+	<br><br>
+	<h4>파일함 / 업무 / 일정 / 할일 / 투표</h4>
+	<br><br>
+</div>
+
+<!-- 초대하기 -->
+<div class="dis-block default-back-color color-white martop-15 text-center cursor-point invite">
+	<br>
+	<h4>초대하기</h4>
+	<br>
+</div>
+
+<!-- 참여자 리스트 -->
+<h5 class="martop-15">전체 참여자</h5>
+<div class="dis-block martop-10 back-color-white" style="padding:15px;">
+
+	<!-- 프로젝트 채팅 -->
+	<div class="default-back-color color-white cursor-point cursor-point text-center">
+		<br>
+		<h4>프로젝트 채팅</h4>
+		<br>
+	</div>
+	<!-- 프로젝트 화상채팅 -->
+	<div class="default-back-color color-white martop-15 cursor-point text-center">
+		<br>
+		<h4>화상회의</h4>
+		<br>
+	</div>
+	
+	<h5 class="color-gray size-16 martop-10">프로젝트 관리자</h5>
+	<div class="back-color-white">
+		<br><br><br>
+	</div>
+	
+	<h5 class="color-gray size-16 martop-10 padtop-10" style="border-top:1px solid #999">참여자</h5>
+	<div class="back-color-white">
+		<br><br><br>
+	</div>
+</div>
+
+<!-- 초대하기  pop -->
+<div class="dim-layer">
+	<div class="dimBg"></div>
+	
+	<!-- Email invite pop -->
+	<div id="emailInvite" class="pop-layer invite-email-con" style="display:block; width:500px">
+	
+		<!-- pop header -->
+		<header class="pop-top border-box">
+			초대하기
+			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+		</header>
+		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   			<div>
+	   			<input type="text" id="folderName" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+	   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+   			</div>
+   			<div>
+	   			<input type="text" id="folderName" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+	   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+   			</div>
+   			<div class="martop-20">
+   				<strong class="dis-block color-blue-l marbtm-10 size-14">[아래 내용은 편집하실 수 있습니다.]</strong>
+   				<textarea placeholder="Flowolf로 업무관리, 채팅, 파일공유, 일정 공지를 한 곳에서! pc에서 사용해보세요"></textarea>
+   			</div>
+   			
+		</section>
+		
+		<!-- pop footer -->
+		<footer class="pop-footer border-box">
+			<input type="button" name="" class="pop-btn submit-btn marleft-5 back-color-pupple-l" value="초대">
+		</footer>
+	</div>		
+		
+	<!-- 초대하기 List pop -->
+	<div id="invite" class="pop-layer" style="display:none; width:500px">
+	
+   		<!-- pop header -->
+   		<header class="pop-top border-box text-center" style="background-color:transparent; height:120px">
+   			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+   			<strong class="dis-block size-24 color-black text-center" style="line-height:120px; border-bottom:1px solid #ccc">프로젝트 제목</strong>
+   		</header>
+   		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   			<div class="back-color-white cursor-point" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">동료 초대</strong>
+   				<strong class="dis-block size-12 color-gray-l">동료를 초대할 수 있습니다.</strong>
+   			</div>
+   			<div class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">프로젝트 참여자</strong>
+   				<strong class="dis-block size-12 color-gray-l">프로젝트를 함께 했던 사람을 초대할 수 있습니다.</strong>
+   			</div>
+   			<div id="emailInv" class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block dis-block size-24 color-gray">이메일로 초대장 발송</strong>
+   				<strong class="dis-block size-12 color-gray-l">초대장을 이메일로 발송할 수 있습니다</strong>
+   			</div>
+   			<div class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">초대 링크</strong>
+   				<strong class="dis-block size-12 color-gray-l">초대링크.....</strong>
+   			</div>
+		</section>
+	</div>
+	
+	
+</div>
+
+<!-- prev form -->
+<form id="prev" action="/pro/main"></form>
+
+<script type="text/javascript">
+
+	// 이전으로
+	$(".prev").click(function(){
+		$("#prev").submit();
+	});
+
+	// 초대하기 
+	$(".invite").click(function(){
+// 		layer_popup("#invite");		
+		layer_popup("#emailInvite");
+	});
+	
+// 	$("#emailInv").click(function(){
+// 		$(this).parents("#invite").css("display", "none");
+// 		$(this).parents("#invite").siblings(".invite-email-con").css("display", "block");
+// 	});
+	
+// 	$(".invite-email-con .btn-close").click(function(){
+// 		$(this).parents('.invite-email-con').css("display", "none");
+// 		$(this).parents('.invite-email-con').siblings(".invite-con").css("display", "block");
+// 	});
+
+	$(".input-delete").click(function(){
+		$(this).siblings("input").val("");
+	});
+	
+	
+</script>
+

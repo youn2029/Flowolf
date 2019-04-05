@@ -1,0 +1,51 @@
+package kr.or.dev.timeline.vote_item.model;
+
+public class VoteItemVO {
+
+	private int vi_no;			// 투표항목번호 (pk)
+	private String vi_cont;		// 투표항목내용
+	private String vi_del_chk;	// 삭제여부
+	private int vote_no;		// 투표글번호
+	private int viu_cnt;		// 투표한 회원 수 (vo에서만 사용)
+
+	public int getVi_no() {
+		return vi_no;
+	}
+
+	public void setVi_no(int vi_no) {
+		this.vi_no = vi_no;
+	}
+
+	public String getVi_cont() {
+		return vi_cont;
+	}
+
+	public void setVi_cont(String vi_cont) {
+		this.vi_cont = vi_cont;
+	}
+
+	public int getVote_no() {
+		return vote_no;
+	}
+
+	public void setVote_no(int vote_no) {
+		this.vote_no = vote_no;
+	}
+
+	public String getVi_del_chk() {
+		return vi_del_chk;
+	}
+
+	public void setVi_del_chk(String vi_del_chk) {
+		this.vi_del_chk = vi_del_chk;
+	}
+
+	public int getViu_cnt() {
+		return viu_cnt;
+	}
+
+	public void setViu_cnt(int viu_cnt) {
+		this.viu_cnt = viu_cnt;
+	}
+
+}

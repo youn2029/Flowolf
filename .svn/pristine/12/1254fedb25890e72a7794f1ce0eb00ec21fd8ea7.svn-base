@@ -1,0 +1,33 @@
+package kr.or.dev.timeline.vote_item.model;
+
+public class VoteItemVO {
+
+	private int vi_no;			// 투표항목번호
+	private String vi_cont;		// 투표항목내용	
+	private int vote_no;		// 투표글번호
+
+	public int getVi_no() {
+		return vi_no;
+	}
+
+	public void setVi_no(int vi_no) {
+		this.vi_no = vi_no;
+	}
+
+	public String getVi_cont() {
+		return vi_cont;
+	}
+
+	public void setVi_cont(String vi_cont) {
+		this.vi_cont = vi_cont;
+	}
+
+	public int getVote_no() {
+		return vote_no;
+	}
+
+	public void setVote_no(int vote_no) {
+		this.vote_no = vote_no;
+	}
+	
+}

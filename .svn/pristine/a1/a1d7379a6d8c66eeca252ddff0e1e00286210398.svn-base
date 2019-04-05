@@ -1,0 +1,262 @@
+package kr.or.dev.timeline.task.dao;
+
+import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.task.model.TaskVO;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:kr/or/dev/config/spring/root-context.xml",
+								 "classpath:kr/or/dev/config/spring/datasource_test.xml",
+								 "classpath:kr/or/dev/config/spring/transaction.xml"})
+public class TaskDaoTest {
+	
+	@Resource(name="taskDao")
+	private TaskDaoInf taskDao;
+	
+	@Before
+	public void setUp(){
+		// populator : 스프링에서 제공
+		// datasource(db 연결정보), 초기화 스크립트
+		
+		// datasource
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		dataSource.setUrl("jdbc:oracle:thin:@112.220.114.130:1521:xe");
+		dataSource.setUsername("flowolftest");
+		dataSource.setPassword("flowolftest");
+		
+		// 초기화 스크립트(init.sql)
+		
+		// poplucator 생성
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("kr/or/dev/config/db/init.sql"));
+		
+		DatabasePopulatorUtils.execute(populator, dataSource);
+	}
+
+	/**
+	* Method : taskDaoTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : taskDao Test
+	*/
+	@Test
+	public void taskDaoTest() {
+		assertNotNull(taskDao);
+	}
+	
+	/**
+	* Method : getTaskSeqTest
+	* 최초작성일 : 2018. 10. 1.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* Method 설명 : 업무 시퀸스 조회
+	*/
+	@Test
+	public void getTaskSeqTest(){
+		/***Given***/
+		
+		/***When***/
+		int resuntCnt = taskDao.getTaskSeq();
+
+		/***Then***/
+		assertEquals(1, resuntCnt);
+	}
+	
+	/**
+	* Method : insertTaskTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무글 등록 TEST
+	*/
+	@Test
+	public void insertTaskTest(){
+		/***Given***/
+		TaskVO taskVo = new TaskVO();
+		taskVo.setTask_no(taskDao.getTaskSeq());
+		taskVo.setTask_title("task title insert test");
+		taskVo.setTask_state("진행");
+		taskVo.setTask_cont("task content insert test");
+		taskVo.setTask_start_date("2018-09-20 16:00");
+		taskVo.setTask_end_date("2018-09-20 16:20");
+		taskVo.setTask_rate(20);
+		taskVo.setTask_priority("높음");
+		taskVo.setPro_no(10001);
+		taskVo.setMem_id("test");
+
+		/***When***/
+		int insertCnt = taskDao.insertTask(taskVo);
+
+		/***Then***/
+		assertEquals(1, insertCnt);
+	}
+	
+	/**
+	* Method : updateTaskTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무글 수정 TEST
+	*/
+	@Test
+	public void updateTaskTest(){
+		/***Given***/
+		TaskVO taskVo = new TaskVO();
+		taskVo.setTask_title("task title edit test");
+		taskVo.setTask_state("보통");
+		taskVo.setTask_cont("task content edit test");
+		taskVo.setTask_start_date("2018-09-20 16:40");
+		taskVo.setTask_end_date("2018-09-20 16:50");
+		taskVo.setTask_rate(60);
+		taskVo.setTask_priority("낮음");
+		taskVo.setTask_fix_chk("n");
+		taskVo.setTask_no(10001);
+
+		/***When***/
+		int updateCnt = taskDao.updateTask(taskVo);
+
+		/***Then***/
+		assertEquals(1, updateCnt);
+
+	}
+	
+	/**
+	* Method : deleteTaskTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무글 삭제 처리 TEST
+	*/
+	@Test
+	public void deleteTaskTest(){
+		/***Given***/
+		int task_no = 10001;
+
+		/***When***/
+		int deleteCnt = taskDao.deleteTask(task_no);
+
+		/***Then***/
+		assertEquals(1, deleteCnt);
+	}
+	
+	/**
+	* Method : getTaskProListTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 프로젝트의 업무글 조회 TEST
+	*/
+	@Test
+	public void getTaskProListTest(){
+		/***Given***/
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("pro_no", 10000);
+		paramMap.put("mem_id", "test");
+
+		/***When***/
+		List<TaskVO> taskProList = taskDao.getTaskProList(paramMap);
+
+		/***Then***/
+		assertEquals(1, taskProList.size());
+
+	}
+	
+	/**
+	* Method : getTaskSearchListTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무 검색 조회 TEST
+	*/
+	@Test
+	public void getTaskSearchListTest(){
+		/***Given***/
+		Map<String, String> searchMap = new HashMap<String, String>(); 
+		searchMap.put("searchField", "task_cont");
+		searchMap.put("searchData", "task");
+
+		/***When***/
+		List<TaskVO> searchList = taskDao.getTaskSearchList(searchMap);
+
+		/***Then***/
+		assertEquals(1, searchList.size());
+
+	}
+	
+	/**
+	* Method : getTestDetailTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무글 상세 조회 TEST
+	*/
+	@Test
+	public void getTestDetailTest(){
+		/***Given***/
+		int task_no = 10001;
+		
+		/***When***/
+		TaskVO taskVo = taskDao.getTaskDetail(task_no);
+
+		/***Then***/
+		assertEquals("task test title", taskVo.getTask_title());
+		assertEquals("진행", taskVo.getTask_state());
+		assertEquals(100, taskVo.getTask_rate());
+	}
+	
+	/**
+	* Method : getTaskMyListTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 회원이 요청한 업무글 조회
+	*/
+	@Test
+	public void getTaskMyListTest(){
+		/***Given***/
+		String mem_id = "test";
+
+		/***When***/
+		List<TaskVO> taskMyList = taskDao.getTaskMyList(mem_id);
+
+		/***Then***/
+		assertEquals(1, taskMyList.size());
+	}
+	
+	/**
+	* Method : getTaskCollListTest
+	* 최초작성일 : 2018. 10. 14.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* Method 설명 : 회원의 담아준 업무글 조회 Test
+	*/
+	@Test
+	public void getTaskCollListTest(){
+		/***Given***/		
+
+		/***When***/
+		List<TaskVO> taskCollList = taskDao.getTaskCollList("test");
+
+		/***Then***/
+		assertEquals(0, taskCollList.size());
+	}
+
+}

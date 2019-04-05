@@ -1,0 +1,134 @@
+package kr.or.dev.timeline.schedule.model;
+
+import java.util.Date;
+
+public class ScheduleVO {
+	
+	private int schd_no;			// 일정글번호
+	private String schd_title;		// 제목.
+	private String schd_loc;		// 장소.
+	private String schd_memo;		// 메모.
+	private String schd_alarm;		// 알람.
+	private Date schd_start_time;	// 시작일시
+	private Date schd_end_time;		// 종료일시
+	private Date schd_time;			// 작성일시
+	private String schd_del_chk;	// 삭제여부
+	private String schd_fix_chk;	// 고정유무
+	private Date schd_fix_date;		// 고정일
+	private int pro_no;				// 프로젝트번호	
+	private String mem_id;			// 작성자ID
+	private String mem_nick;		// 작성자Nick
+
+	public int getSchd_no() {
+		return schd_no;
+	}
+
+	public void setSchd_no(int schd_no) {
+		this.schd_no = schd_no;
+	}
+
+	public String getSchd_title() {
+		return schd_title;
+	}
+
+	public void setSchd_title(String schd_title) {
+		this.schd_title = schd_title;
+	}
+
+	public String getSchd_loc() {
+		return schd_loc;
+	}
+
+	public void setSchd_loc(String schd_loc) {
+		this.schd_loc = schd_loc;
+	}
+
+	public String getSchd_memo() {
+		return schd_memo;
+	}
+
+	public void setSchd_memo(String schd_memo) {
+		this.schd_memo = schd_memo;
+	}
+
+	public Date getSchd_start_time() {
+		return schd_start_time;
+	}
+
+	public void setSchd_start_time(Date schd_start_time) {
+		this.schd_start_time = schd_start_time;
+	}
+
+	public Date getSchd_end_time() {
+		return schd_end_time;
+	}
+
+	public void setSchd_end_time(Date schd_end_time) {
+		this.schd_end_time = schd_end_time;
+	}
+
+	public String getSchd_alarm() {
+		return schd_alarm;
+	}
+
+	public void setSchd_alarm(String schd_alarm) {
+		this.schd_alarm = schd_alarm;
+	}
+
+	public Date getSchd_time() {
+		return schd_time;
+	}
+
+	public void setSchd_time(Date schd_time) {
+		this.schd_time = schd_time;
+	}
+
+	public String getSchd_del_chk() {
+		return schd_del_chk;
+	}
+
+	public void setSchd_del_chk(String schd_del_chk) {
+		this.schd_del_chk = schd_del_chk;
+	}
+
+	public String getSchd_fix_chk() {
+		return schd_fix_chk;
+	}
+
+	public void setSchd_fix_chk(String schd_fix_chk) {
+		this.schd_fix_chk = schd_fix_chk;
+	}
+
+	public Date getSchd_fix_date() {
+		return schd_fix_date;
+	}
+
+	public void setSchd_fix_date(Date schd_fix_date) {
+		this.schd_fix_date = schd_fix_date;
+	}
+
+	public int getPro_no() {
+		return pro_no;
+	}
+
+	public void setPro_no(int pro_no) {
+		this.pro_no = pro_no;
+	}
+
+	public String getMem_id() {
+		return mem_id;
+	}
+
+	public void setMem_id(String mem_id) {
+		this.mem_id = mem_id;
+	}
+
+	public String getMem_nick() {
+		return mem_nick;
+	}
+
+	public void setMem_nick(String mem_nick) {
+		this.mem_nick = mem_nick;
+	}
+
+}

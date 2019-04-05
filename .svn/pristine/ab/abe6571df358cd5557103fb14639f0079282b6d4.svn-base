@@ -1,0 +1,73 @@
+package kr.or.dev.talk.facechat.web;
+
+import java.net.UnknownHostException;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.talk.facechat.model.FaceChatVO;
+import kr.or.dev.talk.facechat.service.FaceChatServiceInf;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+@RequestMapping(value="/faceChat")
+@Controller
+public class FaceChatController {
+	
+	// json 데이터로 응답을 보내기 위한 
+	@Autowired
+	MappingJackson2JsonView jsonView;
+	
+	@Resource(name="fcService")
+	private FaceChatServiceInf fcService;
+	
+	@RequestMapping(value="/faceChat")
+	public String faceChat(Model model, @RequestParam("ip") String ip){
+		model.addAttribute("ip", ip);
+		
+		return "faceChat/faceChat";
+	}
+	
+//	@ResponseBody
+	@RequestMapping(value="/faceChatMake")
+	public ModelAndView faceChatMake(Model model, @RequestParam("fc_ip")String fc_ip, @RequestParam("pro_no") int pro_no){
+		ModelAndView mav = new ModelAndView();
+		mav.setView(jsonView);
+		FaceChatVO fcVo = new FaceChatVO();
+		int fc_no = fcService.getFaceChatSeq();
+		fcVo.setFc_no(fc_no);
+		fcVo.setFc_port(8443);
+		fcVo.setFc_ip(fc_ip);
+		fcVo.setPro_no(pro_no);
+		
+		int cnt = fcService.insertFaceChat(fcVo);
+		
+		if(cnt > 0){
+			System.out.println("성공");
+			
+			FaceChatVO fcvo = fcService.getFaceChatDetail(fc_no);
+			mav.addObject("ip", fcvo.getFc_ip());
+			return mav;
+		}else{
+			System.out.println("실패");
+			
+			mav.setViewName("redirect:/pro/detail?pro_no="+fcVo.getPro_no());
+			return mav;
+		}
+		
+		
+	}
+	
+	@RequestMapping(value="/faceChatRoom")
+	public String faceChatRoom(Model model, @RequestParam("ipRoom") String ip){
+		model.addAttribute("ip", ip);
+		return "faceChat/faceChatRoom";
+	}
+	
+}

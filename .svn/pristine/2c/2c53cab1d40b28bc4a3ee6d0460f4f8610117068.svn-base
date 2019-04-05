@@ -1,0 +1,43 @@
+package kr.or.dev.talk.chat_con.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.talk.chat_con.dao.ChatConDaoInf;
+import kr.or.dev.talk.chat_con.model.ChatConVO;
+
+@Service(value="chatConService")
+public class ChatConService implements ChatConServiceInf{
+	
+	@Resource(name="chatConDao")
+	private ChatConDaoInf chatConDao;
+
+	@Override
+	public List<ChatConVO> getChatConList(int chat_no) {
+		return chatConDao.getChatConList(chat_no);
+	}
+
+	@Override
+	public int insertChatCon(ChatConVO chatConVo) {
+		return chatConDao.insertChatCon(chatConVo);
+	}
+
+	@Override
+	public int getChatConSeq() {
+		return chatConDao.getChatConSeq();
+	}
+
+	@Override
+	public ChatConVO getChatCon(int chat_con_no) {
+		return chatConDao.getChatCon(chat_con_no);
+	}
+
+	@Override
+	public ChatConVO getChatConMax(int chat_no) {
+		return chatConDao.getChatConMax(chat_no);
+	}
+
+}

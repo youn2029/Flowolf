@@ -1,0 +1,92 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<form action="/todo/insert" method="post">
+
+	<!-- tab-con-box:s -->
+	<div class="tab-con-box">
+		<!-- 할일제목:s -->
+		<div class="input-box">
+			<input type="text" name="todo_title" class="font-bold size-18" placeholder="할일 제목을 입력하세요.(선택)">
+		</div>
+		<!-- 할일제목:f -->
+		
+		<!-- 할일 내용:s -->
+		<div class="input-box todo-box">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-minus-circle color-red cursor-point" onclick="removeTodo(this)"></i></dt>
+				<dd class="posi-re">
+					<!-- 할일 내용 입력 input -->
+					<input type="text" name="tiList[0].ti_cont" class="todo-input" placeholder="할일 입력(Enter or Tab 입력시 아래에 할일 입력 추가됨)" onkeydown="fn_keyDown(event, this)" required="required">
+					
+					<!-- 날짜, 담당자 아이콘박스 : s -->
+					<div class="todo-icon-box">
+						
+						<!-- todo date : 날짜추가 : s -->
+						<div class="posi-re dis-inblock float-left maright-15">
+							<!-- date icon button -->
+							<i id="dateResult" class="flow-icon todo-icon icon-calendar-plus cursor-point todo-date-icon"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="datePick(this)"></i>
+<!-- 							<input type="hidden" name="tiList[0].ti_date" class="todo-date"> -->
+							<input type="hidden" name="tiList[0].ti_date" class="todo-date">
+							 
+							<!-- date-picker box -->
+							<div class="dropdown-menu datepicker-here" aria-labelledby="dateResult"></div>
+						</div>
+						<!-- todo date : 날짜추가 : f -->
+						
+						
+						<!-- todo add manager : 담당자추가 : s -->
+						<div class="posi-re dis-inblock float-left todo-add-manager">
+						
+							<!-- 담당자 추가 버튼 -->
+							<div id="todoManager" class="user-add-btn posi-re cursor-point" 
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="icon-circle circle-xs dis-none"></i>
+								<i class="flow-icon todo-icon icon-user-plus"></i>
+								<input type="hidden" name="tiList[0].ti_mem_id" class="todo-mem" value="${memVo.mem_id }">
+							</div>
+					
+							<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):s -->
+							<div class="dropdown-menu todo-pro-user-list" role="menu" aria-labelledby="todoManager">
+								<c:forEach items="${getMemProUserList }" var="proUserVo" end="2">
+								<div class="pro-user-info" onclick="userSelect(this)">
+									<div class="pro-user-photo maright-10">
+										<i class="icon-circle circle-s"></i>
+										<img src="/mem/pic?mem_id=${proUserVo.mem_id }" onerror="this.src='/image/user-pic-sample.png'" width="40">
+									</div>
+									<span class="user-id">${proUserVo.mem_id }</span>
+								</div>
+								</c:forEach>
+							</div>
+							<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):f -->
+					
+						</div>
+						<!-- todo add manager : 담당자추가 : f -->
+						
+					</div>
+					<!-- 날짜, 담당자 아이콘박스 : f -->
+				</dd>
+			</dl>
+		</div>
+		<!-- 할일 내용:f -->
+		
+		<div class="input-box martop-15">
+			<a class="color-black cursor-point" onclick="fn_addTodo(this)"><i class="fas fa-plus maright-15 default-color"></i>할일 추가</a>
+		</div>
+	</div>
+	<!-- tab-con-box:f -->
+	
+	<!-- tab-dn-box:s -->
+	<div class="tab-dn-box">
+		<!-- 올리기(submit) 버튼 -->
+		<input type="submit" value="올리기" class="article-submit-btn float-right font-bold size-18 color-white text-center default-back-color">
+	</div>
+	<!-- tab-dn-box:f -->
+	
+	
+</form>
+
+
+

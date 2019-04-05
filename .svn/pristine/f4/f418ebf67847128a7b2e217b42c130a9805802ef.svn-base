@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<script src="/SE2/js/HuskyEZCreator.js"></script>	
+	<div class="container-fluid">
+		<div class="row">
+
+			
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+	<!--  			 	<form class="form-horizontal" action="/post/detailPost1" method="post">  -->
+	  			   <!-- <form class="form-horizontal">  --> 
+			 	
+				상세보기 페이지임!
+				test
+			   <%-- <input type="hidden" id="post_kind" name="post_kind" value="${post_kind }">
+					<input type="text" id="post_pw" name="post_pw" value="n">
+					<input type="text" id="post_pw_chk" name="post_pw_chk" value="n">
+					<input type="text" id="post_del_chk" name="post_del_chk" value="n">
+					<input type="text" id="mem_id" name="mem_id" value="test">
+					<input type="text" id="mem_nick" name="mem_nick" value="test">
+					 --%>
+					 
+					<!-- 순번 -->		
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label" > 순번 : </label>
+						<div class="col-sm-6" name="post_no">
+							<label class="control-label" id="post_no" name="post_no">${postVo.post_no}</label>
+						</div>
+					</div>
+					
+					<!-- 제목 -->
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label" >제목 : </label>
+						<div class="col-sm-6" name="post_title">
+						 	<label class="control-label" id="post_title" name="post_title">${postVo.post_title}</label>  
+						</div>
+					</div>
+					
+					<!-- 닉네임 -->
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label" >닉네임 : </label>
+						<div class="col-sm-6" name="mem_nick">
+							<label class="control-label" id="mem_nick" name="mem_nick">${postVo.mem_nick}</label>						
+						</div>
+					</div>
+					
+					<!-- 내용 -->
+					<!-- text area는 내용안에 들어가야함.. -->
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label" >내용 : </label>
+						<div class="col-sm-6" name="post_cont">
+						    <label class="control-label" id="post_cont" name="post_cont">${postVo.post_cont}</label>
+						</div>
+					</div>
+					
+					<!-- 첨부파일 -->
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">첨부 파일</label>
+						<div class="col-sm-10" style="width:100px;">
+							<div name="addfile" id="addfile">
+								<input type="file" name="files" id="files">
+							</div>
+							<input type="button" name="plusfileBtn" id="plusfileBtn" value="+">
+							<input type="button" name="minusfileBtn" id="minusfileBtn" value="-">
+						</div>
+					</div>
+					
+					<script type="text/javascript">
+					
+						// 첨부파일 추가/삭제 버튼(editor 소스보다 위에 있어야 함)
+						$(function(){
+							var a = 1;
+							
+							$("#ea").val(a);
+							
+							$("#plusfileBtn").on("click",function(){
+								if(a < 5){
+									$("#addfile").append("<div id=\"add\"><input type=\"file\" name=\"files\" id=\"files\"></div>");
+									a++;
+									$("#ea").val(a);
+								}
+							});
+							
+							$("#minusfileBtn").on("click",function(){
+								$("div[id=add]:last").remove();
+								a--;
+							});
+							
+						});
+						
+					
+						// editor
+						var oEditors = []; // 개발되어 있는 소스에 맞추느라, 전역변수로 사용하였지만, 지역변수로 사용해도 전혀 무관 함.
+						
+						$(function() {
+							// Editor Setting
+							nhn.husky.EZCreator.createInIFrame({
+								oAppRef : oEditors, // 전역변수 명과 동일해야 함.
+								elPlaceHolder : "post_cont", // 에디터가 그려질 textarea ID 값과 동일 해야 함.
+								sSkinURI : "/SE2/SmartEditor2Skin.html", // Editor HTML
+								fCreator : "createSEditor2", // SE2BasicCreator.js 메소드명이니 변경 금지 X
+								htParams : {
+									// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+									bUseToolbar : true,
+									// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+									bUseVerticalResizer : true,
+									// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+									bUseModeChanger : true, 
+								}
+							});
+						
+							// 전송버튼 클릭이벤트
+							$("#savebutton").click(function(){
+								if(confirm("저장하시겠습니까?")) {
+									// id가 smarteditor인 textarea에 에디터에서 대입
+									oEditors.getById["post_cont"].exec("UPDATE_CONTENTS_FIELD", []);
+									
+									// 이부분에 에디터 validation 검증
+									if(validation()) {
+										$("#frmInsert").submit();
+									}
+								}
+							});
+						});
+						
+						// 필수값 Check
+						function validation(){
+							var contents = $.trim(oEditors[0].getContents());
+							if(contents === '<p>&nbsp;</p>' || contents === ''){ // 기본적으로 아무것도 입력하지 않아도 <p>&nbsp;</p> 값이 입력되어 있음. 
+								alert("내용을 입력하세요.");
+								oEditors.getById['post_cont'].exec('FOCUS');
+								return false;
+							}
+						
+							return true;
+						}
+						
+						
+					</script>
+					
+						<!-- 삭제 -->
+						<form action="/post/delete" method="get" onsubmit="return go()">
+							<input type="hidden" name="post_kind" value="${postVo.post_kind }">
+							<button type="submit" class="btn btn-default pull-right" id="post_no" name="post_no" value="${postVo.post_no}">삭제</button>
+						</form>
+						
+						<!-- 수정페이지로 가는 버튼 -->
+						<form action="/post/update" method="get" onsubmit="return go()">
+							<button type="submit" class="btn btn-default pull-right" id="post_no" name="post_no" value="${postVo.post_no}">수정하는 페이지로 가는 버튼 </button>
+						</form>
+					
+ 			 	<!--    </form>   --> 
+				
+			</div>
+		</div>
+	</div>
+</body>
+</html>

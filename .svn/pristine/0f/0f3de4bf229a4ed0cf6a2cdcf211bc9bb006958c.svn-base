@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ptn">
+
+	<!-- 회원파트너신청 -->
+	<insert id="insertPtn" parameterType="ptnVo">
+		INSERT INTO partner(ptn_no,
+							ptn_apply_date,
+							ptn_accept_date,
+							ptn_chk,
+							ptn_apply,
+							ptn_accept)
+					 VALUES(#{ptn_no},
+							sysdate,
+							null,
+							'n',
+							#{ptn_apply},
+							#{ptn_accept})
+	</insert>
+	
+	<!-- 회원파트너수락 -->
+	<update id="updatePtn" parameterType="Integer">
+		UPDATE partner SET ptn_accept_date = sysdate,
+						   ptn_chk = 'y'
+					 WHERE ptn_no = #{ptn_no}
+	</update>
+	
+	<!-- 회원파트너리스트 -->
+	<select id="getPtnMyList" parameterType="String" resultType="ptnVo">
+	 SELECT DISTINCT m.mem_id, m.mem_nick
+	  FROM (SELECT ptn_apply, ptn_accept
+	  		  FROM partner
+			 WHERE ptn_accept = #{mem_id}
+          OR ptn_apply = #{mem_id}
+          AND ptn_chk = 'y')a
+		 , member m
+	  WHERE (m.mem_id=a.ptn_accept
+	     OR m.mem_id=a.ptn_apply)
+       AND m.mem_id not in #{mem_id}
+	</select>
+	
+	<select id="getPtnSeq" resultType="Integer">
+		SELECT ptn_no_seq.nextval FROM dual
+	</select>
+
+</mapper>

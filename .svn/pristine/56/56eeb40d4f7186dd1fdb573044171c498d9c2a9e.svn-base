@@ -1,0 +1,104 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+    
+<header class="head-top">
+
+	<!-- logo -->
+	<div class="logo"><a href=""><img src="<%=request.getContextPath() %>/image/logo.png"></a></div>
+	
+	<!-- other icon navigation:s -->
+	<div class="float-right">
+		<div class="top-icon-nav">
+			<!-- icon navigation list -->
+			<ul class="icon-nav-list">
+				<li><a href="#searchBox" class="top-icon flow-icon icon-search"></a></li>
+				<li><a href="" class="top-icon flow-icon icon-mark"></a></li>
+				<li><a href="" class="top-icon flow-icon icon-question"></a></li>
+				<li><a href="" class="top-icon flow-icon icon-comment"></a></li>
+				<li><a href="" class="top-icon flow-icon icon-bell"></a></li>
+				<li class="user-id flow-icon caret-down">
+					<div class="posi-re dis-inblock maright-10">
+						<i class="icon-circle circle-xs"></i>
+						<img src="<%=request.getContextPath() %>/image/user-pic-sample-s.png">
+					</div>
+					admin
+				</li>
+			</ul>
+			
+			<!-- user info box -->
+			<div class="user-info-box">
+				<div class="posi-re user-info-photo">
+					<i class="icon-circle circle-m"></i>
+					<img src="<%=request.getContextPath() %>/image/user-pic-sample-m.png">
+				</div>
+				<ul class="dis-block martop-10 marbtm-15 padbtm-15 text-center" style="border-bottom:1px solid #ccc">
+					<li class="size-18 color-black">admin</li>
+					<li class="size-16 color-gray">admin@flowolf.com</li>
+				</ul>
+				<ul class="user-info-nav">
+					<li><a href=""><i class="float-left maright-10 top-icon flow-icon icon-gear"></i>환경설정</a></li>
+					<li><a href=""><i class="float-left maright-10 top-icon flow-icon icon-out"></i>로그아웃</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- other icon navigation:f -->
+				
+	<!-- search form:s -->
+	<div class="search-box">
+		<form name="" action="">
+			<div class="col-sm-3 col-md-2 col-lg-2">
+				<select name="" class="flow-icon">
+					<option value="all" selected>ALL</option>
+					<option value="project">프로젝트</option>
+					<option value="article">글</option>
+					<option value="people">참여자</option>
+				</select>
+			</div>
+			<div class="posi-re col-sm-9 col-md-10 col-lg-10 padleft-50">
+				<input type="text" name="" class="col-md-10 search-input" placeholder="검색할 내용을 입력하세요">
+				<button type="submit" class="search-icon">search</button>
+				<button type="button" class="close-icon">close</button>
+			</div>
+		</form>
+	</div>
+	<!-- search form:f -->
+	
+	<script type="text/javascript">
+	
+	// search box open
+	$(".icon-search").on("click", function(){
+		$(".search-box").slideDown();
+		$(".search-input").focus();
+	});
+	
+	// search box close
+	$(".close-icon").on("click", function(){
+		$(".search-box").slideUp();
+		$(".search-input").val();
+	});
+	
+	// user info box toggle
+	$(".user-id").on("click", function(){
+		if($(".user-info-box").css("display") == "none"){
+			$(this).removeClass("caret-down");
+			$(this).addClass("caret-up");
+			$(".user-info-box").slideDown();
+		} else {
+			$(this).addClass("caret-down");
+			$(this).removeClass("caret-up");
+			$(".user-info-box").slideUp();
+		}
+	});
+	</script>
+
+</header>
+
+
+
+
+
+
+
+

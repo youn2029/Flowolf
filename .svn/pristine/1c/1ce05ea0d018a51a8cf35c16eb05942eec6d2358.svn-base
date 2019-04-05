@@ -1,0 +1,227 @@
+package kr.or.dev.timeline.schedule.dao;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.schedule.model.ScheduleVO;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+		"classpath:kr/or/dev/config/spring/root-context.xml",
+		"classpath:kr/or/dev/config/spring/datasource_test.xml",
+		"classpath:kr/or/dev/config/spring/transaction.xml" })
+public class ScheduleDaoTest {
+
+	
+	@Resource(name = "schdDao")
+	private ScheduleDaoInf scheduleDao;
+
+	@Before
+	public void setUp() {
+		// populator : 스프링에서 제공
+		// datesource(db 연결정보), 초기화 스크립트
+
+		// datesource
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		dataSource.setUrl("jdbc:oracle:thin:@112.220.114.130:1521:xe");
+		dataSource.setUsername("flowolftest");
+		dataSource.setPassword("flowolftest");
+
+		// 초기화 스크립트(init.sql)
+
+		// poplucator 생성
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource(
+				"kr/or/dev/config/db/init.sql"));
+
+		DatabasePopulatorUtils.execute(populator, dataSource);
+
+	}
+
+	/**
+	 * Method : scheduleDaotest 
+	 * 최초작성일 : 2018. 9. 7. 
+	 * 작성자 : 김진영 
+	 * 변경이력 : 
+	 * Method 설명 : Dao주입확인Method
+	 * scDao Test
+	 */
+	@Test
+	public void scheduleDaoTest() {
+		assertNotNull(scheduleDao);
+	}
+
+	/**
+	 * Method : scheduleDaotest 
+	 * 최초작성일 : 2018. 9. 7. 
+	 * 작성자 : 김진영 
+	 * 변경이력 : 
+	 * Method 설명 : 스케줄 삽입 테스트
+	 * scDao Test
+	 */
+	@Test
+	public void insertSchdTest(){
+		/***Given***/
+		ScheduleVO schdVo = scheduleDao.getSchdDetail(2);
+		schdVo.setSchd_end_time(new Date());
+		/***When***/
+		int result = scheduleDao.insertSchd(schdVo);
+		/***Then***/
+		assertEquals(1, result);
+	}
+	
+	/**  alt+ shif + j
+	* Method : updateSchd
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : 스케쥴 업데이트 테스트
+	*/
+	@Test
+	public void updateSchd(){
+		/***Given***/
+		ScheduleVO schdVo = scheduleDao.getSchdDetail(1);
+		schdVo.setSchd_title("변화무쌍");
+		/***When***/
+		int result = scheduleDao.updateSchd(schdVo);
+		/***Then***/
+		assertEquals(2, result);
+
+	}
+	
+	
+	/**
+	* Method : deleteSchd
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : 삭제처리 업데이트 테스트
+	*/
+	@Test
+	public void deleteSchd(){
+		/***Given***/
+		
+		/***When***/
+		int result = scheduleDao.deleteSchd(2);
+		/***Then***/
+		assertEquals(1, result);
+
+	}
+	
+	/**
+	* Method : updateFix
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : schedule_no를 통해 해당 스케줄의 고정여부를 수정
+	*/
+	@Test
+	public void updateFix(){
+		/***Given***/
+		ScheduleVO scheduleVo = scheduleDao.getSchdDetail(1);
+		/***When***/
+		scheduleVo.setSchd_fix_chk("n");
+		scheduleVo.setSchd_fix_date(new Date());
+		int result = scheduleDao.updateFix(scheduleVo);
+		/***Then***/
+		assertEquals(1, result);
+	}
+	
+	/**
+	* Method : getSchdDetail
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : schedule_no를 통해서 해당 스케쥴 불러오기
+	*/
+	@Test
+	public void getSchdDetail(){
+		/***Given***/
+
+		/***When***/
+		ScheduleVO scVo = scheduleDao.getSchdDetail(1);
+		/***Then***/
+		assertEquals("사랑해서", scVo.getSchd_title());
+	}
+	
+	/**
+	* Method : getSchdSearchList
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : 검색필드와 데이터를 통해 해당 schedule 불러오기 test
+	*/
+	@Test
+	public void getSchdSearchList(){
+		/***Given***/
+
+		/***When***/
+		Map<String, String> testMap = new HashMap<String, String>();
+		testMap.put("searchField","schd_memo" );
+		testMap.put("searchData", "바람과");
+		
+		List<ScheduleVO> test = scheduleDao.getSchdSearchList(testMap);
+		/***Then***/
+		assertEquals(1, test.size());
+
+	}
+	
+	/**
+	* Method : getSchdProList
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : 해당 프로젝트의 schedule을 List로 반환하는 메서드 Test
+	*/
+	@Test
+	public void getSchdProList(){
+		/***Given***/
+
+		/***When***/
+		List<ScheduleVO> scVo = scheduleDao.getSchdProList(10000);
+		/***Then***/
+		assertEquals(2, scVo.size());
+		
+
+	}
+	
+	
+	
+	/**
+	* Method : getSchdMyList
+	* 최초작성일 : 2018. 9. 10.
+	* 작성자 : PC10
+	* 변경이력 :
+	* Method 설명 : 회원의 id를 통해서 등록한 모든 schedule을 List로 반환하는 메서드 Test
+	*/
+	@Test
+	public void getSchdMyList(){
+		/***Given***/
+		
+
+		/***When***/
+		List<ScheduleVO> scVo = scheduleDao.getSchdMyList("test1");
+		/***Then***/
+		assertEquals(2, scVo.size());
+
+	}
+	
+}

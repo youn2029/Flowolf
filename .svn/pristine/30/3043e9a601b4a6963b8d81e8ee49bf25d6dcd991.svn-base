@@ -1,0 +1,34 @@
+package kr.or.dev.group.box_project.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.box_project.model.BoxProjectVO;
+import kr.or.dev.group.project.model.ProjectVO;
+
+@Repository("boxProDao")
+public class BoxProjectDao implements BoxProjectDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public int insertBoxPro(BoxProjectVO boxProVo) {
+		return template.insert("boxPro.insertBoxPro", boxProVo);
+	}
+
+	@Override
+	public int deleteBoxProR(BoxProjectVO boxProVo) {
+		return template.delete("boxPro.deleteBoxProR", boxProVo);
+	}
+
+	@Override
+	public List<ProjectVO> getBoxProList(int box_no) {
+		return template.selectList("boxPro.getBoxProList", box_no);
+	}
+
+}

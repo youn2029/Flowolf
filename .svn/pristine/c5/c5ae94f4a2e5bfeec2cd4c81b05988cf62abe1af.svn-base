@@ -1,0 +1,47 @@
+package kr.or.dev.timeline.collection.web;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.timeline.collection.service.CollectionServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("collController")
+@RequestMapping("/coll")
+public class CollectionController {
+	
+	@Resource(name="collService")
+	private CollectionServiceInf collService;
+	
+	@RequestMapping("/insert")
+	@ResponseBody
+	public int insertColl(@RequestParam("timeline_col")String timeline_col
+						, @RequestParam("timeline_no")int timeline_no
+						, HttpSession session){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// paramMap
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("timeline_col", timeline_col);
+		paramMap.put("timeline_no", timeline_no);
+		paramMap.put("mem_id", memVo.getMem_id());
+		
+		return collService.insertColl(paramMap);
+	}
+	
+//	@RequestMapping("/delete")
+//	@ResponseBody
+//	public int deleteColl(@RequestParam()){
+//		
+//	}
+}

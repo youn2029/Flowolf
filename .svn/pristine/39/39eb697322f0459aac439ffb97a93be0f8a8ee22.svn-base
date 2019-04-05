@@ -1,0 +1,36 @@
+package kr.or.dev.timeline.basic.web;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.basic.model.BasicVO;
+import kr.or.dev.timeline.basic.service.BasicServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("basicController")
+@RequestMapping("/basic")
+public class BasicController {
+	
+	// basicService
+	@Resource(name="basicService")
+	private BasicServiceInf basicService;
+	
+	@RequestMapping("/insert")
+	public String basicInsert(@RequestParam("basic_cont") String basic_cont,
+			@RequestParam("pro_no") int pro_no,
+			@RequestParam("mem_id") String mem_id){
+		
+		// vo에 저장
+		BasicVO basicVo = new BasicVO();
+		basicVo.setBasic_cont(basic_cont);
+		basicVo.setPro_no(pro_no);
+		basicVo.setMem_id(mem_id);
+		
+		int insertCnt = basicService.insertBasic(basicVo);
+		
+		return "project";
+	}
+
+}

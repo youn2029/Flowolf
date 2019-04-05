@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+	
+	<!-- 게시글 페이징 조회  -->
+	<select id="getPostPageList" resultType="postVo" parameterType="map">
+		SELECT *
+		  FROM (SELECT p.*
+		  			 , ROWNUM rn
+		     	  FROM (SELECT *
+		           		  FROM post
+		           		 WHERE post_kind = #{post_kind}
+		           		   AND post_del_chk = 'n'
+		           	  ORDER BY post_date DESC) p)
+		 WHERE rn BETWEEN (#{page}-1) * #{pageSize} + 1 AND #{page}*#{pageSize}
+	</select>
+
+	<!-- 게시판 등록 -->
+	<insert id="insertPost" parameterType="postVo">
+		INSERT INTO post (post_no, post_kind, post_title, post_cont, post_date, post_pw_chk, post_pw, post_del_chk, mem_id, mem_nick)		
+			 VALUES (#{post_no}, #{post_kind}, #{post_title}, #{post_cont}, sysdate, #{post_pw_chk}, #{post_pw}, 'n', #{mem_id}, #{mem_nick})			
+	</insert>
+
+	<!-- 게시판 수정 (제목,내용,비밀글유무,비밀번호,작성일) -->
+	<update id="updatePost" parameterType="postVo">
+		UPDATE post
+		   SET post_title = #{post_title},
+		   	   post_cont = #{post_cont},
+		   	   post_pw_chk = #{post_pw_chk},
+		   	   post_pw = #{post_pw}
+		 WHERE post_no = #{post_no}
+	</update>
+
+	<!-- 게시판 삭제유무(임시삭제와 같은 의미) -->
+	<update id="deletePost" parameterType="int">
+		UPDATE post
+		   SET post_del_chk = 'y'
+		 WHERE post_no = #{post_no}
+	</update>
+
+	<!-- 게시판 검색 -->
+	<select id="getPostSearchList" parameterType="map" resultType="postVo">
+		SELECT * FROM post
+		 WHERE #{SELECT}=#{SEARCH}
+	</select>
+	
+	<!-- 게시판 상세보기 -->
+	<select id="getPostDetail" parameterType="int" resultType="postVo">
+		SELECT p.*
+			 , (SELECT m.mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = p.mem_id) AS mem_nick
+		  FROM post p
+		 WHERE post_no = #{post_no}
+	</select>
+	
+	<!-- 게시글 번호 반환 -->
+	<select id="getPostSeq" resultType="int">
+	  	 SELECT post_no_seq.nextval 
+	  	   FROM dual	
+	</select>
+	
+	<!-- 해당게시판의 전체 게시글 개수 -->
+	<select id="getPostTotCnt" parameterType="String" resultType="int">
+  		select count(*)	from post where post_kind = #{post_kind}
+  	</select>
+	
+</mapper>

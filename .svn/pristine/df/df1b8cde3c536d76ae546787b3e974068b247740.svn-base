@@ -1,0 +1,375 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<section class="content full-calendar">
+	<div class="project-wrap">
+		<!-- modal 창 -->
+		<div class='modal fade' id='successModal' tabindex='-1' role='dialog' aria-labelledby='successModalLabel' aria-hidden='true'>
+			<div class='modal-dialog' role='document'>
+				<div class='modal-content'>
+					<div class="modal-header" id="rwriter" style="font-weight:700;font-family:ghodic; font-size:150%;background-color:#dddddd;">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+					</div>
+					<div class='modal-body'>
+						<div class="timeline-article con-schedule" style="width:auto;">
+							<div class="container">
+								<div class="schedule-header">
+									<dl>
+										<dt class="maright-15">
+											<span class="dis-block font-thin size-20 color-red text-center" id="rmonth"></span>
+											<strong class="dis-block font-bold size-40 color-black text-center" id="rday"></strong>
+										</dt>
+										<dd class="font-bold size-20 color-black" id="rtitle"></dd>
+										<dd class="martop-10 font-bold size-16 color-black" id="rduration"></dd>
+									</dl>
+								</div>
+								<!-- 위치 검색:s -->
+								<div id="viewResolver" class="input-box martop-15">
+									<i class="fas fa-map-marker-alt"></i>
+									<span id="rlocation"></span>
+									<span class="dis-block" id="rmap"></span>
+								</div>
+								<!-- 메모:s -->
+								<div class="input-box martop-15">
+									<p></p>
+									<i class="fas fa-sticky-note"></i>
+									<span id="rmemo"></span>
+								</div>
+								<!-- 알람:s -->
+								<div>
+									<p></p>
+									<i class="fas fa-bell"></i>
+									<span id="ralarm"></span>
+								</div>
+							<!-- 알람:f -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- full calendar left content : s -->
+		<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 padleft-0 full-calendar-left">
+			<strong class="dis-block marbtm-30 size-18 color-black">일정 : ${proVo.pro_name}</strong>
+			<div id='calendar'></div>
+		</div>
+		<!-- full calendar left content : f -->
+		
+			
+		<!-- full calendar right content : s -->
+		<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 padright-0 full-calendar-right">
+			<strong class="dis-block marbtm-18 padleft-10 font-thin size-20 color-gray">일정</strong>
+			<ul class="schd-edit marbtm-20">
+				<li>
+					<input type="radio" id="myInsertSchd" name="radio" class="custom-check-input schd-my-check"
+					onchange="fn_myInsertSchdCheck(this)">
+					<label for="myInsertSchd">내가 등록한 일정</label>
+				</li>
+				<li>
+					<input type="radio" id="inviteSchd" name="radio" class="custom-check-input schd-invite-check"
+					onchange="fn_inviteSchdCheck(this)">
+					<label for="inviteSchd">초대받은 일정</label>
+				</li>
+				<li>
+					<input type="radio" id="allSchd" name="radio" class="custom-check-input schd-all-check"
+					onchange="fn_allSchdCheck(this)" checked>
+					<label for="allSchd">모든 일정</label>
+				</li>
+			</ul>
+			
+			<strong class="dis-block marbtm-18 padleft-10 font-thin size-20 color-gray">업무</strong>
+			
+			<ul class="schd-edit marbtm-0" style="border-bottom:0">
+				<li>
+					<input type="radio" name="taskSchd" id="myTaskSchd" class="custom-radio-input schd-radio schd-my-radio">
+					<label for="myTaskSchd">내업무</label>
+				</li>
+				<li>
+					<input type="radio" name="taskSchd" id="reTaskSchd" class="custom-radio-input schd-radio schd-re-radio">
+					<label for="reTaskSchd">요청한 업무</label>
+				</li>
+				<li>
+					<input type="radio" name="taskSchd" id="allTaskSchd" class="custom-radio-input schd-radio schd-all-radio">
+					<label for="allTaskSchd">전체 업무</label>
+				</li>
+			</ul>
+			
+		</div>
+		<!-- full calendar right content : f -->
+		
+	</div>
+</section>
+
+<link href='https://code.jquery.com/ui/1.12.1/themes/hot-sneaks/jquery-ui.css' rel="stylesheet"/>
+<link href='<%=request.getContextPath() %>/js/fullcalendar.css' rel='stylesheet' />
+<link href='<%=request.getContextPath() %>/js/fullcalendar.print.css' rel='stylesheet' media='print' />
+
+<script src='<%=request.getContextPath()%>/js/moment.min.js'></script>
+<script src='<%=request.getContextPath()%>/js/fullcalendar.min.js'></script>
+<script src='<%=request.getContextPath()%>/js/ko.js'></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	  ajaxData(); 
+});
+
+function ajaxData() {
+	var mem_id = "${mem_id}";
+	var pro_no = "${proVo.pro_no}";
+	var request = $.ajax({
+		type : "POST",
+		url : "/schd/callSchd2?mem_id="+mem_id+"&pro_no="+pro_no
+	});    
+	//ajax 실행 값 확인
+	request.done(function(schd) {
+		var mySchedule = schd.mySchedule; //내가만든리스트
+		var invitedSchd = schd.invitedSchd; //음음니가초대한리스트
+		
+		//내가 설정한 스케줄 리스트
+	 	var test = [];
+	 	if(mySchedule.length>0){
+	 		for(var i = 0; i<mySchedule.length; i++){
+	 			test.push({
+	 				id 		: mySchedule[i].schd_no
+	 				,title	: mySchedule[i].schd_title
+	 				,start	: mySchedule[i].schd_start_time 
+	 				,end	: mySchedule[i].schd_end_time
+	 				,color	: '#ee6d66'
+	 				,place	: mySchedule[i].schd_loc
+                    ,memo	: mySchedule[i].schd_memo
+                    ,st		: mySchedule[i].schd_start_time
+                    ,alarm	: mySchedule[i].schd_alarm
+                    ,ed		: mySchedule[i].schd_end_time
+                    ,writer	: mySchedule[i].mem_nick
+                    ,lat	: mySchedule[i].schd_lat
+                    ,lon	: mySchedule[i].schd_lon
+	 			})
+	 		}
+	 	}
+	 		
+		//내가 초대된 스케줄 리스트
+	 	if(invitedSchd.length>0){
+		 	for(var i = 0; i<invitedSchd.length; i++){
+		 		test.push( {
+		 			id		: invitedSchd[i].schd_no
+					,title	: invitedSchd[i].schd_title
+					,start	: invitedSchd[i].schd_start_time
+	 				,end	: invitedSchd[i].schd_end_time
+		 			,color	: '#f1c40f'
+	 				,place	: invitedSchd[i].schd_loc
+                    ,memo	: invitedSchd[i].schd_memo
+                    ,st		: invitedSchd[i].schd_start_time
+                    ,ed		: invitedSchd[i].schd_end_time
+                    ,alarm	: invitedSchd[i].schd_alarm
+                    ,writer	: invitedSchd[i].mem_nick
+                    ,lat	: invitedSchd[i].schd_lat
+                    ,lon	: invitedSchd[i].schd_lon
+		 		})
+			}
+		}
+		//캘린더
+		calendarRendering(test);
+	});
+	
+	//실패시 알림
+	request.fail(function( jqXHR, textStatus ) {
+		alert( "일정 로딩 실패 " + textStatus );
+	});
+} 
+
+//내가 초대된 일정 클릭했을때 event
+function fn_inviteSchdCheck(el){
+	var item = $(el);
+	
+	//기존의 redering된 event 삭제
+	$('#calendar').fullCalendar('destroy');
+	var mem_id = "${mem_id}";
+	var pro_no = "${proVo.pro_no}";
+	var request = $.ajax({
+		type : "POST",
+		url : "${pageContext.request.contextPath}/schd/callSchd2?mem_id="+mem_id+"&pro_no="+pro_no
+	});   
+	
+	//ajax 실행 값 확인
+	request.done(function(schd) {
+		var invitedSchd = schd.invitedSchd; //음음니가초대한리스트
+	 	var test = [];
+	 	//내가 초대된 스케줄 리스트
+		if(invitedSchd.length>0){
+	 	 	for(var i = 0; i<invitedSchd.length; i++){
+	 	 		test.push( {
+	 	 			id		: invitedSchd[i].schd_no
+					,title	: invitedSchd[i].schd_title
+					,start	: invitedSchd[i].schd_start_time
+	 				,end	: invitedSchd[i].schd_end_time
+		 			,color	: '#f1c40f'
+	 				,place	: invitedSchd[i].schd_loc
+                    ,memo	: invitedSchd[i].schd_memo
+                    ,st		: invitedSchd[i].schd_start_time
+                    ,ed		: invitedSchd[i].schd_end_time
+                    ,alarm	: invitedSchd[i].schd_alarm
+                    ,writer	: invitedSchd[i].mem_nick
+                    ,lat	: invitedSchd[i].schd_lat
+                    ,lon	: invitedSchd[i].schd_lon
+		 		})
+			}
+		}
+		//캘린더 render
+	 	calendarRendering(test);
+	});
+	
+	//실패시 보여주기
+	request.fail(function( jqXHR, textStatus ) {
+		alert( "일정 로딩 실패" + textStatus );
+	});
+}
+
+//모든 일정 보여주기 
+function fn_allSchdCheck(el){
+	var item = $(el);
+	$('#calendar').fullCalendar('destroy');
+	ajaxData(); 
+}
+
+//내가 등록한 일정 보여주기
+function fn_myInsertSchdCheck(el){
+	var item = $(el);
+	
+	//기존의 calendar rendering된 이벤트 제거
+	$('#calendar').fullCalendar('destroy');
+	var mem_id = "${mem_id}";
+	var pro_no = "${proVo.pro_no}";
+	var request = $.ajax({
+		type : "POST",
+		url : "/schd/callSchd2?mem_id="+mem_id+"&pro_no="+pro_no
+	});   
+	
+	//ajax 실행 값 확인
+	request.done(function(schd) {
+		var mySchedule = schd.mySchedule; //내가만든리스트
+		//내가 설정한스케줄리스트 Array로 담기
+	 	var test = [];
+	 	if(mySchedule.length>0){
+	 		for(var i = 0; i<mySchedule.length; i++){
+	 			test.push({
+	 				 id 	: mySchedule[i].schd_no
+					,title	: mySchedule[i].schd_title
+					,start	: mySchedule[i].schd_start_time 
+					,end	: mySchedule[i].schd_end_time
+					,color	: '#ee6d66'
+					,place	: mySchedule[i].schd_loc
+	                ,memo	: mySchedule[i].schd_memo
+	                ,st		: mySchedule[i].schd_start_time
+	                ,ed		: mySchedule[i].schd_end_time
+	                ,writer	: mySchedule[i].mem_nick
+                    ,lat	: mySchedule[i].schd_lat
+                    ,lon	: mySchedule[i].schd_lon
+		 	 	})
+	 	 	}
+	 	}
+	 	//캘린더 render
+		calendarRendering(test);
+	});
+}
+
+function calendarRendering(test){
+	$('#calendar').fullCalendar({
+		header:{ //헤더부분에 뜨는 메뉴 설정
+			left : "month, agendaWeek agendaDay",
+			center: "title",
+			right:"today, prevYear,prev,next,nextYear" 
+		},
+		buttonText:{
+			prevYear:new moment().year() -1,
+			nextYear:new moment().year() +1
+		},
+		viewRender:function(view){
+			var y = moment($('#calendar').fullCalendar('getDate')).year();
+			$(".fc-prevYear-button").text(y-1);
+			$(".fc-nextYear-button").text(y+1);
+		},
+		themeSystem:"jquery-ui",
+		events : test,
+		eventClick: function(r) {
+			rendering(r)
+		}
+	});
+}
+
+//각 id 값에 value 넣어주기 
+function rendering(r){
+	$('#successModal').modal('show');
+	$('#rwriter').html('&nbsp  &nbsp'+r.writer);
+	$('#rtitle').html(r.title);
+	$('#rmonth').html(r.st.substr(5,2)+'월');
+	$('#rday').html(r.st.substr(8,2));
+	$('#rduration').html(getFormatDate(new Date(r.st))+" - "+getFormatDate(new Date(r.ed)));
+	$('#rlocation').html(placeFormatter(r));
+	$('#rmap').html(view(r.lon,r.lat));
+	$('#rmemo').html('&nbsp &nbsp'+r.memo);
+	$('#ralarm').html('&nbsp &nbsp'+alertFormatter(r.st, r.alarm));
+		
+}
+
+function placeFormatter(r){
+	console.log(r);
+	var diff=null;
+	var placeMaker = '';
+	if(r.place==diff|| r.place==placeMaker || r.place== null|| r.place =='undefined'){
+		$("#viewResolver").hide();
+	}else{
+		$("#viewResolver").show();
+		placeMaker = '&nbsp &nbsp'+r.place+'<a href="'+"https://maps.google.com?q="+r.place+'" target="google_blank" class="marleft-15">'+'지도보기'+'</a>'+'<p></p>';
+	}
+	return placeMaker;
+}
+
+function alertFormatter(start, end){
+	var diff = (new Date(start).getTime() - new Date(end).getTime())/(1000*60);
+	var date = "";
+	if(diff == 0){
+		date = "없음";
+	} else if (0 < diff && diff < 60) {
+		date = diff + "분 전 미리 알림";
+	} else if (diff!=0 && diff < 181 && (diff / 60) < 4) {
+		date = diff / 60 + "시간 전 미리 알림";
+	} else if (1439 < diff && diff % 1440 == 0) {
+		date = diff / 1440 + "일 전 미리 알림";
+	}else{
+		date = "없음";	
+	}
+	return date;
+}
+
+function getFormatDate(date){
+		var year = date.getFullYear();
+		var month = (1 + date.getMonth());
+		month = month >= 10 ? month : '0' + month;
+		var day = date.getDate();
+		day = day >= 10 ? day : '0' + day;
+		return  year + '-' + month + '-' + day;
+	}
+	
+function view(lon, lat){
+		if(lon != null && lat !=null){
+			var mapsrc = "<img src=https://maps.googleapis.com/maps/api/staticmap?center="
+		+ lat
+		+ ","
+		+ lon
+		+ "&amp;zoom=15&amp;size=480x300&amp;markers=color:red|"
+		+ lat
+		+ ","
+		+ lon
+		+ "&amp;key=AIzaSyADjbtMn46r9DGFyo_ZRz3c6fOXzuOKWCw>";
+			return mapsrc;
+		}else{
+			return "";
+		}
+}
+</script>
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boxPro">
+
+	<!-- 보관함에 프로젝트 등록 -->
+	<insert id="insertBoxPro" parameterType="boxProVo">
+		INSERT INTO box_project (pro_no, box_no, box_pro_date)
+			VALUES (#{pro_no}, #{box_no}, sysdate)
+	</insert>
+	
+	<!-- 보관함에 프로젝트 삭제 -->
+	<delete id="deleteBoxProR" parameterType="boxProVo">
+		DELETE
+		  FROM box_project
+		 WHERE pro_no = #{pro_no}
+		   AND box_no = #{box_no}
+	</delete>
+	
+	<!-- 보관함에 있는 모든 프로젝트 조회 -->
+	<select id="getBoxProList" parameterType="map" resultType="proVo">
+		  SELECT p.*
+			   , (SELECT kind_name 
+			 	    FROM kind k 
+			 	   WHERE k.kind_no = p.kind_no) AS kind_name
+		 	   , (SELECT pro_user_color
+				    FROM project_user
+				   WHERE pro_no = p.pro_no
+				     AND mem_id = #{mem_id}) AS pro_user_color
+		 	   , (SELECT count(*) 
+		 	 	    FROM DUAL 
+		 	 	   WHERE EXISTS(SELECT * 
+		 	 	 	 			  FROM important imp 
+		 	 	 			     WHERE imp.pro_no = p.pro_no
+		 	 	 			       AND imp.mem_id = #{mem_id})) AS imp_chk
+  		    FROM project p
+        	   , ( SELECT *
+		 		     FROM box_project 
+		 		    WHERE box_no = #{box_no}) bp
+		   WHERE p.pro_no = bp.pro_no
+		     AND p.pro_del_chk = 'n'
+	</select>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="files">
+
+<!-- parameterType =>내가 직접 입력하는 값, String 타입으로 입력을 하는 것
+	 resultType    =>결과값,   	     memVo 타입의 결과 -->
+
+	<!-- 첨부파일 추가 -->            
+	<insert id="insertFiles" parameterType="filesVo">
+		  INSERT INTO files (files_no,	  <!-- 파일번호        -->     
+							 files_name,  <!-- 파일명          -->     
+							 files_path,  <!-- 파일경로        -->    
+							 files_upload,<!-- 업로드파일명    -->    
+							 files_time,  <!-- 작성일시        -->    
+							 basic_no,    <!-- 일반글번호      -->     
+							 task_no,	  <!-- 업무글번호      -->    
+							 rep_no,	  <!-- 댓글번호	  -->     
+							 post_no,	  <!-- 게시글번호       -->     
+							 mem_nick )	  <!-- 작성자Nick   -->	
+					VALUES  (#{files_no},	
+							 #{files_name},		
+							 #{files_path},		
+							 #{files_upload},	
+							 sysdate,		
+							 #{basic_no},	
+							 #{task_no},	
+							 #{rep_no},		
+							 #{post_no},	
+							 #{mem_nick} )
+	</insert>
+	
+	<!-- 첨부파일 삭제 -->          
+	<delete id="deleteFiles" parameterType="int">
+		DELETE files 
+		 WHERE files_no=#{files_no}
+	</delete>
+	
+	<!-- 첨부파일 상세 조회 -->           
+	<select id="getFilesDetail" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE files_no=#{files_no}
+	</select>
+	
+	<!-- 일반글의 첨부파일 조회	-->      
+	<select id="getFilesBasicList" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE basic_no=#{basic_no}
+	</select>
+	
+	<!-- 업무글의 첨부파일 조회	-->     
+	<select id="getFilesTaskList" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE task_no=#{task_no}
+	</select>
+	
+	<!-- 댓글의 첨부파일 조회 -->    
+	<select id="getFilesRepList" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE rep_no=#{rep_no}
+	</select>	
+	
+	<!-- 게시글의 첨부파일 조회 -->      
+	<select id="getFilesPostList" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE post_no=#{post_no}
+	</select>
+	
+	<!-- 프로젝트의 전체 첨부파일 조회 (일반글, 업무글, 댓글)-->   
+	<select id="getFilesAllList" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE pro_no=#{pro_no}
+	</select>
+	
+	<!-- 파일 검색 조회 (일반글, 업무글, 댓글, 게시판) -->    
+	<select id="getFilesSearchList" parameterType="map" resultType="filesVo">
+	   SELECT * FROM files
+	    WHERE #{select}=#{search}
+	</select>
+	
+</mapper>

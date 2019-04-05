@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="task">
+
+	<!-- 업무 등록 -->
+	<insert id="insertTask" parameterType="taskVo">
+		INSERT INTO task (
+			task_no, task_title, task_state, task_cont, task_start_date, task_end_date, task_rate, task_priority, task_del_chk,
+			task_fix_chk, task_time, pro_no, mem_id
+		)
+		VALUES (
+			TASK_NO_SEQ.NEXTVAL, #{task_title}, #{task_state}, #{task_cont}, #{task_start_date}, #{task_end_date}, #{task_rate},
+			#{task_priority}, 'n', 'n', sysdate, #{pro_no}, #{mem_id}
+		)
+	</insert>
+	
+	<!-- 업무 수정 -->
+	<update id="updateTask" parameterType="taskVo">
+		UPDATE task
+		   SET task_title = #{task_title}
+		     , task_state = #{task_state}
+		     , task_cont = #{task_cont}
+		     , task_start_date = #{task_start_date}
+		     , task_end_date = #{task_end_date}
+		     , task_rate = #{task_rate}
+		     , task_priority = #{task_priority}
+		     , task_fix_chk = #{task_fix_chk}
+		 WHERE task_no = #{task_no}
+	</update>
+	
+	<!-- 업무 삭제처리 -->
+	<update id="deleteTask" parameterType="int">
+		UPDATE task
+		   SET task_del_chk = 'y'
+		 WHERE task_no = #{task_no}
+	</update>
+	
+	<!-- 프로젝트 업무글 조회 -->
+	<select id="getTaskProList" parameterType="int" resultType="taskVo">
+		SELECT t.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = t.mem_id) AS mem_nick
+		  FROM task t
+		 WHERE pro_no = #{pro_no}
+		   AND task_del_chk = 'n'
+	</select>
+	
+	<!-- 업무 검색 조회 -->
+	<select id="getTaskSearchList" parameterType="map" resultType="taskVo">
+		SELECT t.*
+		     , (SELECT mem_nick 
+		     	  FROM member m 
+		     	 WHERE m.mem_id = t.mem_id) AS mem_nick
+		  FROM task t
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+		   AND task_del_chk = 'n'
+	</select>
+	
+	<!-- 업무글 상세조회 -->
+	<select id="getTaskDetail" parameterType="int" resultType="taskVo">
+		SELECT *
+		  FROM task
+		 WHERE task_no = #{task_no}
+	</select>
+	
+	<!-- 회원이 요청한 업무글 조회 -->
+	<select id="getTaskMyList" parameterType="string" resultType="taskVo">
+		SELECT *
+		  FROM task
+		 WHERE mem_id = #{mem_id}
+		   AND task_del_chk = 'n'
+	</select>
+
+
+</mapper>

@@ -1,0 +1,602 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    
+<section class="content project-detail">
+
+	<!-- alertCustom -->
+	<input type="hidden" class="alert-msg" value="${msg }">
+	<input type="hidden" class="alert-className" value="${className }">
+	<script type="text/javascript">
+		$(function(){
+			var msg = $(".alert-msg").val();
+			var className = $(".alert-className").val();
+			
+			if(msg.length != 0){
+				alertCustom(msg, className);
+				<%
+					session.setAttribute("msg", "");
+					session.setAttribute("className", "");
+				%>
+			}
+		});
+	</script>
+	
+	<div class="project-wrap">
+		<!-- project left content:s -->
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 padleft-0">
+		
+			<!-- project title(프로젝트 제목):s -->
+			<div id="proTitle" class="pro-detail-box project-title ${proVo.pro_user_color }">
+				<div class="pro-tit">
+					<c:choose>
+						<c:when test="${proVo.imp_chk == 1 }">
+							<i class="fas fa-star size-20 color-yellow maright-15" data-prono="${proVo.pro_no }"></i>
+						</c:when>
+						<c:otherwise>
+							<i class="fas fa-star size-20 color-gray-l maright-15" data-prono="${proVo.pro_no }"></i>
+						</c:otherwise>
+					</c:choose>
+					<span class="size-20 color-white">${proVo.pro_name }, ${timeLineList.size() }</span>
+				</div>
+				<ul class="pro-edit-nav">
+					<li>
+						<i class="fas fa-palette size-30 color-white cursor-point edit-color-btn" onclick="fn_editColor(this)"></i>
+						<div class="edit-box edit-color-box">
+							<div class="color-sample default-back-color"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-red"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pink"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-orange"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-yellow-d"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-green"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-green-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-blue-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-blue-d"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pupple"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pupple-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-gray"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-black"><i class="fas fa-check-circle size-16"></i></div>
+						</div>
+					</li>
+					<li>
+						<button id="projectEdit" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="fas fa-ellipsis-v size-30 color-white"></i>
+						</button>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="projectEdit">
+							<li class="drop-tit">프로젝트 설정</li>
+							<li class="cursor-point" onclick="boxProEdit()">보관함 설정</li>
+							<li class="cursor-point" onclick="deleteProUser()">프로젝트 나가기</li>
+							<li class="cursor-point" onclick="proUpdate()">프로젝트 수정</li>
+							<c:if test="${proVo.mem_id eq memVo.mem_id }">
+								<li class="cursor-point color-red">프로젝트 삭제</li>
+							</c:if>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			
+			<script type="text/javascript">
+			$(function() {
+				
+				// 중요프로젝트 체크(icon click)
+				$(".pro-tit > i").on("click", function(){
+					if($(this).hasClass("color-gray-l")){
+						$(this).removeClass("color-gray-l");
+						$(this).addClass("color-yellow");
+						
+						var pro_no = $(this).data("prono");		
+						
+						$.ajax({					
+							
+							url : "/imp/insert",
+							method : "get",
+							data : {pro_no:pro_no},
+							dataType : "json",
+							success : function(data){
+								if(data==1){
+									alertCustom("변경되었습니다.", "alert-warning");
+								}
+							}
+						});
+						
+					} else {
+						$(this).removeClass("color-yellow");
+						$(this).addClass("color-gray-l");
+						
+						var pro_no = $(this).data("prono");			
+						
+						$.ajax({					
+							
+							url : "/imp/delete",
+							method : "get",
+							data : {pro_no:pro_no},
+							dataType : "json",
+							success : function(data){
+								if(data==1){
+									alertCustom("변경되었습니다.", "alert-warning");
+								}
+							}
+						});
+					}
+				});
+				
+				// check color : 현재 프로젝트 색상과 같은 색상리스트를 찾아 체크표시
+				var backColor = $("#proTitle").attr("class").split(' ').pop(); // 현재 적용된 색상명(클래스명)
+				$(".edit-color-box").find("div").each(function(i, e){
+					var selectColor = $(this).attr("class").split(' ').pop();
+					
+					if(backColor == selectColor) {
+						$(this).addClass("select-color");
+					}
+				});
+				
+				// 다른 색상을 선택했을 때 색상바꾸기
+				$(".edit-color-box").find("div").on("click", function(){
+					var changeColor = $(this).attr("class").split(' ').pop();
+					$("#proTitle").removeClass(backColor);
+					$("#proTitle").addClass(changeColor);
+					backColor = changeColor;
+					
+					$.ajax({
+						
+						url : "/proUser/update",
+						method : "get",
+						data : {pro_user_color:changeColor},
+						dataType : "json",
+						success : function(data){
+							if(data==1){
+								alertCustom("변경되었습니다.", "alert-warning");
+							}
+						}
+					});
+					
+					$(this).addClass("select-color");
+					$(".edit-color-box").find("div").not(this).removeClass("select-color");
+					
+				});				
+			});
+			
+			// 프로젝트 보관함 popup
+			function boxProEdit(){
+// 				$(".proFolderEdit-form #pro_no").val("${proVo.pro_no}");
+				layer_popup("#proFolderEdit");
+			}
+			
+			// 프로젝트 수정 popup
+			function proUpdate(){
+				layer_popup("#editProject");
+			}
+			
+			function deleteProUser(){
+				layer_popup("#deleteProUser");
+			}
+			
+			</script>
+			<!-- project title(프로젝트 제목):f -->
+			
+			<!-- project task report(업무리포트):s -->
+			<div class="pro-detail-box pro-task-report martop-20">
+				<h3 class="size-16 marbtm-50"><i class="fas fa-chart-pie maright-10 size-20 color-green-l"></i> 업무리포트(전체 5건)</h3>
+			</div>
+			<!-- project task report(업무리포트):f -->
+			
+			<!-- project write tab(프로젝트 타임라인 글쓰기 탭박스):s -->
+			<div class="pro-detail-box pro-tab-box martop-20">
+				<div class="tabs-box">
+					<ul class="tabs">
+						<li data-id="tab-1" class="active"><i class="fas fa-edit maright-10"></i>글쓰기</li>
+						<li data-id="tab-2"><i class="fas fa-laptop maright-10"></i>업무</li>
+						<li data-id="tab-3"><i class="far fa-calendar-alt maright-10"></i>일정</li>
+						<li data-id="tab-4"><i class="fas fa-list maright-10"></i>할일</li>
+						<li data-id="tab-5"><i class="fas fa-check maright-10"></i>투표</li>
+					</ul>
+					<div class="tabs-container">
+						<!-- 글쓰기:s -->
+						<div id="tab-1" class="tabs-content active">
+							<%@include file="/include/tab_write_article.jsp" %>
+						</div>
+						<!-- 글쓰기:f --> 
+						
+						<!-- 업무:s -->
+						<div id="tab-2" class="tabs-content con-task">
+							<%@include file="/include/tab_write_task.jsp" %>
+						</div>
+						<!-- 업무:f -->
+						
+						<!-- 일정:s -->
+						<div id="tab-3" class="tabs-content con-schedule">
+							<%@include file="/include/tab_write_schedule.jsp" %>
+						</div>
+						<!-- 일정:f -->
+						
+						<!-- 할일:s -->
+						<div id="tab-4" class="tabs-content con-todo">
+							<%@include file="/include/tab_write_todo.jsp" %>
+						</div>
+						<!-- 할일:f -->
+						
+						<!-- 투표:s -->
+						<div id="tab-5" class="tabs-content con-vote">
+							<%@include file="/include/tab_write_vote.jsp" %>
+						</div>
+						<!-- 투표:f -->
+					</div>
+				</div>
+			</div>
+			
+			<script type="text/javascript">
+			$(function(){
+				// 탭메뉴 설정 : 탭메뉴(li)에 설정된 data-id 값과 같은 id값을 가진 content box 노출
+				$("ul.tabs li").on("click", function(){
+					var tab_id = $(this).attr("data-id");
+					$("ul.tabs li").removeClass("active");
+					$(".tabs-content").removeClass("active");
+					
+					$(this).addClass("active");
+					$("#"+tab_id).addClass("active");
+				});
+			});
+			</script>
+			<!-- project write tab(프로젝트 타임라인 글쓰기 탭박스):f -->
+			
+			<!-- top pick article(상단고정글):s -->
+			<div class="top-pick-article martop-20">
+				<h5>상단고정글</h5>
+				<div class="pick-article-box martop-10">
+					<div class="pic-article-con">
+					</div>
+				</div>
+			</div>
+			<!-- top pick article(상단고정글):f -->
+			
+			<!-- project timeline:s -->
+			<c:forEach items="${timeLineList }" var="timeLine">
+				<div class="timeline-box martop-20">
+				<c:choose>
+					<c:when test="${timeLine.basicVo != null }">
+						<input type="hidden" class="col-no" data-col="basic_no" data-no="${timeLine.basicVo.basic_no }">
+					</c:when>
+					<c:when test="${timeLine.taskVo != null }">
+						<input type="hidden" class="col-no"  data-col="task_no" data-no="${timeLine.taskVo.task_no }">
+					</c:when>
+					<c:when test="${timeLine.todoVo != null }">
+						<input type="hidden" class="col-no" data-col="todo_no" data-no="${timeLine.todoVo.todo_no }">
+					</c:when>
+					<c:when test="${timeLine.voteVo != null }">
+						<input type="hidden" class="col-no" data-col="vote_no" data-no="${timeLine.voteVo.vote_no }">
+					</c:when>
+					<c:otherwise>
+						<input type="hidden" class="col-no" data-col="schd_no" data-no="${timeLine.schdVo.schd_no }">
+					</c:otherwise>
+				</c:choose>
+				
+					<!-- timeline header:s -->
+					<div class="timeline-header back-color-white">
+						<!-- article writer info -->
+						<div class="article-writer-info">
+							<dl>
+								<dt class="posi-re maright-15">
+									<i class="flow-icon icon-circle circle-s"></i>
+									<img src="/mem/pic?mem_id=${timeLine.mem_id }" onerror="this.src=('/image/user-pic-sample.png')" height="40">
+								</dt>
+								<dd>
+									<strong class="dis-block size-18 color-black">${timeLine.mem_nick }</strong>
+									<span class="dis-block size-14 color-gray-l">
+										<fmt:formatDate value="${timeLine.time }" pattern="yyyy-MM-dd HH:mm"/>
+									</span>
+								</dd>
+							</dl>
+						</div>
+						
+						<!-- article icon : s -->
+						<ul class="article-top-icon">
+						
+							<!-- article pick button -->
+							<li>
+								<a href="#pickCheck" class="pick-check-btn">
+									<i class="fas fa-map-pin size-24 cursor-point"></i>
+									<!-- <i class="fas fa-map-pin size-24 cursor-point pick-active"></i> -->
+								</a>
+							</li>
+						
+							<!-- article edit : s -->
+							<c:if test="${timeLine.mem_id == memVo.mem_id }">
+								<li class="posi-re float-left">
+									<button id="articleEdit" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-ellipsis-v size-24 color-gray"></i>
+									</button>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="articleEdit">
+										<li class="cursor-point" onclick="fn_editArticle(this)">글 수정</li>
+										<li class="cursor-point">글 삭제</li>
+									</ul>
+								</li>
+							</c:if>
+							<!-- article edit : f -->
+						</ul>
+						<!-- article icon : f -->
+						
+						<script type="text/javascript">
+						$(function(){
+							// 고정글 체크 팝업
+							$('.pick-check-btn').click(function(){
+								var $href = $(this).attr('href');
+								layer_popup($href);
+							});
+						});
+						</script>
+						
+						<!-- 상단 고정글 확인 레이어 팝업 : s -->
+						<div class="dim-layer">
+							<div class="dimBg"></div>
+							
+						    <div id="pickCheck" class="pop-layer">
+					    		<!-- pop header -->
+					    		<header class="pop-top border-box">
+					    			상단고정 설정
+					    			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+					    		</header>
+					    		
+					    		<!-- pop con -->
+						   		<section class="pop-con border-box">
+						   			<p>이 글을 상단고정 하시겠습니까?</p>
+						   			<p>이 글을 상단고정 해제 하시겠습니까?</p>
+								</section>
+								
+								<!-- pop footer -->
+								<footer class="pop-footer border-box">
+									<input type="button" name="" class="pop-btn default-btn btn-close" value="취소">
+									<input type="button" name="" class="pop-btn submit-btn marleft-5 back-color-pupple-l" value="확인">
+								</footer>
+							</div>
+							
+						</div>
+						<!-- 상단 고정글 확인 레이어 팝업 : f -->
+						
+					</div>
+					<!-- timeline header:f -->
+					
+					<!-- timeline content:s -->	
+					<div class="timeline-content" onchange="fn_colmnNum(this)">
+						<!-- if문  -->
+						<c:choose>
+							<c:when test="${timeLine.basicVo != null }">
+								<%@include file="/include/timeline_article.jsp" %>
+							</c:when>
+							<c:when test="${timeLine.taskVo != null }">
+								<%@include file="/include/timeline_task.jsp" %>
+							</c:when>
+							<c:when test="${timeLine.todoVo != null }">
+								<%@include file="/include/timeline_todo.jsp" %>
+							</c:when>
+							<c:when test="${timeLine.voteVo != null }">
+								<%@include file="/include/timeline_vote.jsp" %>
+							</c:when>
+							<c:otherwise>
+								<%@include file="/include/timeline_schedule.jsp" %>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<!-- timeline content:f -->
+					
+					<!-- timeline footer:s -->
+					<div class="timeline-footer">
+					
+						<!-- 좋아요 / 댓글 개수:s -->
+						<div class="article-etc-info">
+						
+							<!-- 좋아요 선택 시 이모티콘 나올 부분 -->
+							<div class="like-result">
+								<!-- if() 좋아요가 있을 때  img태그 추가
+								<img src="" width="20" class="maright-10">
+								<strong>아이디</strong> 님  -->
+								<!--
+									if(한명일땐) { 님 } else { 님 외 0명}
+								-->
+							</div>
+							
+							<!-- 댓글 개수 -->
+							<div class="comment-count back-color-gray-l color-white">
+								<i class="fas fa-comment maright-10"></i> ${timeLine.repMap.size() }개
+							</div>
+							
+							<!-- 좋아요 / 댓글작성 / 담아두기 버튼 -->
+							<ul class="article-etc-menu martop-10 marbtm-0">
+								<li class="posi-re cursor-point">
+									
+<%-- 									<c:forEach items="${emoUserList }" var="emoUserVo"> --%>
+<%-- 										<c:if test="${emoUserVo.mem_id == memVo.mem_id }"> --%>
+											
+<%-- 										</c:if> --%>
+<%-- 									</c:forEach> --%>
+									
+									
+									<!-- like button : s -->
+									<div id="emoticonToggle" class="emoticon-btn cursor-point" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-thumbs-up maright-10"></i>좋아요
+									</div>
+									<!-- like button : f -->
+									
+									<!-- Chagned like button : s -->
+									<div class="emoticon-after-btn cursor-point" onclick="fn_emoResultBtn(this)">
+										<img src="" width="20" class="maright-10">
+										<span class="size-14 default-color"></span>
+									</div>
+									<!-- Chagned like button : f -->
+									
+									<!-- Emoticon list box -->
+									<div class="dropdown-menu emoticon-box" aria-labelledby="emoticonToggle">
+										<ul>
+											<c:forEach items="${emoList }" var="emo">
+												<li class="posi-re" data-emono="${emo.emo_no }">
+													<img src="/emo/view?emo_no=${emo.emo_no }">
+													<span>${emo.emo_name }</span>
+												</li>
+											</c:forEach>											
+										</ul>
+									</div>
+								</li>
+								<li class="cursor-point" onclick="fn_commentFocus(this)"><i class="fas fa-comment-alt maright-10"></i> 댓글작성</li>
+								<li class="cursor-point" onclick="fn_likeChange(this)">
+									<i class="fas fa-bookmark maright-10"></i>
+									<span>담아두기</span>
+								</li>
+							</ul>
+						</div>
+						<!-- 좋아요 / 댓글 개수:f -->
+					
+						<!-- 댓글:s -->
+						<div class="timeline-comment-wrap">
+						
+							<!-- 댓글 리스트:s -->
+							<div class="comment-list-box">
+								<dl>
+									<dt class="posi-re">
+										<i class="flow-icon icon-circle circle-s-re"></i>
+										<img src="" onerror="this.src='/image/user-pic-sample.png'" width="40">
+									</dt>
+									<dd class="posi-re">
+									
+										<!-- 댓글 작성자 정보 -->
+										<div class="comment-user-info">
+											<div class="dis-inblock font-bold size-15 color-black maright-10">아이디</div>
+											<div class="dis-inblock size-15 color-gray maright-20">2018-09-21 20:21</div>
+											<div class="dis-inblock size-15 color-gray cursor-point" onclick="fn_likeChange(this)">
+												<i class="fas fa-thumbs-up maright-10"></i><span>좋아요</span>
+											</div>
+										</div>
+										
+										<!-- 댓글내용 -->
+										<div class="article-txt martop-5">
+											<pre class="font-thin size-16 color-gray">이곳에 내용이 들어가면 됩니다</pre>
+										</div>
+										
+										<!-- 댓글 수정 박스 -->
+										<div class="comment-edit-box">
+											<form action="" id="commentEdit">
+												<div class="float-left" style="width:95%">
+													<textarea rows="5" cols="50" style="width:100%;" onkeyup="autoTextarea(this, 40, 300)" onkeydown="fn_keyDownEsc(event, this)"></textarea>
+													<div class="dis-block float-left martop-5 size-13 color-gray"><span class="default-color">취소</span> 하실려면 <span class="color-red">Esc</span>키를 누르세요.</div>
+												</div>
+												
+												<!-- 파일첨부 -->
+												<label for="commentEditFile" class="marbtm-0">
+													<i class="fas fa-paperclip martop-10 size-24 color-gray cursor-point" onmouseover="fn_overColor(this)" onmouseout="fn_outColor(this)"></i>
+												</label>
+												<input type="file" id="commentEditFile" class="dis-none" onchange="commentFileUpload(this)">
+												
+												<!-- 이미지 목록이 나올부분 -->
+												<div class="comment-upload-img-list">
+												</div>
+												
+												<!-- 첨부파일 목록이 나올부분 -->
+												<div class="comment-upload-file-list">
+												</div>
+												
+											</form>
+										</div>
+										
+										<!-- 댓글 수정,삭제 버튼 -->
+										<ul class="comment-edit-btn">
+											<li class="cursor-point" onclick="fn_commentEdit(this)">수정</li>
+											<li class="cursor-point">삭제</li>
+										</ul>
+									</dd>
+								</dl>
+							</div>
+							<!-- 댓글 리스트:f -->
+						
+							<!-- 댓글 입력:s -->
+							<form action="">
+								<div class="comment-insert-box">
+									<dl>
+										<dt class="posi-re">
+											<i class="flow-icon icon-circle circle-s-re"></i>
+											<img src="/mem/pic?mem_id=${memVo.mem_id }" onerror="this.src='/image/user-pic-sample.png'" width="40">
+										</dt>
+										<dd>
+											<textarea rows="5" cols="50" name="rep_cont"
+											placeholder="댓글을 입력하세요.(Enter는 입력, shift + Enter는 줄바꿈)"
+											onkeyup="autoTextarea(this, 36, 300)" onkeydown="fn_keyDownEsc(event, this)"></textarea>
+											
+											<!-- 파일첨부 -->
+											<label for="commentFile" class="marbtm-0">
+												<i class="fas fa-paperclip martop-10 size-24 color-gray cursor-point" onmouseover="fn_overColor(this)" onmouseout="fn_outColor(this)"></i>
+											</label>
+											<input type="file" id="commentFile" class="dis-none" onchange="commentFileUpload(this)">
+											
+											<!-- 이미지 목록이 나올부분 -->
+											<div class="comment-upload-img-list">
+											</div>
+											
+											<!-- 첨부파일 목록이 나올부분 -->
+											<div class="comment-upload-file-list">
+											</div>
+											
+										</dd>
+									</dl>
+								</div>
+							</form>
+							<!-- 댓글 입력:f -->
+						</div>
+						<!-- 댓글:f -->
+						
+					</div>
+					<!-- timeline footer:f -->
+					
+				</div>
+			</c:forEach>
+			<!-- project timeline:f -->
+			
+			<script type="text/javascript">
+			// article img slide
+			var swiper = new Swiper('.swiper-container-img', {
+				slidesPerView: 2,
+				spaceBetween: 20,
+				slidesPerGroup: 1,
+				loop: true,
+				loopFillGroupWithBlank: true,
+				navigation: {
+					nextEl: '.swiper-button-next',
+					prevEl: '.swiper-button-prev',
+				},
+			});
+			
+			
+			$(function(){
+				
+				// 좋아요 클릭 이벤트
+				$(".emoticon-box li").click(function(){
+					var item = $(this);
+					var emo_no = $(this).data("emono");
+					var timeline_col = $(this).parents(".timeline-box").children(".col-no").data("col");
+					var timeline_no = $(this).parents(".timeline-box").children(".col-no").data("no");
+					
+// 					$.ajax({
+// 						url : "/emoUser/insert",
+// 						method : "get",
+// 						data : {emo_no:emo_no, timeline_col:timeline_col, timeline_no:timeline_no},
+// 						dataType : "json",
+// 						success : function(data){
+							
+// 							fn_emoticon(item);
+// 						}
+// 					});
+				});
+				
+			});
+			
+			
+			</script>
+			
+		</div>
+		<!-- project left content:f -->
+		
+		<!-- project right content:s -->
+		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 padright-0">
+			<%@include file="/include/project_right.jsp" %>
+		</div>
+		<!-- project right content:f -->
+		
+	</div>
+</section>

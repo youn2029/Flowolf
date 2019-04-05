@@ -1,0 +1,301 @@
+package kr.or.dev.user.member.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.encrypt.kisa.sha256.KISA_SHA256;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.dao.MemberDaoInf;
+import kr.or.dev.user.member.model.MemberVO;
+import net.nurigo.java_sdk.api.Message;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
+
+import org.json.simple.JSONObject;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+@Controller("loginController")
+@RequestMapping("/login")
+public class LoginController {
+	
+	// 회원
+	@Resource(name="memDao")
+	private MemberDaoInf memDao;
+	
+	// 프로젝트 참여자
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;	
+	
+	/**
+	* Method : loginView
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @return
+	* Method 설명 : 로그인 화면
+	*/
+	@RequestMapping("/view")
+	public String loginView(){
+		
+		return "login/login";
+	}
+	
+	/**
+	* Method : loginProcess
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_id
+	* @param mem_pw
+	* @param model
+	* @param session
+	* @return
+	* Method 설명 : 로그인
+	*/
+	@RequestMapping("/login")
+	public String loginProcess(@RequestParam("mem_id") String mem_id
+							 , @RequestParam("mem_pw") String mem_pw
+							 , Model model
+							 , HttpSession session){
+		
+		MemberVO memVo = memDao.getMemDetail(mem_id);
+		
+		if (memVo.getMem_pw().equals(KISA_SHA256.encrypt(mem_pw))) {
+			
+			// 회원정보
+			session.setAttribute("memVo", memVo);
+			
+			// 참여중인 프로젝트 정보
+			List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+			session.setAttribute("myProList", myProList);
+			
+			// 프로젝트 구분 정보
+			List<KindVO> kindList = kindService.getKindAllList();
+			session.setAttribute("kindList", kindList);
+			
+			return "main";
+		}else {
+			
+			// 로그인 실패
+			return "redirect:/login/view";
+		}		
+	}
+	
+	/**
+	* Method : idChk
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : ID(Email) 중복 체크
+	*/
+	@RequestMapping("/idChk")
+	@ResponseBody
+	public int idChk(@RequestParam("mem_id") String mem_id){
+		return memDao.chkMemId(mem_id);
+	}
+	
+	
+	/**
+	* Method : nickChk
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_nick
+	* @return
+	* Method 설명 : Nick 중복 체크
+	*/
+	@RequestMapping("/nickChk")
+	@ResponseBody
+	public int nickChk(@RequestParam("mem_nick") String mem_nick){		
+		return memDao.chkMemNick(mem_nick);
+	}
+	
+	
+	/**
+	* Method : signUp
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param req
+	* @return
+	* @throws IllegalStateException
+	* @throws IOException
+	* Method 설명 : 회원가입
+	*/
+	@RequestMapping("/signup")
+	@ResponseBody
+	public int signUp(MultipartHttpServletRequest req) throws IllegalStateException, IOException{	
+		
+		MultipartFile pic = req.getFile("mem_pic");
+		
+		// 사진 저장 경로 (임시)
+		String pic_path = "C:\\Users\\YSH\\Desktop";
+		String pic_name = "";
+		String pic_upload = "";
+		
+		if (pic.isEmpty()) {
+			pic_name = "user-pic-sample.png";
+			pic_upload = "cf40302c-2204-4d02-99bc-a8276bf480e7";			
+		}else {
+			pic_name = pic.getOriginalFilename();
+			pic_upload = UUID.randomUUID().toString();
+			
+			File uploadFile = new File(pic_path+File.separator+pic_upload);
+			
+			// 지정된 경로에 저장
+			pic.transferTo(uploadFile);
+		}
+		
+		MemberVO memVo = new MemberVO();
+		memVo.setMem_id(req.getParameter("mem_id"));
+		memVo.setMem_pw(KISA_SHA256.encrypt(req.getParameter("mem_pw")));
+		memVo.setMem_name(req.getParameter("mem_name"));
+		memVo.setMem_nick(req.getParameter("mem_nick"));
+		memVo.setMem_phone(req.getParameter("mem_phone"));		
+		memVo.setMem_pic_name(pic_name);
+		memVo.setMem_pic_path(pic_path);
+		memVo.setMem_pic_upload(pic_upload);	
+		
+		return memDao.insertMem(memVo);
+		
+	}
+	
+	/**
+	* Method : findId
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_name
+	* @param mem_phone
+	* @return
+	* Method 설명 : 아이디 찾기
+	*/
+	@RequestMapping("/findId")
+	@ResponseBody
+	public Map<String, String> findId(@RequestParam("mem_name") String mem_name, @RequestParam("mem_phone") String mem_phone){	
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("mem_name", mem_name);
+		paramMap.put("mem_phone", mem_phone);
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("mem_id", memDao.findId(paramMap));
+		
+		return result;
+	}
+	
+	/**
+	* Method : memChk
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_name
+	* @param mem_id
+	* @param mem_phone
+	* @return
+	* Method 설명 : Password 찾기를 할 때, 해당 회원 조회
+	*/
+	@RequestMapping("/memChk")
+	@ResponseBody
+	public Map<String, String> memChk(@RequestParam("mem_name") String mem_name
+									, @RequestParam("mem_id") String mem_id
+									, @RequestParam("mem_phone") String mem_phone){
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("mem_id", mem_id);
+		paramMap.put("mem_name", mem_name);
+		paramMap.put("mem_phone", mem_phone);
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("mem_id", memDao.getMemChk(paramMap));
+		
+		return result;
+	}
+	
+	/**
+	* Method : memPwSet
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_id
+	* @param mem_pw
+	* @return
+	* Method 설명 : 회원의 비밀번호 수정
+	*/
+	@RequestMapping("/memPwSet")
+	@ResponseBody
+	public int memPwSet(@RequestParam("mem_id") String mem_id
+				   , @RequestParam("mem_pw") String mem_pw){
+		
+		MemberVO memVo = memDao.getMemDetail(mem_id);
+		
+		String pw = KISA_SHA256.encrypt(mem_pw);
+		memVo.setMem_pw(pw);
+		
+		return memDao.updateMem(memVo);
+	}
+	
+	/**
+	* Method : msgSend
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_phone
+	* @param phoneNum
+	* @return
+	* Method 설명 : 해당 핸드폰 번호에 인증번호 전송
+	*/
+	@RequestMapping("/msgSend")
+	@ResponseBody
+	public int msgSend(@RequestParam("mem_phone") String mem_phone
+					 , @RequestParam("phoneNum") int phoneNum){
+		
+		System.out.println(mem_phone+", "+phoneNum);
+		
+		String msg = "[FlowolF 본인 확인] 인증 코드("+ phoneNum +")를 입력해주세요.";
+		
+		String api_key = "NCSAW4FAYIZKPMFA";
+	    String api_secret = "MDLN1ZC5BX31NLM8X31541UBJ36J0WUH";
+	    Message coolsms = new Message(api_key, api_secret);
+	    
+	    // 4 params(to, from, type, text) are mandatory. must be filled
+	    HashMap<String, String> params = new HashMap<String, String>();
+	    params.put("to", mem_phone); // 수신번호
+	    params.put("from", "01094217598"); // 발신번호
+	    params.put("type", "SMS"); // Message type ( SMS, LMS, MMS, ATA )
+	    params.put("text", msg); // 문자내용    
+	    params.put("app_version", "JAVA SDK v1.2"); // application name and version
+
+	    try {
+	      JSONObject obj = (JSONObject) coolsms.send(params);
+	      System.out.println(obj.toString());
+	      return 1;
+	    } catch (CoolsmsException e) {
+	      System.out.println(e.getMessage());
+	      System.out.println(e.getCode());
+	      return 0;
+	    }	    
+	    
+	}
+
+}

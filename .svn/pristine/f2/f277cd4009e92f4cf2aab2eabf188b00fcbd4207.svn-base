@@ -1,0 +1,77 @@
+package kr.or.dev.timeline.basic.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.timeline.TimeLine;
+import kr.or.dev.timeline.basic.model.BasicVO;
+
+public interface BasicServiceInf {
+	
+	/**
+	* Method : insertBasic
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basicVo
+	* @return
+	* Method 설명 : 일반글 등록
+	*/
+	int insertBasic(BasicVO basicVo);
+	
+	/**
+	* Method : updateBasic
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basicVo
+	* @return
+	* Method 설명 : 일반글 수정
+	*/
+	int updateBasic(BasicVO basicVo);
+	
+	/**
+	* Method : deleteBasic
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basic_no
+	* @return
+	* Method 설명 : 일반글 삭제처리
+	*/
+	int deleteBasic(int basic_no);
+	
+	/**
+	* Method : getBasicDetail
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basic_no
+	* @return
+	* Method 설명 : 일반글 상세 조회
+	*/
+	BasicVO getBasicDetail(int basic_no);
+	
+	/**
+	* Method : getBasicProList
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 일반글 조회
+	*/
+	List<TimeLine> getBasicProList(int pro_no);
+	
+	/**
+	* Method : getBasicSearchList
+	* 최초작성일 : 2018. 9. 17
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 일반글 검색 조회
+	*/
+	List<BasicVO> getBasicSearchList(Map<String, String> searchMap);
+
+}

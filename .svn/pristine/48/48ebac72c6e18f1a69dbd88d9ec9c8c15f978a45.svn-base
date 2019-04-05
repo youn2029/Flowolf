@@ -1,0 +1,15 @@
+package kr.or.dev.user.member.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller("loginController")
+@RequestMapping("/login")
+public class LoginController {
+	
+	@RequestMapping("/view")
+	public String loginView(){
+		return "login/login";
+	}
+
+}

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="schd">
+
+	<!-- 일정 등록 -->
+	<insert id="insertSchd" parameterType="schdVo">
+		INSERT INTO SCHEDULE(schd_no
+		      				,schd_title
+		      				,schd_loc
+		      				,schd_memo
+		      				,schd_start_time
+		      				,schd_end_time
+		      				,schd_alarm
+		      				,schd_time
+		      				,schd_del_chk
+		      				,schd_fix_chk
+		      				,schd_fix_date
+		      				,pro_no
+		      				,mem_id
+		      				,schd_lon
+		      				,schd_lat)
+		      		VALUES (schd_no_seq.nextval
+		      				,#{schd_title}
+		      				,#{schd_loc}
+		      				,#{schd_memo}
+		      				,#{schd_start_time}
+		      				,#{schd_end_time}
+		      				,#{schd_alarm}
+		      				,sysdate
+		      				,#{schd_del_chk}
+		      				,#{schd_fix_chk}
+		      				,sysdate
+		      				,#{pro_no}
+		      				,#{mem_id}
+		      				,#{schd_lon}
+		      				,#{schd_lat}) 
+	</insert>
+		
+	<!-- 일정 수정 -->
+	<update id="updateSchd" parameterType="schdVo">
+					 UPDATE SCHEDULE
+					   	SET  schd_title 	 =	#{schd_title}
+						    ,schd_loc 		 =	#{schd_loc}
+						    ,schd_memo 		 =	#{schd_memo}
+						    ,schd_start_time = 	#{schd_start_time}
+						    ,schd_end_time   = 	#{schd_end_time}
+						    ,schd_alarm 	 =	#{schd_alarm}
+						    ,schd_time 		 =	sysdate
+						    ,schd_del_chk	 =  #{schd_del_chk}
+						    ,schd_fix_chk 	 =	#{schd_fix_chk}
+						    ,schd_fix_date 	 = 	sysdate
+						    ,schd_lon		 =  #{schd_lon}
+						    ,schd_lat		 =  #{schd_lat}
+					  WHERE schd_no = #{schd_no} 
+						    
+	</update>
+		
+	<!-- 일정삭제 -->
+	<update id="deleteSchd" parameterType="schdVo">
+		UPDATE SCHEDULE 
+					SET schd_del_chk = 'y'
+		   		  WHERE schd_no = #{schd_no}
+	</update>
+
+	<!-- 일정번호를 통해서 해당 schedule의 고정여부를 Update -->
+	<update id="updateFix" parameterType="schdVo">
+		UPDATE SCHEDULE 
+				    SET schd_fix_chk  = #{schd_fix_chk},
+				        schd_fix_date = #{schd_fix_date}
+				  WHERE schd_no = #{schd_no}
+	</update>
+
+	<!-- 일정상세보기 -->
+	<select id="getSchdDetail" parameterType="int" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE schd_no=#{schd_no}
+	</select>	
+	
+	<!--내용을 넣어 검색해서 나오는 일정 검색 조회 -->
+	<select id="getSchdSearchList" parameterType="Map" resultType="schdVo">
+		SELECT * FROM SCHEDULE
+		WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+	
+	<!-- 프로젝트의 일정 조회 -->
+	<select id="getSchdProList" parameterType="map" resultType="schdVo">
+				SELECT b.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = b.mem_id) AS mem_nick
+			 , (SELECT co.coll_no
+		          FROM collection co
+		         WHERE co.schd_no = b.shcd_no
+		           AND co.mem_id = #{mem_id}) AS coll_chk	
+		  FROM basic b
+		 WHERE pro_no = #{pro_no}
+		   AND schd_del_chk = 'n'
+	</select>
+	
+	<!-- 회원이 등록한 일정 조회 -->
+	<select id="getSchdMyList" parameterType="String" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id = #{mem_id}
+	</select>
+	
+	<!-- 회원의 id와 프로젝트 번호를 통해서 일정조회 -->
+	<select id="getSchd_Id_Pro_no" parameterType="map" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id=#{mem_id} AND pro_no=#{pro_no}
+	</select>
+	
+	<!-- project내에서 내가 초대받은 일정만 불러오기 -->
+	<select id="getInviteSchdInProeject" parameterType="map" resultType="schdVo">
+<!-- 		select * from schedule where pro_no = #{pro_no} AND mem_id&lt;&gt;#{mem_id} -->
+		select * from schedule where pro_no = #{pro_no} AND mem_id!=#{mem_id}
+	</select>
+	
+	<!-- 접속한 회원의 일정 중 현재 시간과 일치하는 알림 가져오기 -->
+	<select id="getAlarmList" parameterType="map" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id=#{mem_id} AND schd_alarm=#{schd_alarm}
+		order by schd_no
+	</select>
+	
+	<!--전체 스케줄 중에서 내가 등록한 일정 제외하고 초대된 일정만 가져옴 -->
+	<select id="getInvited_Schd" parameterType="String" resultType="schdVo">
+		SELECT *
+		FROM  SCHEDULE S, PROJECT_USER PU, MEMBER M
+		WHERE  S.PRO_NO = PU.PRO_NO
+		AND   PU.MEM_ID = M.MEM_ID
+		AND    PU.MEM_ID = #{mem_id}
+		AND    S.MEM_ID &lt;&gt;  PU.MEM_ID 
+	</select>
+	
+	
+
+</mapper>

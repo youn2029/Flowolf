@@ -1,0 +1,256 @@
+package kr.or.dev.timeline.schedule.web;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.common.Format;
+import kr.or.dev.timeline.schedule.model.ScheduleVO;
+import kr.or.dev.timeline.schedule.service.ScheduleServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.google.gson.Gson;
+
+@Controller
+@RequestMapping("/schd")
+public class ScheduleController {
+
+	// Service injection
+	@Resource(name = "scheduleService")
+	private ScheduleServiceInf schService;
+	
+	
+	// 일정 Create
+	@RequestMapping(value = "/insert", method = RequestMethod.GET)
+	public String sendSchedule(Model model, @RequestParam("alert_time") String alert_time,
+			@RequestParam("datetime") String datetime, ScheduleVO vo, HttpSession session)
+			throws NumberFormatException, ParseException {
+		String lat = vo.getSchd_lat();
+		String lon = vo.getSchd_lon();
+		
+		// 날짜 datetime
+		String[] time = datetime.split("   -   ");
+		
+		// 알람 울릴시간(Format class의 메서드를 이용, 시작날짜로부터 계산해서 알림날짜를 추출)
+		String notificationTimer = "";
+		if(!alert_time.equals("0")){
+			notificationTimer = Format.notificationFormatter(time[0],-Integer.parseInt(alert_time));
+		}
+		
+		// 스케줄 작성한 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		String mem_id = memVo.getMem_id();
+
+		int schd_no = schService.getSchd_seq();
+		vo.setSchd_no(schd_no);
+		vo.setSchd_start_time(time[0]);
+		vo.setSchd_end_time(time[1]);
+		vo.setSchd_alarm(notificationTimer);
+		vo.setSchd_time(new Date());
+		vo.setSchd_del_chk("n");
+		vo.setSchd_fix_chk("n");
+		vo.setSchd_fix_date(null);
+		vo.setSchd_lat(lat);
+		vo.setSchd_lon(lon);
+		vo.setMem_id(mem_id);
+		
+		int result = schService.insertSchd(vo);
+		if (result == 1) {
+			
+			session.setAttribute("msg", "글 등록이 완료되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		return "redirect:/pro/detail?pro_no="+vo.getPro_no();
+	}
+	
+	
+	// 일정 삭제
+	@RequestMapping(value="/delete")
+	public String deleteSchedule(@RequestParam("timeline_no")int schd_no, HttpSession session){
+		
+		ScheduleVO vo = schService.getSchdDetail(schd_no);
+		int pro_no = vo.getPro_no();
+		System.out.println("delete 들어옴");
+		System.out.println("pro_no : " + pro_no);
+		System.out.println("schd_no : "+ schd_no);
+		int result = schService.deleteSchd(schd_no);
+		
+		if (result == 1) {
+			session.setAttribute("msg", "해당 글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+pro_no;
+	}
+	
+	
+	// 고정 여부 수정
+	@RequestMapping(value="/fix")
+	public String updateFix(@RequestParam("timeline_no")int schd_no, 
+			HttpSession session, @RequestParam("fix_chk")String fix_chk){
+		ScheduleVO vo = schService.getSchdDetail(schd_no);
+		int pro_no = vo.getPro_no();
+		vo.setSchd_fix_chk(fix_chk);
+		vo.setSchd_fix_date(new Date());
+		int result = schService.updateFix(vo);
+		String msg = "에러 발생";
+		if(fix_chk.equals("y")){
+			msg = "해당 글이 상단 고정되었습니다.";
+		}else{
+			msg = "해당 글 고정이 해제되었습니다.";
+		}
+		
+		if (result ==1 ){
+			session.setAttribute("msg", msg);
+			session.setAttribute("className", "alert-warning");
+		}
+		return "redirect:/pro/detail?pro_no="+pro_no;
+		
+	}
+	
+	// 일정 Update
+	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	public String updateSchd( @RequestParam("alert_time") String alert_time,ScheduleVO vo,
+			@RequestParam("datetime") String datetime,
+			@RequestParam("defaultDate") String defaultDate,
+			HttpSession session
+			)
+					throws NumberFormatException, ParseException {
+		if(datetime == null || datetime==""){
+			datetime = defaultDate;
+		}
+		// 날짜 datetime
+		String[] time = datetime.split("   -   ");  //2018-01-22 10:22   - 2018-01-22 12:22
+		// 알람 울릴시간(Format class의 메서드를 이용, 시작날짜로부터 계산해서 알림날짜를 추출)
+		String notificationTimer = Format.notificationFormatter(time[0],-Integer.parseInt(alert_time));
+		
+		//vo객체 일부내용 수정
+		vo.setSchd_start_time(time[0]);
+		vo.setSchd_end_time(time[1]);
+		vo.setSchd_alarm(notificationTimer);
+		vo.setSchd_del_chk("n");
+		vo.setSchd_fix_chk("n");
+		int result = schService.updateSchd(vo);
+		
+		if (result == 1) {
+			session.setAttribute("msg", "글 수정이 완료되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		return "redirect:/pro/detail?pro_no="+vo.getPro_no();
+	}
+	
+	
+	
+	// polling.jsp로부터 member_id를 받아 그에 해당하는 
+	// 알림을 조회하고 다시 뿌려주는 메서드 
+	@RequestMapping(value = "/dbcheck", method = RequestMethod.GET)
+	public ModelAndView testAjax(Model model,HttpSession session,
+			@RequestParam("member_id")String mem_id) throws ParseException{
+		ModelAndView mv = new ModelAndView("jsonView");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mem_id", mem_id);
+		map.put("schd_alarm", Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		
+		List<ScheduleVO> schdvo = schService.getAlarmList(map);
+		mv.addObject("test", schdvo);
+		
+		return mv;
+	}
+	
+	//전체일정클릭
+	//mem_id를 통해 해당 회원의 모든 스케줄을 조회
+	//순서 aside -> callCalendar -> fullCalendar -> callCalendar2 
+	@RequestMapping("/callCalendar" )
+	public String callCalendar(Model model ,HttpSession session,HttpServletRequest request){
+		
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo"); 
+		model.addAttribute("mem_id", memVo.getMem_id());
+		
+		return "allCalendar"; //tile에 맵핑되어있는 id
+	}
+	
+	@RequestMapping(value="/callCalendar2", method=RequestMethod.POST)
+	@ResponseBody
+	public void scheduleParser(@RequestParam("mem_id")String mem_id,HttpServletResponse response){
+		
+		Map<String,Object> map = schService.groupCalendarList(mem_id);
+		Gson gson = new Gson();
+		String json = "";
+		json = gson.toJson(map);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		try {
+			response.getWriter().print(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+		
+
+	//project_right.jsp에서 일정 클릭시 호출되는 메서드
+	//mem_id와 pro_no를 통해 해당 회원의 해당 프로젝트 스케줄을 조회
+	//순서 project_right -> callCalendarById_no -> profullCalendar -> searchProSchd
+	@RequestMapping("/callSchd")
+	public String callCalendarById_no(Model model, HttpSession session){
+		
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo"); 
+		model.addAttribute("mem_id", memVo.getMem_id());
+		
+		return "proCalendar";//tile에 맵핑되어있는 id
+	}
+	
+	
+	//profullCalendar.jsp ajax에서 요청하는 메서드
+	@RequestMapping(value="/callSchd2", method=RequestMethod.POST)
+	@ResponseBody
+	public void projectScheduleParser(@RequestParam("mem_id")String mem_id,
+		@RequestParam("pro_no") int pro_no,	HttpServletResponse response){
+		
+		Map<String,Object> map = schService.projectCalendarList(mem_id,pro_no);
+		Gson gson = new Gson();
+		String json = "";
+		json = gson.toJson(map);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		try {
+			response.getWriter().print(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@RequestMapping("/test")
+	public String test(Model model,HttpSession session) throws ParseException{
+		
+		model.addAttribute("mem_id","yshTest@naver.com");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mem_id","yshTest@naver.com");
+		map.put("schd_alarm", Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		System.out.println(Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		List<ScheduleVO> schdvo =  schService.getAlarmList(map);
+		model.addAttribute("svo",schdvo);
+		
+		return "schedule/polling";
+	}
+	
+	
+}

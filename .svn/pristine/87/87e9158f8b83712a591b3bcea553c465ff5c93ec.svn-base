@@ -1,0 +1,851 @@
+@charset "utf-8";
+
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css); /* noto-sans(본고딕) */
+@import url(//fonts.googleapis.com/earlyaccess/nanumgothic.css); /* Nanum Gothic(나눔고딕) */
+@import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css); /* Nanum Myeongjo(나눔명조) */
+
+
+/*******************************************
+* FLOWOLF Custom Style
+* 팀명 : #DEV
+* 최초작성일 : 2018-08-28
+* 작성자 : UA(Kim ji su)
+*******************************************/
+.body-wrap-full {width:100%;letter-spacing:-0.06em}
+.container {width:100%;padding:0}
+
+/* left panel */
+.body-wrap-full .body-left-panel {position:relative;display:inline-block;float:left;width:250px;height:100vh;min-height:100%;background-color:#272c33}
+.body-wrap-full.open-nav .body-left-panel {width:250px;padding:60px 30px;transition:width 0.3s ease}
+.body-wrap-full.close-nav .body-left-panel {width:100px;padding-top:100px;transition:width 0.3s ease}
+
+/* right panel */
+.body-wrap-full .body-right-panel {position:relative;display:inline-block;float:left;transition:all 0.3s ease}
+.body-wrap-full.open-nav .body-right-panel {
+	width:-webkit-calc(100% - 250px);
+	width:-moz-calc(100% - 250px);
+	width:-o-calc(100% - 250px);
+	width:calc(100% - 250px);
+}
+.body-wrap-full.close-nav .body-right-panel {
+	width:-webkit-calc(100% - 100px);
+	width:-moz-calc(100% - 100px);
+	width:-o-calc(100% - 100px);
+	width:calc(100% - 100px);
+}
+
+/* navbar toggle button */
+.nav-toggle-btn {position:fixed;overflow:hidden;top:34px;left:225px;width:50px;height:50px;z-index:9999;transition:all 0.3s ease}
+.nav-toggle-btn > a {display:block;width:100%;height:50px;text-indent:-5000px}
+
+.open-nav .nav-toggle-btn {left:225px}
+.close-nav .nav-toggle-btn {left:75px}
+
+.open-nav .nav-toggle-btn > a {background-position:-400px 0}
+.close-nav .nav-toggle-btn > a {background-position:-500px 0}
+
+
+/*******************************************
+*
+* Note : login page
+*
+*******************************************/
+.body-wrap-basic.login-wrap {position:relative;width:500px;margin:60px auto}
+
+.login-wrap .login-logo {cursor:pointer} 
+
+/* login nav */
+.login-wrap ul.login-nav {position:absolute;left:50%;width:56px;margin-left:230px;z-index:1}
+.login-wrap ul.login-nav li {
+	position:relative;
+	width:100%; height:100px;
+	padding:17px 10px 10px 30px;
+	font-size:14px;
+	color:#fff;
+	line-height:16px;
+	border-radius:0 10px 10px 0;
+	cursor:pointer;
+}
+.login-wrap ul.login-nav li:nth-child(2) {padding-top:25px}
+.login-wrap ul.login-nav li:hover {opacity:.7}
+
+/* login box */
+.login-box {position:relative;width:100%;padding:50px 60px;background-color:#fff;z-index:99}
+
+/* photo box */
+.photo-box {position:relative;width:150px;margin:0 auto}
+.photo-box .img-box {position:relative;overflow:hidden;width:150px;height:150px}
+.photo-box .img-box i.icon-circle {position:absolute;overflow:hidden;top:0;left:0;width:150px;height:150px;background:url('/image/design_basic.png') no-repeat;background-position:0 -50px;z-index:999}
+.photo-box .img-box img {max-width:150px}
+
+.photo-box .file-btn-box {position:absolute;top:120px;right:10px;transition:all .3s;z-index:9999}
+.photo-box .file-btn-box:hover {transition:all .3s cubic-bezier(.175, .885, .32, 1.275)}
+.photo-box .file-btn-box .upload-btn {font-size:20px;color:#666;cursor:pointer}
+.photo-box .file-btn-box .upload-btn:hover {color:#999;transition:all .3s}
+.photo-box .file-btn-box .photo-upload {display:none}
+
+/* input box - button */
+.login-box input {width:100%;height:60px;font-size:16px;color:#fff;line-height:60px;border:0}
+.login-box .input-box {position:relative;width:100%}
+.login-box .input-box > input[type="text"],
+.login-box .input-box > input[type="password"] {height:45px;padding:0 10px 5px 10px;color:#333;border-bottom:1px solid #ddd}
+
+/* login button */
+.login-box .login-btn {position:relative;display:block;width:100%;height:60px;font-size:16px;color:#fff;line-height:60px;text-align:center}
+
+.login-box .login-btn.login-kakao {color:#333;background-color:#ffe600}
+.login-box .login-btn.login-google {color:#333;background-color:#fff;border:1px solid #ccc}
+
+.login-box .login-btn > i.login-icon {position:absolute;overflow:hidden;background:url('/image/design_basic.png') no-repeat;text-indent:-5000px}
+.login-box .login-btn.login-kakao > i.icon-talk {top:19px;left:20px;width:23px;height:22px;background-position:0 0}
+.login-box .login-btn.login-google > i.icon-google {top:17px;left:19px;width:25px;height:25px;background-position:-100px 0}
+
+/* check button */
+.login-box .input-box > .check-btn {position:absolute;top:13px;right:10px;font-size:16px}
+
+/* find password btn */
+.login-box .find-pw-btn {display:block;width:100%;height:60px;font-size:16px;color:#fff;line-height:60px;text-align:center}
+
+/* login footer */
+.login-box .dn-copy {font-family:'Malgun Gothic';font-style:italic;font-size:12px;color:#999;text-align:center}
+
+/* login alert box */
+.alert-box {display:none;width:100%;margin:5px 0;font-size:14px}
+
+
+/*******************************************
+*
+* Note : aside navigation
+*
+*******************************************/
+.navbar-con {position:fixed;left:0;top:0;bottom:0;width:250px;min-height:100%;padding:60px 30px;background-color:#272c33;z-index:9999}
+/* overflow-y:scroll;overflow:-moz-scrollbars-none;
+.navbar-con::-webkit-scrollbar {display:none} */
+.body-wrap-full.open-nav .navbar-con {width:250px;padding:60px 30px;transition:width 0.3s ease}
+.body-wrap-full.close-nav .navbar-con {width:100px;padding-top:100px;transition:width 0.3s ease}
+
+/* title:open */
+.navbar-con h1 {height:40px;margin:0;font-size:1.5em;color:#717d8d}
+.navbar-con > h1 > a:hover {color:#9b59b6}
+
+/* title:close */
+.close-nav .navbar-con > h1 {display:none}
+
+/* list:open */
+.navbar-con > ul.nav-list {width:100%;margin-bottom:30px;padding-bottom:30px;border-bottom:1px solid #727e8e}
+.navbar-con > ul.nav-list > li {position:relative;width:100%;height:34px}
+.open-nav .navbar-con > ul.nav-list > li > a {display:block;width:100%;padding:0 10px;font-size:14px;color:#ccc;line-height:34px}
+.open-nav .navbar-con > ul.nav-list > li:hover,
+.open-nav .navbar-con > ul.nav-list > li > a:hover {color:#fff;background-color:#3f4853}
+.open-nav .navbar-con > ul.nav-list > li > a > i {display:inline-block;width:20px;text-align:center}
+.open-nav .navbar-con > ul.nav-list > li > a > span {display:inline-block;margin-left:10px}
+
+/* list:close */
+.close-nav .navbar-con > ul.nav-list {margin-bottom:15px;padding:0;border:0}
+.close-nav .navbar-con > ul.nav-list > li {margin-top:15px;text-align:center}
+.close-nav .navbar-con > ul.nav-list > li:first-child {margin-top:0}
+.close-nav .navbar-con > ul.nav-list > li > a {width:40px;padding:0;font-size:24px;text-align:center}
+.close-nav .navbar-con > ul.nav-list > li > a > span {display:none}
+.close-nav .navbar-con > ul.collection-nav > li:first-child > a,
+.close-nav .navbar-con > ul.collection-nav > li:last-child > a {font-size:22px} /* 전체업무, 내 게시물 */
+
+/* my-folder:open */
+.open-nav .navbar-con> ul.nav-list > li.nav-folder-open {display:block}
+.open-nav .navbar-con> ul.nav-list > li.nav-folder-close {display:none}
+
+/* my-folder:close */
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-open {display:none}
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-close {display:block}
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-close > ul {position:absolute;display:none;top:0;left:70px;width:180px;background-color:#434c59;z-index:1}
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-close > ul > li.sub-list-tit {background-color:#272c33}
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-close > ul > li {width:100%}
+.close-nav .navbar-con > ul.nav-list.nav-folder > li.nav-folder-close > ul > li > a {display:block;width:100%;height:38px;padding:0 20px 0 0;font-size:14px;color:#ccc;line-height:38px}
+
+/* my-folder edit button */
+.edit-btn {position:absolute;display:none;top:7px;right:10px;z-index:99}
+.edit-btn > a {float:left;margin-left:10px;color:#a4a4a4}
+.edit-btn > a:first-child {margin-left:0}
+.edit-btn > a:hover {color:#fff}
+li.nav-folder-close .edit-btn {top:10px;right:15px}
+
+/* aside footer */
+.navbar-con .aside-footer {width:100%;font-style:italic;font-size:11px;color:#999;letter-spacing:0}
+.close-nav .navbar-con .aside-footer {display:none}
+
+
+/*******************************************
+*
+* Note : head top
+*
+*******************************************/
+.head-top {clear:both;position:relative;display:inline-block;width:100%;height:60px;padding:0 125px;background-color:#fff;border-bottom:1px solid #ccc}
+@media screen and (max-width:1300px) {
+	.head-top {padding-left:50px;padding-right:50px}
+}
+
+/* logo */
+.head-top .logo {float:left;display:inline-block;padding-top:7px}
+
+/* top icon navigation */
+.head-top .top-icon-nav {position:absolute;top:18px;right:125px;height:24px}
+.head-top .top-icon-nav > ul > li {float:left;height:24px;margin-left:15px}
+.head-top .top-icon-nav > ul > li:first-child {margin-left:0}
+
+@media screen and (max-width:1300px) {
+	.head-top .top-icon-nav {right:50px}
+}
+
+/* top icon */
+.head-top .top-icon-nav .top-icon {display:block;width:24px;height:24px}
+.head-top .top-icon-nav .top-icon.icon-search {background-position:0 -250px}
+.head-top .top-icon-nav .top-icon.icon-mark {background-position:-100px -250px}
+.head-top .top-icon-nav .top-icon.icon-question {background-position:-200px -250px}
+.head-top .top-icon-nav .top-icon.icon-comment {background-position:-300px -250px}
+.head-top .top-icon-nav .top-icon.icon-bell {background-position:-400px -250px}
+.head-top .top-icon-nav .top-icon.icon-caret {width:10px;background-position:-500px -100px}
+
+/* user id */
+.head-top .top-icon-nav > ul > li.user-id {width:120px;padding-right:20px;font-size:14px;color:#2b3991;line-height:24px;cursor:pointer}
+.head-top .top-icon-nav > ul > li.user-id.caret-down {background-position:right -90px}
+.head-top .top-icon-nav > ul > li.user-id.caret-up {background-position:right -140px}
+.head-top .top-icon-nav > ul > li.user-id img {vertical-align:top}
+
+/* user info box */
+.user-info-box {display:none;position:absolute;top:42px;right:-20px;z-index:9;width:200px;height:auto;padding:20px;background-color:#fff;border:1px solid #ccc;border-radius:5px;box-shadow:2px 2px 2px 2px rgba(0,0,0,.3)}
+.user-info-box .user-info-photo {width:60px;margin:0 auto}
+.user-info-box ul.user-info-nav li {margin-top:5px}
+.user-info-box ul.user-info-nav li:first-child {margin-top:0}
+.user-info-box ul.user-info-nav li a {display:block;height:20px;font-size:12px;color:#999;line-height:20px}
+.user-info-box ul.user-info-nav li a:hover {color:#333}
+.head-top .top-icon-nav .top-icon.icon-gear {width:14px;height:20px;background-position:0 -296px}
+.head-top .top-icon-nav .top-icon.icon-out {width:14px;height:20px;background-position:-100px -296px}
+
+
+/* search box */
+.search-box {display:none;position:absolute;top:0px;left:0;right:0;height:60px;padding:10px 125px;border-bottom:1px solid #ccc;background-color:#fff;z-index:999}
+.search-box select {
+	width:100%;
+	height:40px;
+	font-size:14px;
+	color:#333;
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	appearance:none;
+	border:0;
+	background-position:right -82px
+}
+.search-box .search-input {height:40px;font-size:16px;color:#333;padding:0 15px;border:0}
+.search-box button {position:absolute;overflow:hidden;top:0;right:0;width:24px;height:40px;background:transparent url('/image/design_basic.png');text-indent:-5000px}
+.search-box button.search-icon {right:39px;background-position:0 -242px}
+.search-box button.close-icon {background-position:-500px -240px}
+
+
+/*******************************************
+*
+* Note : main - project list (메인화면 - 프로젝트 리스트 페이지)
+*
+*******************************************/
+.content {clear:both;position:relative;display:inline-block;width:100%;min-height:100%;padding:50px 0}
+.content h1 {font-size:16px;color:#333;margin:0 0 30px 0}
+
+/*********** project wrap ***********/
+@media screen and (max-width:750px) {
+	.content {padding-left:50px;padding-right:50px}
+	.content .project-wrap {margin-left:-3.6%;margin-right:-3.6%}
+	.content.main .project-wrap div:nth-child(n+2) {margin-top:5%}
+}
+
+@media screen and (min-width:751px) and (max-width:899px) {
+	.content {padding-left:50px;padding-right:50px}
+	.content .project-wrap {margin-left:-3%;margin-right:-3%}
+	.content.main .project-wrap div:nth-child(n+3) {margin-top:5%}
+}
+
+@media screen and (min-width:900px) and (max-width:1300px) {
+	.content {padding-left:50px;padding-right:50px}
+	.content.main .col-xs-12, .content.main .col-sm-6,
+	.content.main .col-md-3, .content.main .col-lg-2 {padding:0 .8%}
+	.content.main .col-md-3,
+	.content.main .col-lg-2 {width:25%}
+	.content .project-wrap {margin-left:-.5%;margin-right:-.5%}
+	.content.main .project-wrap div:nth-child(n+5) {margin-top:1.5%}
+}
+
+@media screen and (min-width:1301px) {
+	.content {padding-left:125px;padding-right:125px}
+	.content.main .col-xs-12, .content.main .col-sm-6,
+	.content.main .col-md-3, .content.main .col-lg-2 {padding:0 .5%}
+	.content.main .col-md-3,
+	.content.main .col-lg-2 {width:20%}
+	.content .project-wrap {margin-left:-.5%;margin-right:-.5%}
+	.content.main .project-wrap div:nth-child(n+6) {margin-top:.8%}
+}
+
+/* project box */
+.project-box {float:left;width:100%;height:260px;text-align:center;border-radius:10px;cursor:pointer}
+.project-box:hover {box-shadow:0 2px 2px 2px rgba(0,0,0,.15)}
+
+/* project box : project title */
+.project-box .pro-tit-box {position:relative;width:100%;height:160px;padding-top:70px;border-radius:10px 10px 0 0}
+.project-box .pro-tit-box .check-import {position:absolute;top:20px;left:20px}
+
+/* project box : member list */
+.project-box .pro-mem-list-box {width:100%;height:100px;padding:15px;background-color:#fff;border-radius:0 0 10px 10px}
+.project-box .pro-mem-list-box ul.pro-mem-photo {display:inline-block;height:40px;margin:0 auto}
+.project-box .pro-mem-list-box ul.pro-mem-photo li {position:relative;overflow:hidden;float:left;width:40px;height:40px;margin-left:10px}
+.project-box .pro-mem-list-box ul.pro-mem-photo li:first-child {margin-left:0}
+.project-box .pro-mem-list-box .pro-mem-info {
+	display:block;
+	overflow:hidden;
+	width:100%;
+	height:40px;
+	font-size:14px;
+	color:#676767;
+	line-height:40px;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	text-align:center
+}
+
+@media screen and (min-width:768px) and (max-width:1300px) {
+	.project-box {height:200px}
+	.project-box .pro-tit-box {height:130px;padding-top:60px}
+	.project-box .pro-mem-list-box {height:70px}
+	.project-box .pro-mem-list-box ul.pro-mem-photo {float:left;width:40px;margin-right:10px}
+	.project-box .pro-mem-list-box ul.pro-mem-photo li {display:none}
+	.project-box .pro-mem-list-box ul.pro-mem-photo li:first-child {display:block}
+	.project-box .pro-mem-list-box .pro-mem-info {
+		display:inline-block;
+		width:-webkit-calc(100% - 50px);
+		width:-moz-calc(100% - 50px);
+		width:-o-calc(100% - 50px);
+		width:calc(100% - 50px);
+		text-align:left
+	}
+}
+
+/* 프로젝트 추가 */
+.add-project {padding:90px 20px;background-color:#fff;border:1px dashed #333;border-radius:10px;cursor:pointer}
+.add-project i.icon-plus {display:block;overflow:hidden;width:40px;height:40px;margin:0 auto;background-position:0 -350px}
+
+@media screen and (max-width:1300px) {
+	.add-project {padding-top:60px}
+}
+
+
+/*******************************************
+*
+* Note : project detail(프로젝트 상세 페이지)
+*
+*******************************************/
+.content.project-detail .project-wrap {margin-left:0;margin-right:0}
+.project-detail .project-wrap .pro-detail-box {position:relative;float:left;width:100%;padding:20px;background-color:#fff;border:1px solid #ccc;border-radius:5px}
+
+/*******************************************
+* project title box(프로젝트 제목 박스)
+*******************************************/
+.project-title {border:0 !important}
+.project-title > .pro-tit {width:100%;height:40px;line-height:40px}
+.project-title > ul.pro-edit-nav {position:absolute;top:20px;right:20px;margin:0;z-index:9999}
+.project-title > ul.pro-edit-nav > li {position:relative;float:left;height:40px;margin-left:20px}
+.project-title > ul.pro-edit-nav > li:first-child {margin-left:0}
+.project-title > ul.pro-edit-nav > li > i {display:block;line-height:44px}
+.project-title > ul.pro-edit-nav > li > .edit-box {
+	display:none;
+	position:absolute;
+	top:50px;
+	right:-20px;
+	padding:10px 20px;
+	background-color:#fff;
+	border-radius:10px;
+	box-shadow:2px 2px 2px 2px rgba(0,0,0,.3);
+}
+
+/* project color(프로젝트 색상 설정) */
+.project-title > ul.pro-edit-nav > li > .edit-color-box {width:290px;height:170px}
+.project-title > ul.pro-edit-nav > li > .edit-color-box > .color-sample {position:relative;float:left;width:40px;height:40px;margin:5px;border-radius:50%}
+.project-title > ul.pro-edit-nav > li > .edit-color-box > .color-sample.select-color {border:2px solid #000}
+.project-title > ul.pro-edit-nav > li > .edit-color-box > .color-sample > i {display:none;position:absolute;top:0;left:0;width:11px;height:11px;background-color:#fff;border-radius:50%}
+.project-title > ul.pro-edit-nav > li > .edit-color-box > .color-sample.select-color i {display:block}
+
+
+/* project edit(프로젝트 설정) */
+.project-title > ul.pro-edit-nav > li > .edit-pro-box {width:150px;padding:10px}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > h3 {margin:0 0 10px 0;font-size:14px;color:#333}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > ul {padding-left:5px}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > ul > li {margin-top:5px}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > ul > li:first-child {margin-top:0}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > ul > li > a {display:block;font-size:12px;color:#676767}
+.project-title > ul.pro-edit-nav > li > .edit-pro-box > ul > li > a:hover {color:#2b3991}
+
+
+/*******************************************
+* project task report(업무리포트)
+*******************************************/
+
+
+
+/*******************************************
+* project write tab(글쓰기 탭)
+*******************************************/
+.project-detail .project-wrap .pro-detail-box.pro-tab-box {padding:0}
+.tabs-box,
+.tabs-box ul.tabs,
+.tabs-box ul.tabs li,
+.tabs-box .tabs-container,
+.tabs-box .tabs-container .tabs-content {float:left;padding:0;margin:0}
+
+.tabs-box,
+.tabs-box ul.tabs,
+.tabs-box .tabs-container,
+.tabs-box .tabs-container .tabs-content {width:100%}
+
+
+/*------------------------------------------
+- project write tab manu
+- (글쓰기 탭 메뉴 스타일)
+------------------------------------------*/
+.tabs-box ul.tabs {height:70px;padding:20px 20px 0 20px}
+.tabs-box ul.tabs li {position:relative;width:20%;height:40px;font-size:1.5rem;color:#8d8e90;line-height:40px;border-left:1px solid #ccc;text-align:center;cursor:pointer}
+.tabs-box ul.tabs li:first-child {border-left:0}
+.tabs-box ul.tabs li::after {content:'';position:absolute;left:0;bottom:-10px;width:100%;height:1px;background-color:#ccc}
+.tabs-box ul.tabs li:first-child.active {color:#45aaf2}
+.tabs-box ul.tabs li:first-child.active::after {content:'';height:3px;background-color:#45aaf2}
+.tabs-box ul.tabs li:nth-child(2).active {color:#26de81}
+.tabs-box ul.tabs li:nth-child(2).active::after {content:'';height:3px;background-color:#26de81}
+.tabs-box ul.tabs li:nth-child(3).active {color:#ee6d66}
+.tabs-box ul.tabs li:nth-child(3).active::after {content:'';height:3px;background-color:#ee6d66}
+.tabs-box ul.tabs li:nth-child(4).active {color:#9b59b6}
+.tabs-box ul.tabs li:nth-child(4).active::after {content:'';height:3px;background-color:#9b59b6}
+.tabs-box ul.tabs li:last-child.active {color:#e67e22}
+.tabs-box ul.tabs li:last-child.active::after {content:'';height:3px;background-color:#e67e22}
+
+/*------------------------------------------
+- project write tab contents common
+- (글쓰기 탭  내용 공통 스타일)
+------------------------------------------*/
+.tabs-box .tabs-container .tabs-content {display:none}
+.tabs-box .tabs-container .tabs-content.active {display:inherit}
+
+/* tab con box */
+.tabs-box .tabs-container .tabs-content .tab-con-box {float:left;width:100%;padding:20px}
+.tabs-box .tabs-container .tabs-content .tab-con-box textarea {overflow-y:hidden;width:100%;height:120px;border:0}
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box {float:left;width:100%;min-height:40px;padding:0 5px 10px;border-bottom:1px solid #efefef}
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl {width:100%;min-height:30px;margin:0;color:#999} 
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl dt,
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl dd {float:left;min-height:30px;line-height:30px}
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl dt {width:20px}
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl dd {
+	width:-webkit-calc(100% - 40px);
+	width:-moz-calc(100% - 40px);
+	width:-o-calc(100% - 40px);
+	width:calc(100% - 40px);
+}
+.tabs-box .tabs-container .tabs-content .tab-con-box .input-box dl dd label {margin:0}
+.tabs-box .tabs-container .tabs-content .tab-con-box input {height:30px;line-height:30px;border:0}
+
+/* tab dn box */
+.tabs-box .tabs-container .tabs-content .tab-dn-box {float:left;width:100%;height:60px;padding:10px 20px;border-top:1px solid #ccc}
+.tabs-box .tabs-container .tabs-content .tab-dn-box label {height:40px;color:#999;line-height:40px;cursor:pointer}
+.tabs-box .tabs-container .tabs-content .tab-dn-box .article-submit-btn {float:right;width:100px;height:40px;line-height:40px;border-radius:5px}
+
+
+/*------------------------------------------
+- project write tab contents file & img upload
+- (파일 & 이미지 업로드 스타일)
+------------------------------------------*/
+
+/* 파일 정보 */
+.tab-con-box .upload-file-info {position:relative;width:100%;height:86px;padding:20px;border:1px solid #ccc;border-radius:2px}
+.tab-con-box .upload-file-info dl {width:100%}
+.tab-con-box .upload-file-info dl dt,
+.tab-con-box .upload-file-info dl dd {float:left}
+.tab-con-box .upload-file-info dl dt {width:46px !important;margin-right:20px}
+.tab-con-box .upload-file-info dl dd {
+	width:-webkit-calc(100% - 66px) !important;
+	width:-moz-calc(100% - 66px) !important;
+	width:-o-calc(100% - 66px) !important;
+	width:calc(100% - 66px) !important;
+}
+.tab-con-box .upload-file-info i.file-close-btn {top:33px;right:20px}
+
+/* 이미지 정보 */
+.tab-con-box .upload-img-info {position:relative;display:inline-block;width:18%;height:120px;margin-left:2.5%;border:1px solid #999}
+.tab-con-box .upload-img-info:first-child {margin-left:0}
+.tab-con-box .upload-img-info .upload-img {overflow:hidden;width:100%;height:118px;background-repeat:no-repeat;background-size:cover;background-position:center}
+.tab-con-box .upload-img-info i.img-close-btn {top:-10px;right:-10px}
+
+.tab-con-box .upload-file-info i.file-close-btn,
+.tab-con-box .upload-img-info i.img-close-btn {position:absolute;font-size:20px;color:#aaa;background-color:#fff;border-radius:50%;cursor:pointer}
+.tab-con-box .upload-file-info i.file-close-btn:hover,
+.tab-con-box .upload-img-info i.img-close-btn:hover {color:#888}
+
+
+/*------------------------------------------
+- project write tab contents task style
+- (프로젝트 글쓰기 탭 내용 - 업무 스타일)
+------------------------------------------*/
+
+/* 업무상태 */
+.con-task .task-state-list label {float:left;height:30px;padding:0 20px;border:1px solid #ccc;border-width:1px 1px 1px 0;cursor:pointer}
+.con-task .task-state-list label:first-child {border-left:1px solid #ccc;border-radius:5px 0 0 5px}
+.con-task .task-state-list label:last-child {border-radius:0 5px 5px 0}
+.con-task .task-state-list label.checked {color:#fff}
+.con-task .task-state-list label:first-child.checked {background-color:#45aaf2;border-color:#45aaf2}
+.con-task .task-state-list label:nth-child(2).checked {background-color:#26de81;border-color:#26de81}
+.con-task .task-state-list label:nth-child(3).checked {background-color:#e67e22;border-color:#e6722}
+.con-task .task-state-list label:nth-child(4).checked {background-color:#2b3991;border-color:#2b3991}
+.con-task .task-state-list label:last-child.checked {background-color:#8d8e90;border-color:#8d8e90}
+
+/* 담당자추가 리스트박스 */
+.task-user-list {display:block;width:100%}
+.task-user-list .name-tag {float:left;height:34px;margin:0 3px;padding:5px 10px;background-color:#efeff9;border-radius:5px}
+.task-user-list .name-tag img {vertical-align:top}
+.task-user-list .name-tag img,
+.task-user-list .name-tag strong,
+.task-user-list .name-tag i {float:left;height:24px;line-height:24px} .task-user-list .name-tag i {cursor:pointer;line-height:26px}
+.pro-user-list {
+	display:none;
+	overflow-y:auto;
+	position:absolute;
+	top:34px;
+	z-index:9999;
+	width:200px;
+	max-height:200px;
+	padding:10px;
+	background-color:#fff;
+	border:1px solid #ddd;
+	border-radius:5px;
+	box-shadow:0 2px 5px rgba(0, 0, 0, 0.15)
+}
+.pro-user-list .pro-user-info {display:block;width:100%;height:40px;margin-bottom:10px;line-height:40px}
+.pro-user-list .pro-user-info .pro-user-photo {position:relative;display:inline-block;width:40px;height:40px}
+.pro-user-list .pro-user-info .pro-user-photo img {vertical-align:top}
+
+/* 추가 항목 입력 버튼 */
+.con-task button.add-item-btn {margin-top:15px;padding:5px 15px;color:#999;border:1px solid #999;border-radius:20px}
+.con-task button.add-item-btn:hover {color:#333;border-color:#333}
+
+/* 추가 항목 박스 */
+.add-item-box {display:none}
+
+/* 시작일, 마감일 */
+.con-task i.icon-task {display:block;overflow:hidden;width:18px;height:20px;margin-top:5px;text-indent:-5000px}
+.con-task i.icon-task.icon-sDate {background-position:-200px -300px}
+.con-task i.icon-task.icon-fDate {background-position:-300px -300px}
+
+/* 진척도 */
+.work-range {position:relative;width:200px;height:20px;margin-top:5px;background-color:#ccc;border-radius:10px;text-align:center}
+.work-range span.work-percent {position:absolute;top:0;left:0;right:0;z-index:2;height:20px;font-size:12px;line-height:20px}
+.work-range .pcnt-bar {position:absolute;top:0;left:0;bottom:0;z-index:1;background-color:#45aaf2;border-radius:10px}
+.work-range .pcnt-btn {position:absolute;width:20%;top:0;bottom:-10px;z-index:3;cursor:pointer}
+.work-range .pcnt-btn span {
+	display:none;
+	position:absolute;
+	top:26px;
+	left:50%;
+	z-index:1000;
+	width:36px;
+	height:23px;
+	margin-left:-18px;
+	font-size:10px;
+	line-height:21px;
+	border-radius:3px;
+	background-color: rgba(0,0,0,0.6)
+}
+.work-range .pcnt-btn span::before {
+	content:'';
+	position:absolute;
+	top:-4px;
+	left:50%;
+	z-index:1000;
+	width:10px;
+	height:4px;
+	margin-left:-5px;
+	background:url('/image/design_basic.png') no-repeat;
+	background-position:-590px -200px
+}
+.work-range .pcnt-btn.pcnt-20 {left:0}
+.work-range .pcnt-btn.pcnt-40 {left:20%}
+.work-range .pcnt-btn.pcnt-60 {left:40%}
+.work-range .pcnt-btn.pcnt-80 {left:60%}
+.work-range .pcnt-btn.pcnt-100 {left:80%}
+
+/* 우선순위 */
+.task-rank {position:absolute;top:0;left:0px;z-index:99;height:30px;color:#333;background-color:#fff}
+.task-rank-list {
+	display:none;
+	position:absolute;
+	top:34px;
+	z-index:99;
+	width:150px;
+	background-color:#fff;
+	border:1px solid #ddd;
+	border-radius:5px;
+	box-shadow:0 2px 5px rgba(0, 0, 0, 0.15)
+}
+.task-rank-list li {width:100%;height:34px;padding:0 10px;color:#333;line-height:34px;cursor:pointer}
+.task-rank-list li:hover {background-color:#efefef}
+.task-rank i.rank-icon,
+.task-rank-list li i.rank-icon {overflow:hidden;display:inline-block;width:8px;height:14px;margin:10px 10px 0 0;text-indent:-5000px}
+.task-rank i.rank-icon.icon-low,
+.task-rank-list li i.rank-icon.icon-low {background-position:-100px -350px}
+.task-rank i.rank-icon.icon-basic,
+.task-rank-list li i.rank-icon.icon-basic {height:10px;background-position:-200px -350px}
+.task-rank i.rank-icon.icon-high,
+.task-rank-list li i.rank-icon.icon-high {background-position:-300px -350px}
+.task-rank i.rank-icon.icon-emer,
+.task-rank-list li i.rank-icon.icon-emer {background-position:-400px -350px}
+.task-rank i.rank-icon {margin-top:8px}
+
+
+/*------------------------------------------
+- project write tab contents schedule style
+- (프로젝트 글쓰기 탭 내용 - 일정 스타일)
+------------------------------------------*/
+.con-schedule input.date-input {width:120px;border:1px solid #666 !important;text-align:center}
+.con-schedule select {height:30px;padding:0 10px}
+.con-schedule input[type="checkbox"]:not(:checked) + label:before,
+.con-schedule input[type="checkbox"]:checked + label:before {top:5px}
+.con-schedule input[type="checkbox"]:not(:checked) + label:after,
+.con-schedule input[type="checkbox"]:checked + label:after {top:7px}
+
+
+/*------------------------------------------
+- project write tab contents todo style
+- (프로젝트 글쓰기 탭 내용 - 할일 스타일)
+------------------------------------------*/
+.con-todo dl {margin-top:15px !important}
+
+/* to do content input */
+.con-todo input.todo-input {float:left;width:80%}
+
+/* date & user icon */
+.con-todo .todo-icon-box {position:absolute;right:0;top:0}
+.con-todo .todo-icon-box .todo-icon {display:block;height:24px}
+.con-todo .todo-icon-box .icon-calendar-plus {width:20px;background-position:0 -400px}
+.con-todo .todo-icon-box .icon-calendar-plus:hover {background-position:0 -450px}
+.con-todo .todo-icon-box .icon-user-plus {width:30px;background-position:-100px -400px}
+.con-todo .todo-icon-box .icon-user-plus:hover {background-position:-100px -450px}
+
+/* date-picker wrap box */
+.date-pick-box {
+	display:none;
+	position:absolute;
+	top:34px;
+	left:-200px;
+	z-index:9999;
+	padding:10px;
+	background-color:#fff;
+	border:1px solid #ddd;
+	border-radius:5px;
+	box-shadow:0 2px 5px rgba(0, 0, 0, 0.15)
+}
+
+
+/*------------------------------------------
+- project write tab contents vote style
+- (프로젝트 글쓰기 탭 내용 - 투표 스타일)
+------------------------------------------*/
+.con-vote dl {margin-top:15px !important}
+.con-vote input.vote-input {float:left;width:100%}
+
+
+
+/*******************************************
+*
+* project timeline
+*
+*******************************************/
+.project-detail .project-wrap .timeline-box {position:relative;float:left;width:100%;background-color:#fff;border:1px solid #ccc}
+
+/*------------------------------------------
+- project timeline header
+- (프로젝트 타임라인 박스 상단부분 스타일)
+------------------------------------------*/
+.timeline-header {position:relative;float:left;width:100%;height:80px;padding:20px}
+
+/* timeline header : article-writer-info */
+.timeline-header .article-writer-info {float:left;width:100%}
+.timeline-header .article-writer-info dl,
+.timeline-header .article-writer-info dl dt,
+.timeline-header .article-writer-info dl dd {float:left}
+.timeline-header .article-writer-info dl {width:100%;margin:0}
+.timeline-header .article-writer-info dl dt {width:40px}
+.timeline-header .article-writer-info dl dd span {letter-spacing:0}
+
+/* timeline header : article-top-icon */
+.timeline-header > ul.article-top-icon {position:absolute;height:40px;top:20px;right:20px;margin:0}
+.timeline-header > ul.article-top-icon > li {float:left;height:40px;margin-left:20px;line-height:44px}
+.timeline-header > ul.article-top-icon > li:first-child {margin:0}
+.timeline-header > ul.article-top-icon > li > .article-edit-box {
+	display:none;
+	position:absolute;
+	width:100px;
+	top:50px;
+	right:-20px;
+	background-color:#fff;
+	border-radius:5px;
+	box-shadow:2px 2px 2px 2px rgba(0,0,0,.3);
+}
+.timeline-header > ul.article-top-icon > li > .article-edit-box ul li {
+	display:block;
+	height:30px;
+	line-height:30px;
+	border-radius:5px 5px 0 0;
+	text-align:center
+}
+.timeline-header > ul.article-top-icon > li > .article-edit-box ul li:last-child {border-radius:0 0 5px 5px}
+.timeline-header > ul.article-top-icon > li > .article-edit-box ul li:hover {background-color:#efefef}
+
+
+/*------------------------------------------
+- project timeline content
+- (프로젝트 타임라인 박스 내용 부분 스타일)
+------------------------------------------*/
+.timeline-content {float:left;width:100%;padding:0 20px}
+.article-txt {display:block;float:left;width:100%}
+.article-txt pre {
+	overflow:inherit;
+	width:100%;
+	margin:0;
+	padding:0;
+	font-family:'Noto Sans KR','Malgun Gothic', 'Nanum Gothic', dotum, sans-serif, Apple Gothic;
+	font-size:15px;
+	color:#484848;
+	line-height:20px;
+	background-color:transparent;
+	border:0;
+	border-radius:0
+}
+
+
+/*------------------------------------------
+- project timeline footer
+- (프로젝트 타임라인 박스 하단 부분 스타일)
+------------------------------------------*/
+.timeline-box .timeline-footer {float:left;width:100%;margin-top:20px}
+
+/* 좋아요 및 댓글 개수 표시 부분 */
+.article-etc-info {
+	float:left;
+	width:-webkit-calc(100% - 40px);
+	width:-moz-calc(100% - 40px);
+	width:-o-calc(100% - 40px);
+	width:calc(100% - 40px);
+	margin-left:20px
+}
+
+/* 좋아요 개수 표시  */
+.article-etc-info > .like-result {float:left}
+
+/* 댓글 개수 */
+.article-etc-info > .comment-count {float:right;width:80px;height:30px;line-height:30px;border-radius:20px;text-align:center}
+
+/* 좋아요, 댓글달기, 담아두기 */
+.article-etc-info > ul.article-etc-menu {display:block;float:left;width:100%;height:40px;border-top:1px solid #ccc}
+.article-etc-info > ul.article-etc-menu > li {float:left;height:40px;margin-left:30px;font-size:14px;color:#999;line-height:40px}
+.article-etc-info > ul.article-etc-menu > li:first-child {margin-left:0}
+
+/* 이모티콘 박스 */
+.emoticon-after-btn {display:none}
+.emoticon-box {
+	display:none;
+	position:absolute;
+	top:-90px;
+	left:0;
+	z-index:9999;
+	width:320px;
+	height:80px;
+	padding:10px 20px;
+	background-color:#fff;
+	border-radius:5px;
+	box-shadow:2px 2px 2px 2px rgba(0,0,0,.3);
+}
+.emoticon-box > ul > li {float:left;width:40px;height:60px;margin-left:20px;font-size:11px;color:#999;text-align:center}
+.emoticon-box > ul > li:first-child {margin-left:0}
+.emoticon-box > ul > li > img,
+.emoticon-box > ul > li > span {position:absolute}
+.emoticon-box > ul > li > img {left:0;bottom:20px;width:40px;height:40px}
+.emoticon-box > ul > li:hover > img {left:-10px;width:60px;height:60px}
+.emoticon-box > ul > li > span {left:0;bottom:0;width:100%;height:20px;line-height:20px}
+.emoticon-box > ul > li:hover > span {color:#333}
+
+/* 댓글 wrap 박스 */
+.timeline-comment-wrap {float:left;width:100%;padding:10px 20px;background-color:#f1f2f3;border:1px solid #ccc;border-width:1px 0 1px}
+.timeline-comment-wrap dl,
+.timeline-comment-wrap dl dt,
+.timeline-comment-wrap dl dd {float:left}
+.timeline-comment-wrap dl {width:100%;margin:0}
+.timeline-comment-wrap dl dt {width:40px;margin-right:10px}
+.timeline-comment-wrap dl dd {
+	width:-webkit-calc(100% - 50px);
+	width:-moz-calc(100% - 50px);
+	width:-o-calc(100% - 50px);
+	width:calc(100% - 50px);
+}
+
+/* 댓글 입력 textarea */
+.timeline-comment-wrap textarea {overflow-y:hidden;float:left;width:95%;height:37px;padding:8px 5px;background-color:transparent;border:1px solid #ccc}
+.timeline-comment-wrap label > i {float:right;width:5%;text-align:right}
+
+/* 댓글 리스트 박스 */
+.comment-list-box dl {margin-top:15px}
+
+.comment-list-box .comment-user-info {display:block;float:left;width:100%}
+
+.comment-list-box ul.comment-edit-btn {position:absolute;top:0;right:0px}
+.comment-list-box ul.comment-edit-btn li {float:left;font-size:13px;color:#999}
+.comment-list-box ul.comment-edit-btn li:first-child::after {content:'|';margin:0 10px;color:#ccc}
+
+.comment-list-box .comment-edit-box {display:none}
+
+
+/* 댓글 등록 박스 */
+.comment-insert-box {float:left;width:100%;margin-top:20px}
+
+/* 댓글 파일 정보 */
+.timeline-comment-wrap .upload-file-info {position:relative;float:left;width:100%;height:36px;padding:5px;border:1px solid #ccc;border-radius:2px}
+.timeline-comment-wrap .upload-file-info > dl {width:100%}
+.timeline-comment-wrap .upload-file-info > dl > dt,
+.timeline-comment-wrap .upload-file-info > dl > dd {float:left}
+.timeline-comment-wrap .upload-file-info > dl > dt {width:26px !important;margin-right:10px}
+.timeline-comment-wrap .upload-file-info > dl > dd {
+	width:-webkit-calc(100% - 36px) !important;
+	width:-moz-calc(100% - 36px) !important;
+	width:-o-calc(100% - 36px) !important;
+	width:calc(100% - 36px) !important;
+}
+.comment-insert-box dl dd .upload-file-info i.file-close-btn {top:-10px;right:-10px}
+
+/* 댓글 이미지 정보 */
+.timeline-comment-wrap .upload-img-info {position:relative;display:inline-block;width:18%;height:120px;margin-left:2.5%;border:1px solid #999}
+.timeline-comment-wrap .upload-img-info:first-child {margin-left:0}
+.timeline-comment-wrap .upload-img-info .upload-img {overflow:hidden;width:100%;height:118px;background-repeat:no-repeat;background-size:cover;background-position:center}
+.timeline-comment-wrap .upload-img-info i.img-close-btn {top:-10px;right:-10px}
+
+.timeline-comment-wrap .upload-file-info i.file-close-btn,
+.timeline-comment-wrap .upload-img-info i.img-close-btn {position:absolute;font-size:20px;color:#aaa;background-color:#fff;border-radius:50%;cursor:pointer}
+.timeline-comment-wrap .upload-file-info i.file-close-btn:hover,
+.timeline-comment-wrap .upload-img-info i.img-close-btn:hover {color:#888}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

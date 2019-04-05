@@ -1,0 +1,43 @@
+package kr.or.dev.talk.chat_con.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.talk.chat_con.model.ChatConVO;
+
+@Repository(value="chatConDao")
+public class ChatConDao implements ChatConDaoInf{
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public List<ChatConVO> getChatConList(int chat_no) {
+		return template.selectList("chatCon.getChatConList", chat_no);
+	}
+
+	@Override
+	public int insertChatCon(ChatConVO chatConVo) {
+		return template.insert("chatCon.insertChatCon", chatConVo);
+	}
+
+	@Override
+	public int getChatConSeq() {
+		return template.selectOne("chatCon.getChatConSeq");
+	}
+
+	@Override
+	public ChatConVO getChatCon(int chat_con_no) {
+		return template.selectOne("chatCon.getChatCon", chat_con_no);
+	}
+
+	@Override
+	public ChatConVO getChatConMax(int chat_no) {
+		return template.selectOne("chatCon.getChatConMax", chat_no);
+	}
+
+}

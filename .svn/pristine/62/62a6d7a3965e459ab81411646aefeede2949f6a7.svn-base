@@ -1,0 +1,350 @@
+package kr.or.dev.group.project.web;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.alim.model.AlimVO;
+import kr.or.dev.alim.service.AlimServiceInf;
+import kr.or.dev.group.box.model.BoxVO;
+import kr.or.dev.group.box.service.BoxServiceInf;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project.service.ProjectServiceInf;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.talk.chat.model.ChatVO;
+import kr.or.dev.talk.chat.service.ChatServiceInf;
+import kr.or.dev.talk.facechat.model.FaceChatVO;
+import kr.or.dev.talk.facechat.service.FaceChatServiceInf;
+import kr.or.dev.timeline.TimeLine;
+import kr.or.dev.timeline.basic.service.BasicServiceInf;
+import kr.or.dev.timeline.emoticon.model.EmoticonVO;
+import kr.or.dev.timeline.emoticon.service.EmoticonServiceInf;
+import kr.or.dev.timeline.schedule.service.ScheduleServiceInf;
+import kr.or.dev.timeline.task.service.TaskServiceInf;
+import kr.or.dev.timeline.todo.service.TodoServiceInf;
+import kr.or.dev.timeline.vote.service.VoteServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.member.service.MemberServiceInf;
+import kr.or.dev.user.partner.model.PartnerVO;
+import kr.or.dev.user.partner.service.PartnerServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("proController")
+@RequestMapping("/pro")
+public class ProjectController {
+	
+	// 회원
+	@Resource(name="memService")
+	private MemberServiceInf memService;
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;	
+	
+	// 프로젝트
+	@Resource(name="proService")
+	private ProjectServiceInf proService;
+	
+	// 프로젝트 참여자
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	// 보관함
+	@Resource(name="boxService")
+	private BoxServiceInf boxService;
+	
+	// 일반
+	@Resource(name="basicService")
+	private BasicServiceInf basicService;
+	
+	// 업무
+	@Resource(name="taskService")
+	private TaskServiceInf taskService;
+	
+	// 일정
+	@Resource(name="scheduleService")
+	private ScheduleServiceInf schdService;
+	
+	// 할일
+	@Resource(name="todoService")
+	private TodoServiceInf todoService;
+	
+	// 투표
+	@Resource(name="voteService")
+	private VoteServiceInf voteService;
+	
+	// 이모티콘
+	@Resource(name="emoService")
+	private EmoticonServiceInf emoService;
+	
+	//채팅
+	@Resource(name="chatService")
+	private ChatServiceInf chatService;
+	
+	//동료
+	@Resource(name="ptnService")
+	private PartnerServiceInf ptnService;
+	
+	//화상회의
+	@Resource(name="fcService")
+	private FaceChatServiceInf fcService;
+	
+	//알림
+	@Resource(name="alimService")
+	private AlimServiceInf alimService;
+		
+	/**
+	* Method : proMain
+	* 최초작성일 : 2018. 9. 5.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @return
+	* Method 설명 : 프로젝트 메인
+	*/
+	@RequestMapping("/main")
+	public String proMain(HttpSession session){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 회원의 프로젝트 조회
+		List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+		session.setAttribute("myProList", myProList);
+		
+		// 프로젝트 분류 정보
+		List<KindVO> kindList = kindService.getKindAllList();
+		session.setAttribute("kindList", kindList);
+		
+		// 보관함 정보
+		List<BoxVO> boxList = boxService.getBoxMyList(memVo.getMem_id());
+		session.setAttribute("boxList", boxList);
+		
+		// 채팅목록
+		List<ChatVO> getChatList = chatService.getChatList(memVo.getMem_id());
+		session.setAttribute("getChatList", getChatList);
+		
+		// 프로젝트 참여자 목록
+		List<ProjectUserVO> getMemProUserList = proUserService.getMemProUserList(memVo.getMem_id());
+		session.setAttribute("getMemProUserList", getMemProUserList);
+		
+		// 동료목록
+		List<PartnerVO> ptnMyList = ptnService.getPtnMyList(memVo.getMem_id());
+		session.setAttribute("ptnMyList", ptnMyList);
+		
+		// 전체 동료목록
+		List<MemberVO> memAllList = memService.getMemAllList(memVo.getMem_id());
+		session.setAttribute("memAllList", memAllList);
+		
+		// 알림 목록
+		List<AlimVO> alimList = alimService.getAlimList(memVo.getMem_id());
+		session.setAttribute("alimList", alimList);
+		
+		return "main";
+	}
+	
+	/**
+	* Method : proInsert
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param proVo
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 생성
+	*/
+	@RequestMapping("/insert")
+	public String proInsert(ProjectVO proVo, HttpSession session){		
+		
+		// pro_no 가져오기
+		int pro_no = proService.getProSeq();
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		proVo.setPro_no(pro_no);
+		proVo.setMem_id(memVo.getMem_id());
+		
+		int resultCnt = proService.insertPro(proVo);
+		if (resultCnt == 1) {
+			// 프로젝트 참여자
+			ProjectUserVO proUserVo = new ProjectUserVO();
+			proUserVo.setPro_no(pro_no);
+			proUserVo.setMem_id(memVo.getMem_id());
+			proUserVo.setPro_user_man_chk("y");
+			
+			// 프로젝트 참여자 등록
+			resultCnt = proUserService.insertProUser(proUserVo);
+			
+			if (resultCnt == 1) {
+				
+				session.setAttribute("msg", "프로젝트가 추가되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+			
+			return "redirect:/pro/detail?pro_no="+pro_no;
+			
+		}
+		return "redirect:/pro/main";
+	}
+	
+	/**
+	* Method : proUpdate
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param proVo
+	* @param model
+	* @return
+	* Method 설명 : 프로젝트 수정
+	*/
+	@RequestMapping("/update")
+	public String proUpdate(ProjectVO proVo, HttpSession session){
+		
+		int resultCnt = proService.updatePro(proVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "프로젝트가 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : proDelete
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트 삭제처리
+	*/
+	@RequestMapping("/delete")
+	public String proDelete(@RequestParam("pro_no")int pro_no, HttpSession session){
+		
+		int resultCnt = proService.deletePro(pro_no);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "프로젝트가 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");			
+		}		
+		return "redirect:/pro/main";
+	}
+	
+	/**
+	* Method : allPro
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @return
+	* Method 설명 : 전체 프로젝트 list 
+	*/
+	@RequestMapping("/all")
+	public String allPro(HttpSession session, Model model){
+		
+		model.addAttribute("what", "전체");
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 회원의 프로젝트 조회
+		List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+		model.addAttribute("myProList", myProList);
+		
+		return "projectList";
+	}
+	
+	/**
+	* Method : detailPro
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 상세 조회
+	*/
+	@RequestMapping("/detail")
+	public String detailPro(@RequestParam("pro_no")int pro_no, HttpSession session){
+		
+		// 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("pro_no", pro_no);
+		paramMap.put("mem_id", memVo.getMem_id());
+		
+		// 프로젝트 정보
+		ProjectVO proVo = proService.getProDetail(paramMap);
+		session.setAttribute("proVo", proVo);
+		
+		// 타임라인 정보
+		List<TimeLine> timeLineList = getTimeLineList(paramMap);
+		session.setAttribute("timeLineList", timeLineList);
+		
+		// 이모티콘 정보
+		List<EmoticonVO> emoList = emoService.getEmoAllList();
+		session.setAttribute("emoList", emoList);
+		
+		// 프로젝트 참여자 list
+		List<ProjectUserVO> proUserList = proUserService.getProUserList(pro_no);
+		session.setAttribute("proUserList", proUserList);
+		
+		// 해당 프로젝트의 보관유무를 확인할 수 있는 보관함 리스트
+		List<BoxVO> proBoxList = boxService.getProBoxList(paramMap);
+		session.setAttribute("proBoxList", proBoxList);
+		
+		// 해당 프로젝트의 화상회의 유무를 확인하는 목록
+		FaceChatVO fcVo = fcService.getFaceChatDetail(pro_no); 
+		session.setAttribute("fcVo", fcVo);
+		
+		// 알림 목록
+		List<AlimVO> alimList = alimService.getAlimList(memVo.getMem_id());
+		session.setAttribute("alimList", alimList);
+		
+		return "project";
+	}
+	
+	/**
+	* Method : getTimeLineList
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 해당 프로젝트의 타임라인 조회
+	*/
+	public List<TimeLine> getTimeLineList(Map<String, Object> paramMap){
+		
+		// 타임라인 List
+		List<TimeLine> timeLineList = new ArrayList<TimeLine>();
+		
+		timeLineList.addAll(basicService.getBasicProList(paramMap));
+		timeLineList.addAll(taskService.getTaskProList(paramMap));
+		timeLineList.addAll(schdService.getSchdProList(paramMap));
+		timeLineList.addAll(todoService.getTodoProList(paramMap));
+		timeLineList.addAll(voteService.getVoteProList(paramMap));
+		
+		Collections.sort(timeLineList);
+		
+		return timeLineList;		
+	}
+}

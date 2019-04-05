@@ -1,0 +1,54 @@
+package kr.or.dev.talk.chat.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.talk.chat.dao.ChatDaoInf;
+import kr.or.dev.talk.chat.model.ChatVO;
+
+@Service("chatService")
+public class ChatService implements ChatServiceInf {
+	
+	@Resource(name="chatDao")
+	private ChatDaoInf chatDao;
+
+	@Override
+	public List<ChatVO> getChatList(String mem_id) {
+		return chatDao.getChatList(mem_id);
+	}
+
+	@Override
+	public ChatVO getChatDetail(int chat_no) {
+		return chatDao.getChatDetail(chat_no);
+	}
+
+	@Override
+	public int insertChat(ChatVO chatVo) {
+		return chatDao.insertChat(chatVo);
+	}
+
+	@Override
+	public int updateChat(ChatVO chatVo) {
+		return chatDao.updateChat(chatVo);
+	}
+
+	@Override
+	public int deleteChat(int chat_no) {
+		return chatDao.deleteChat(chat_no);
+	}
+
+	@Override
+	public int getChatSeq() {
+		return chatDao.getChatSeq();
+	}
+
+	@Override
+	public List<ChatVO> getChatSearchList(Map<String, String> map) {
+		return chatDao.getChatSearchList(map);
+	}
+
+}

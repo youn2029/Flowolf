@@ -1,0 +1,35 @@
+package kr.or.dev.timeline.collection.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.timeline.collection.dao.CollectionDaoInf;
+import kr.or.dev.timeline.collection.model.CollectionVO;
+
+@Service("collService")
+public class CollectionService implements CollectionServiceInf {
+	
+	@Resource(name="collDao")
+	private CollectionDaoInf collDao;
+
+	@Override
+	public int insertColl(Map<String, Object> paramMap) {
+		return collDao.insertColl(paramMap);
+	}
+
+	@Override
+	public int deleteCollR(int coll_no) {
+		return collDao.deleteCollR(coll_no);
+	}
+
+	@Override
+	public List<CollectionVO> getCollMyList(String mem_id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

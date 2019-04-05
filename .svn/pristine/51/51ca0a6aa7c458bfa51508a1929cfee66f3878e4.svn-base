@@ -1,0 +1,36 @@
+package kr.or.dev.talk.facechat.service;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.talk.facechat.dao.FaceChatDaoInf;
+import kr.or.dev.talk.facechat.model.FaceChatVO;
+
+@Service(value="fcService")
+public class FaceChatService implements FaceChatServiceInf{
+	
+	@Resource(name="fcDao")
+	private FaceChatDaoInf fcDao;
+
+	@Override
+	public FaceChatVO getFaceChatDetail(int pro_no) {
+		return fcDao.getFaceChatDetail(pro_no);
+	}
+
+	@Override
+	public int insertFaceChat(FaceChatVO faceChatVo) {
+		return fcDao.insertFaceChat(faceChatVo);
+	}
+
+	@Override
+	public int deleteFaceChatR(int fc_no) {
+		return fcDao.deleteFaceChatR(fc_no);
+	}
+
+	@Override
+	public int getFaceChatSeq() {
+		return fcDao.getFaceChatSeq();
+	}
+
+}

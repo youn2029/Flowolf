@@ -1,0 +1,35 @@
+package kr.or.dev.talk.chat_user.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.talk.chat_user.model.ChatUserVO;
+
+@Repository("chatUserDao")
+public class ChatUserDao implements ChatUserDaoInf {
+
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	
+	@Override
+	public List<ChatUserVO> getChatUserList(int chat_no) {
+		return template.selectList("chatUser.getChatUserList", chat_no);
+	}
+
+	@Override
+	public int insertChatUser(ChatUserVO chatUserVo) {
+		return template.insert("chatUser.insertChatUser", chatUserVo);
+	}
+
+	@Override
+	public int deleteChatUserR(ChatUserVO chatUserVo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

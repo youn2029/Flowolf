@@ -1,0 +1,75 @@
+package kr.or.dev.common;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class Format {
+	
+	// yyyy-MM-dd 폼
+	public static String dateFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(date);
+	}
+	
+	// yyyy-MM-dd hh:mm 폼 
+	public static String timeFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm");
+		return sdf.format(date);
+	}
+	
+	// MM/dd 폼
+	public static String monthFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd");
+		return sdf.format(date);
+	}
+
+	
+	/**
+	* Method : minuteModi
+	* 최초작성일 : 2018. 9. 12.
+	* 작성자 : 김진영
+	* 변경이력 :
+	* @param date
+	* @param duty
+	* @return
+	* @throws ParseException
+	* Method 설명 : 알람 설정 메서드, 인자값으로 String date, 알람설정값인자 duty
+	*/
+	public static String notificationFormatter(String date, int duty)
+			throws ParseException {
+
+		// 현재시스템 시간값으로 캘린더 객체 생성
+		Calendar now = Calendar.getInstance();
+
+		// String 문자열을 date형으로 변환키위한 데이트포멧생성
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+		// String 변수값(sdf.parse(date)을 톨해 Date타입으로 변경됨)으로 캘린더를 setTime.
+		now.setTime(sdf.parse(date));
+
+		// 위에서 세팅된 값을 duty(알림설정값)로 변경 -> 캘린더값이 변경됨
+		// 현재는 분단위로 세팅(ex:-60 = 1시간전, -1440 = 1일전)
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH),
+				now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY),
+				now.get(Calendar.MINUTE) + duty);
+
+		// 캘린더에의 값을 각각의 변수에 저장
+		int year = now.get(Calendar.YEAR);
+		int month = now.get(Calendar.MONTH) + 1;
+		int day = now.get(Calendar.DAY_OF_MONTH);
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+		int minute = now.get(Calendar.MINUTE);
+
+		// return할 내용을 String 변수에 저장 
+		String reDate = year + "-" + ((month < 10) ? "0" : "") + month + "-"
+				+ ((day < 10) ? "0" : "") + day + " "
+				+ ((hour < 10) ? "0" : "") + hour + ":"
+				+ ((minute < 10) ? "0" : "") + minute;
+		
+		return reDate;
+	}
+	
+	
+}

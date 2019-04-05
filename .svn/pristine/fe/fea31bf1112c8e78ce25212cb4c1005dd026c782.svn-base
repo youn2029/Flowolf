@@ -1,0 +1,57 @@
+package kr.or.dev.group.box_project.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.box_project.service.BoxProjectServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@RequestMapping("/boxPro")
+@Controller("boxProController")
+public class BoxProjectController {
+
+	@Resource(name="boxProService")
+	private BoxProjectServiceInf boxProService;
+	
+	/**
+	* Method : boxProList
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @param box_no
+	* @param box_name
+	* @return
+	* Method 설명 : 보관함 프로젝트 참여자 list
+	*/
+	@RequestMapping("/list")
+	public String boxProList(HttpSession session
+						   , Model model
+						   , @RequestParam("box_no")int box_no
+						   , @RequestParam("box_name")String box_name){		
+		
+		model.addAttribute("what", box_name+" 보관함");
+		
+		// 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("mem_id", memVo.getMem_id());
+		paramMap.put("box_no", box_no);
+		
+		List<Map<String, Object>> myProList = boxProService.getBoxProList(paramMap);
+		model.addAttribute("myProList", myProList);
+		
+		return "projectList";
+	}
+}

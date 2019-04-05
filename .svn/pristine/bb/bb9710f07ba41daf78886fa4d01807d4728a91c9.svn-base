@@ -1,0 +1,94 @@
+package kr.or.dev.user.admin.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.board.post.model.PostVO;
+import kr.or.dev.board.post.service.PostServiceInf;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project.service.ProjectServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.member.service.MemberServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@RequestMapping("/adm")
+@Controller
+public class AdminController {
+
+	// 회원
+	@Resource(name="memService")
+	private MemberServiceInf memService;
+	
+	// 프로젝트
+	@Resource(name="proService")
+	private ProjectServiceInf proService;
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;
+	
+	// 게시판
+	@Resource(name="postService")
+	private PostServiceInf postService;
+		
+	@RequestMapping("/memList")
+	public String admMain(HttpSession session){
+		
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo");
+		
+		List<MemberVO> memAllList = memService.getMemAllList(memVo.getMem_id());
+		session.setAttribute("memAllList", memAllList);
+		
+		return "adminMemberlist";
+	}
+	
+	@RequestMapping("/proEdit")
+	public String proEdit(HttpSession session){
+		List<ProjectVO> proAllList = proService.getProAllList();
+		session.setAttribute("proAllList", proAllList);
+		
+		List<KindVO> kindAllList = kindService.getKindAllList();
+		session.setAttribute("kindAllList", kindAllList);
+		return "adminProjectEdit";
+	}
+	
+	@RequestMapping("/postList")
+	public String postList(@RequestParam(value="page", defaultValue="1") int page,
+					 	   @RequestParam(value="pageSize", defaultValue="10") int pageSize,
+					 	   @RequestParam(value="post_kind") String post_kind,
+					 	   HttpSession session,
+					 	   Model model){
+	
+		// page, pageSize parameter 확인
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("page", page);
+		paramMap.put("pageSize", pageSize);
+		paramMap.put("post_kind", post_kind);
+		
+		// 게시판 분류저장(insert시 필요)
+		session.setAttribute("post_kind", post_kind);
+		
+		// Map형으로 service에서 가져옴 
+		Map<String, Object> resultMap = postService.getPostPageList(paramMap);
+		
+		List<PostVO> postList = (List<PostVO>) resultMap.get("postList");
+		model.addAttribute("postList", postList);
+		
+		// 페이지 네이게이션 문자열
+		String pageNavi = (String) resultMap.get("pageNavi");
+		model.addAttribute("pageNavi", pageNavi);
+		
+		return "adminPostList";
+
+	}
+}

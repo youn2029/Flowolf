@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="files">
+
+	<!-- 첨부파일 추가 -->            
+	<insert id="insertFiles" parameterType="map">
+		INSERT INTO files (files_no
+							, files_name
+							, files_path
+							, files_upload
+							, files_time
+							, ${timeline_col}
+							, files_kind)
+			VALUES (files_no_seq.nextval
+			, #{files_name}
+			, #{files_path}
+			, #{files_upload}
+			, sysdate
+			, #{timeline_no}
+			, #{files_kind})
+	</insert>
+	
+	<!-- 첨부파일 삭제 -->          
+	<delete id="deleteFilesR" parameterType="int">
+		DELETE 
+		  FROM files 
+		 WHERE files_no = #{files_no}
+	</delete>
+	
+	<!-- 첨부파일 상세 조회 -->           
+	<select id="getFilesDetail" parameterType="int" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE files_no = #{files_no}
+	</select>
+	
+	<!-- 해당 글의 첨부파일 조회(일반, 업무, 댓글, 게시판)	-->      
+	<select id="getFilesList" parameterType="map" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE ${timeline_col} = #{timeline_no}
+	</select>
+	
+	<!-- 파일 검색 조회  -->    
+	<select id="getFilesSearchList" parameterType="map" resultType="filesVo">
+		SELECT *
+		  FROM files
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+	
+	<!-- 파일 번호 반환 -->
+	<select id="getFilesSeq" resultType="int">
+	  	 SELECT files_no_seq.nextval 
+	  	   FROM dual	
+	</select>
+	
+</mapper>

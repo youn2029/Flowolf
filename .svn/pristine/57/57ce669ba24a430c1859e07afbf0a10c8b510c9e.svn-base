@@ -1,0 +1,39 @@
+package kr.or.dev.talk.chat_file.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.talk.chat_file.model.ChatFileVO;
+
+@Repository("chatFileDao")
+public class ChatFileDao implements ChatFileDaoInf{
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+	
+
+	@Override
+	public List<ChatFileVO> getChatFileList(int chat_no) {
+		return template.selectList("chatFile.getChatFileList", chat_no);
+	}
+
+	@Override
+	public int insertChatFile(ChatFileVO chatFileVo) {
+		return template.insert("chatFile.insertChatFile", chatFileVo);
+	}
+
+	@Override
+	public ChatFileVO getChatFileDetail(int chat_file_no) {
+		return template.selectOne("chatFile.getChatFileDetail", chat_file_no);
+	}
+
+	@Override
+	public int getChatFileSeq() {
+		return template.selectOne("chatFile.getChatFileSeq");
+	}
+
+}

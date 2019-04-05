@@ -1,0 +1,38 @@
+package kr.or.dev.timeline.vote_item.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.timeline.vote_item.dao.VoteItemDaoInf;
+import kr.or.dev.timeline.vote_item.model.VoteItemVO;
+
+@Service("viService")
+public class VoteItemService implements VoteItemServiceInf {
+	
+	@Resource(name="viDao")
+	private VoteItemDaoInf viDao;
+
+	@Override
+	public int insertVi(VoteItemVO viVo) {
+		return viDao.insertVi(viVo);
+	}
+
+	@Override
+	public int updateVi(VoteItemVO viVo) {
+		return viDao.updateVi(viVo);
+	}
+
+	@Override
+	public int deleteVi(int vi_no) {
+		return viDao.deleteVi(vi_no);
+	}
+
+	@Override
+	public List<VoteItemVO> getViList(int vote_no) {
+		return viDao.getViList(vote_no);
+	}
+
+}

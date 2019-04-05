@@ -1,0 +1,38 @@
+package kr.or.dev.user.partner.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.partner.model.PartnerVO;
+
+@Repository("ptnDao")
+public class PartnerDao implements PartnerDaoInf {
+
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+	
+	@Override
+	public int insertPtn(PartnerVO ptnVo) {
+		return template.insert("ptn.insertPtn", ptnVo);
+	}
+
+	@Override
+	public int updatePtn(PartnerVO ptnVo) {
+		return template.update("ptn.updatePtn", ptnVo);
+	}
+
+	@Override
+	public List<PartnerVO> getPtnMyList(String mem_id) {
+		return template.selectList("ptn.getPtnMyList", mem_id);
+	}
+
+	
+
+	
+
+}

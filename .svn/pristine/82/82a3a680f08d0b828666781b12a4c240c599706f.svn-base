@@ -1,0 +1,92 @@
+package kr.or.dev.group.project.web;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project.service.ProjectServiceInf;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+@Controller("proController")
+@RequestMapping("/pro")
+public class ProjectController {
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;	
+	
+	// 프로젝트
+	@Resource(name="proService")
+	private ProjectServiceInf proService;
+	
+	// 프로젝트 참여자
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	/**
+	* Method : proMain
+	* 최초작성일 : 2018. 9. 5.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @return
+	* Method 설명 : 프로젝트 메인
+	*/
+	@RequestMapping("/main")
+	public String proMain(HttpSession session, Model model){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 회원의 프로젝트 조회
+		List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+		session.setAttribute("myProList", myProList);
+		
+		// 구분 조회
+		List<KindVO> kindList = kindService.getKindAllList();
+		session.setAttribute("kindList", kindList);
+		
+		return "main";
+	}
+	
+	@RequestMapping("/insert")
+	public String proInsert(ProjectVO proVo, HttpSession session){		
+		
+		// pro_no 가져오기
+		int pro_no = proService.getProSeq();
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		proVo.setPro_no(pro_no);
+		proVo.setMem_id(memVo.getMem_id());
+		
+		int resultCnt = proService.insertPro(proVo);
+		if (resultCnt == 1) {
+			// 프로젝트 참여자
+			ProjectUserVO proUserVo = new ProjectUserVO();
+			proUserVo.setPro_no(pro_no);
+			proUserVo.setMem_id(memVo.getMem_id());
+			proUserVo.setPro_user_man_chk("y");
+			
+			proUserService.insertProUser(proUserVo);
+		}
+		
+		
+		return "redirect:/login/login";
+	}
+}

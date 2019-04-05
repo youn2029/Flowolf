@@ -1,0 +1,142 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<form action="">
+
+	<!-- tab-con-box:s -->
+	<div class="tab-con-box">
+		<!-- 일정제목:s -->
+		<div class="input-box">
+			<input type="text" class="font-bold size-18" placeholder="일정 제목을 입력하세요." required="required">
+		</div>
+		<!-- 일정제목:f -->
+		
+		<!-- 일정 시간 설정:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="far fa-clock"></i></dt>
+				<dd>
+					<input type="text" id="datepickerS" class="date-input">
+					<select class="select-time marleft-10">
+						<option value="0000">00:00</option>
+						<option value="0030">00:30</option>
+						<option value="0100">01:00</option>
+						<option value="0130">01:30</option>
+						<option value="0200">02:00</option>
+						<option value="0230">02:30</option>
+						<option value="0300">03:00</option>
+						<option value="0330">03:30</option>
+						<option value="0400">04:00</option>
+						<option value="0430">04:30</option>
+						<option value="0500">05:00</option>
+					</select>
+					
+					<span class="marleft-20 maright-20">~</span>
+					
+					<input type="text" id="datepickerF" class="date-input">
+					<select class="select-time marleft-10">
+						<option value="0000">00:00</option>
+						<option value="0030">00:30</option>
+						<option value="0100">01:00</option>
+						<option value="0130">01:30</option>
+						<option value="0200">02:00</option>
+						<option value="0230">02:30</option>
+						<option value="0300">03:00</option>
+						<option value="0330">03:30</option>
+						<option value="0400">04:00</option>
+						<option value="0430">04:30</option>
+						<option value="0500">05:00</option>
+					</select>
+					
+					<div class="dis-inblock marleft-20">
+						<input type="checkbox" id="allTime" name="allTime">
+						<label for="allTime">종일</label>
+					</div>
+				</dd>
+			</dl>
+		</div>
+		<!-- 일정 시간 설정:f -->
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<input type="text" placeholder="장소를 입력하세요.">
+				</dd>
+			</dl>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					<textarea rows="2" cols="" placeholder="메모를 입력하세요."></textarea>
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					<select>
+						<option value="alarm-none">없음</option>
+						<option value="alarm-min-10">10분전 미리알림</option>
+						<option value="alarm-min-30">30분전 미리알림</option>
+						<option value="alarm-hour-1">1시간전 미리알림</option>
+						<option value="alarm-hour-2">2시간전 미리알림</option>
+						<option value="alarm-hour-3">3시간전 미리알림</option>
+						<option value="alarm-day-1">1일전</option>
+						<option value="alarm-day-2">2일전</option>
+						<option value="alarm-day-7">7일전</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+		
+	</div>
+	<!-- tab-con-box:f -->
+	
+	<!-- tab-dn-box:s -->
+	<div class="tab-dn-box">
+		<!-- 올리기(submit) 버튼 -->
+		<input type="submit" value="올리기" class="article-submit-btn float-right font-bold size-18 color-white text-center default-back-color">
+	</div>
+	<!-- tab-dn-box:f -->
+	
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+
+	// now date
+	var currentDate = new Date();
+	  
+	// set datepicker option
+	$("#datepickerS, #datepickerF").datepicker({
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+		monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+	}).datepicker("setDate", currentDate);
+	
+	// all time checked('종일' 체크했을 때)
+	$("#allTime").on("click", function(){
+		if($(this).prop("checked")){
+			$(".select-time").hide();
+		} else {
+			$(".select-time").fadeIn();
+		}
+	});
+});
+</script>

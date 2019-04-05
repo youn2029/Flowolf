@@ -1,0 +1,113 @@
+@charset "utf-8";
+
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css); /* noto-sans(본고딕) */
+@import url(//fonts.googleapis.com/earlyaccess/nanumgothic.css); /* Nanum Gothic(나눔고딕) */
+@import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css); /* Nanum Myeongjo(나눔명조) */
+
+
+/*******************************************
+* FLOWOLF Collection Custom Style
+* 팀명 : #DEV
+* 최초작성일 : 2018-09-28
+* 작성자 : UA(Kim ji su)
+*******************************************/
+
+
+/*******************************************
+*
+* Note : task all (전체 업무 / 프로젝트 업무)
+*
+*******************************************/
+.collection-left-wrap {padding:30px;background-color:#fff}
+
+
+
+/*******************************************
+*
+* Note : full schedule (전체 일정 / 프로젝트 일정)
+*
+*******************************************/
+
+/*******************************************
+* full schedule left content(프로젝트 제목 박스)
+*******************************************/
+
+
+
+/*******************************************
+* full schedule right content(프로젝트 제목 박스)
+*******************************************/
+.full-calendar-right {}
+
+/* 스케쥴 설정 리스트 */
+ul.schd-edit {display:block;width:100%;margin:0 0 20px 0;padding-bottom:20px;border-bottom:1px solid #ccc}
+ul.schd-edit li {width:100%;padding:7px 10px}
+ul.schd-edit li:hover {background-color:#d4d6d9}
+ul.schd-edit li label {margin-bottom:0}
+
+/* '내가 등록한 일정' check box before */
+.schd-my-check:not(:checked) + label:before,
+.schd-my-check:checked + label:before {
+	border:0;
+	background-color:#ee6d66;
+}
+
+/* '내가 등록한 일정' check box after:mark */
+.schd-my-check:not(:checked) + label:after,
+.schd-my-check:checked + label:after {
+	color:#fff !important;
+}
+
+/* '초대받은 일정' check box before */
+.schd-invite-check:not(:checked) + label:before,
+.schd-invite-check:checked + label:before {
+	border:0;
+	background-color:#f1c40f;
+}
+/* '초대받은 일정' check box after:mark */
+.schd-invite-check:not(:checked) + label:after,
+.schd-invite-check:checked + label:after {
+	color:#fff !important;
+}
+
+/* '내업무 / 요청한업무 / 전체업무' radio before */
+.schd-radio:checked + label:before,
+.schd-radio:not(:checked) + label:before {
+    top: 0px;
+}
+
+/* '내 업무 / 요청한 업무 / 전체 업무' radio after:mark */
+.schd-radio:checked + label:after,
+.schd-radio:not(:checked) + label:after {
+    top: 4px;
+}
+
+/* '내 업무' radio after:mark */
+.schd-my-radio:checked + label:after,
+.schd-my-radio:not(:checked) + label:after {
+	background: #746fcc;
+}
+
+/* '요청한 업무' radio after:mark */
+.schd-re-radio:checked + label:after,
+.schd-re-radio:not(:checked) + label:after {
+	background: #26de81;
+}
+
+/* '전체 업무' radio after:mark */
+.schd-all-radio:checked + label:after,
+.schd-all-radio:not(:checked) + label:after {
+	background: #45aaf2;
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,78 @@
+package kr.or.dev.board.post_reply.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.board.post_reply.model.PostReplyVO;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository("PostreplyDao")
+public class PostReplyDao implements PostReplyDaoInf {
+
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+	
+	/**
+	 * Method : getPostRepList
+	 * 최초작성일 : 2018. 9. 11.
+	 * 작성자 : 노미소
+	 * 변경이력 :
+	 * @param post_no
+	 * @return
+	 * Method 설명 : 게시글의 번호를 매개변수로 받아 해당 게시글의 댓글 리스트 반환 
+	 */
+	@Override
+	public List<PostReplyVO> getPostRepList(int post_no) {
+		List<PostReplyVO> repList = template.selectList("postreply.getRepList", post_no);
+		return repList;
+	}
+
+	/**
+	 * Method : insertPostRep
+	 * 최초작성일 : 2018. 9. 11.
+	 * 작성자 : 노미소
+	 * 변경이력 :
+	 * @param postRepVo
+	 * @return
+	 * Method 설명 : 게시글댓글의 객체를 매개변수로 받아 게시글댓글 등록
+	 */
+	@Override
+	public int insertPostRep(PostReplyVO postRepVo) {
+		int cnt = template.insert("postreply.insertRep", postRepVo);
+		return cnt;
+	}
+
+	/**
+	 * Method : updatePostRep
+	 * 최초작성일 : 2018. 9. 11.
+	 * 작성자 : 노미소
+	 * 변경이력 :
+	 * @param postRepVo
+	 * @return
+	 * Method 설명 : 게시글댓글의 객체를 매개변수로 받아 게시글댓글 수정
+	 */
+	@Override
+	public int updatePostRep(PostReplyVO postRepVo) {
+		int cnt = template.update("postreply.updateRep", postRepVo);
+		return cnt;
+	}
+	
+	/**
+	 * Method : deletePostRep
+	 * 최초작성일 : 2018. 9. 11.
+	 * 작성자 : 노미소
+	 * 변경이력 :
+	 * @param post_rep_no
+	 * @return
+	 * Method 설명 : 게시글댓글의 번호를 매개변수로 받아 해당 게시글댓글 삭제
+	 */
+	@Override
+	public int deletePostRep(int post_rep_no) {
+		int cnt = template.delete("postreply.deleteRep", post_rep_no);
+		return cnt;
+	}
+
+}

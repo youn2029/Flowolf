@@ -1,0 +1,38 @@
+package kr.or.dev.group.kind.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.group.kind.dao.KindDaoInf;
+import kr.or.dev.group.kind.model.KindVO;
+
+import org.springframework.stereotype.Service;
+
+@Service("kindService")
+public class KindService implements KindServiceInf {
+	
+	@Resource(name="kindDao")
+	private KindDaoInf kindDao;
+
+	@Override
+	public int insertKind(KindVO kindVo) {
+		return kindDao.insertKind(kindVo);
+	}
+
+	@Override
+	public int updateKind(KindVO kindVo) {
+		return kindDao.updateKind(kindVo);
+	}
+
+	@Override
+	public int deleteKind(int kind_no) {
+		return kindDao.deleteKind(kind_no);
+	}
+
+	@Override
+	public List<KindVO> getKindAllList() {
+		return kindDao.getKindAllList();
+	}
+
+}

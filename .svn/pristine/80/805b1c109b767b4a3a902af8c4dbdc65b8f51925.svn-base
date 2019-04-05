@@ -1,0 +1,685 @@
+package kr.or.dev.user.admin.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.board.post.model.PostVO;
+import kr.or.dev.board.post.service.PostServiceInf;
+import kr.or.dev.board.post_reply.model.PostReplyVO;
+import kr.or.dev.board.post_reply.service.PostReplyServiceInf;
+import kr.or.dev.encrypt.kisa.sha256.KISA_SHA256;
+import kr.or.dev.files.model.FilesVO;
+import kr.or.dev.files.service.FilesServiceInf;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project.service.ProjectServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+import kr.or.dev.user.member.service.MemberServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+@RequestMapping("/adm")
+@Controller
+public class AdminController {
+
+	// 회원
+	@Resource(name="memService")
+	private MemberServiceInf memService;
+	
+	// 프로젝트
+	@Resource(name="proService")
+	private ProjectServiceInf proService;
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;
+	
+	// 게시판
+	@Resource(name="postService")
+	private PostServiceInf postService;
+	
+	// 게시판 댓글
+	@Resource(name="postReplyService")
+	private PostReplyServiceInf postReplyService;
+	
+	// 첨부 파일
+	@Resource(name="filesService")
+	private FilesServiceInf filesService;
+	
+	@RequestMapping("/memList")
+	public String admMain(HttpSession session
+						, @RequestParam(value="page", defaultValue="1")int page
+						, @RequestParam(value="pageSize", defaultValue="20")int pageSize
+						, Model model){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo");
+		
+		// paramMap
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("page", page);
+		paramMap.put("pageSize", pageSize);
+		
+		// 전체 회원 페이지 조회
+		List<MemberVO> memAllList = memService.getMemPageAllList(paramMap);
+		session.setAttribute("memAllList", memAllList);
+		
+		int totCnt = memService.getMemAllCnt();
+		// 페이지네이션
+		String pageNavi = makePageNavi(page, pageSize, totCnt, "/adm/memList");
+		model.addAttribute("pageNavi", pageNavi);
+		
+		return "adminMemberlist";
+	}
+	
+	@RequestMapping("/proEdit")
+	public String proEdit(HttpSession session){
+		List<ProjectVO> proAllList = proService.getProAllList();
+		session.setAttribute("proAllList", proAllList);
+		
+		List<KindVO> kindAllList = kindService.getKindAllList();
+		session.setAttribute("kindAllList", kindAllList);
+		return "adminProjectEdit";
+	}
+	
+	@RequestMapping("/memUpdate")
+	public String memUpdate(MemberVO memvo, HttpSession session
+							,@RequestParam("mem_pic") MultipartFile file
+							,@RequestParam("mem_pass") String mem_pass) throws IllegalStateException, IOException, ServletException{
+		
+		MemberVO memVo = memService.getMemDetail(memvo.getMem_id());
+		memVo.setMem_name(memvo.getMem_name());
+		memVo.setMem_nick(memvo.getMem_nick());
+		memVo.setMem_phone(memvo.getMem_phone());
+		
+		
+		if(mem_pass != null && !(mem_pass.equals("12345678"))){
+			memVo.setMem_pw(KISA_SHA256.encrypt(mem_pass));
+		}
+		
+		
+		if(file != null){
+			String pic_path = "C:\\Flowolf\\profile";
+			String pic_upload = UUID.randomUUID().toString();
+			File file_upload = new File(pic_path + File.separator + pic_upload);
+			file.transferTo(file_upload);
+			
+			memVo.setMem_pic_name(file.getOriginalFilename());
+			memVo.setMem_pic_path(pic_path);
+			memVo.setMem_pic_upload(pic_upload);
+		}
+		
+		int cnt = memService.updateMem(memVo);
+		if(cnt > 0){
+			
+			session.setAttribute("msg", "회원 정보가 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/adm/memList";
+	}
+	
+	
+	
+	
+	@RequestMapping("/postList")
+	public String postList(@RequestParam(value="page", defaultValue="1") int page,
+					 	   @RequestParam(value="pageSize", defaultValue="10") int pageSize,
+					 	   @RequestParam(value="post_kind") String post_kind,
+					 	   HttpSession session,
+					 	   Model model){
+	
+		// page, pageSize parameter 확인
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("page", page);
+		paramMap.put("pageSize", pageSize);
+		paramMap.put("post_kind", post_kind);
+		
+		// 게시판 분류저장(insert시 필요)
+		session.setAttribute("post_kind", post_kind);
+		
+		// Map형으로 service에서 가져옴 
+		Map<String, Object> resultMap = postService.getPostPageList(paramMap);
+		
+		List<PostVO> postList = (List<PostVO>) resultMap.get("postList");
+		model.addAttribute("postList", postList);
+		
+		// 페이지 네이게이션 문자열
+		String pageNavi = makePageNavi(page, pageSize, (int)resultMap.get("totCnt"), post_kind);
+		model.addAttribute("pageNavi", pageNavi);
+		
+		return "adminPostList";
+
+	}
+	
+	@RequestMapping("/postDetail")
+	public String postDetail(@RequestParam("post_no") int post_no,
+							Model model){
+		PostVO postVo = postService.getPostDetail(post_no);
+		model.addAttribute("postVo", postVo);
+		
+		// 댓글 조회
+		List<PostReplyVO> postReplyList = postReplyService.getPostRepList(post_no);
+		model.addAttribute("postReplyList", postReplyList);
+		
+		// 첨부파일 조회 
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("timeline_col", "post_no");
+		paramMap.put("timeline_no", post_no);
+		
+		List<FilesVO> filesList = filesService.getFilesList(paramMap);
+		model.addAttribute("filesList", filesList);
+		
+		return "adminPostDetail";
+	}
+	
+	@RequestMapping("/insertView")
+	public String insertPostView(){
+		return "adminPostInsert";
+	}
+	
+	@RequestMapping("/insert")
+	public String insertPost(PostVO postVo,
+							 HttpSession session,
+							 Model model,
+							 @RequestParam(value="articleFile", required=false) List<MultipartFile> fileList) throws IllegalStateException, IOException {
+		// post_no 가져오기
+		int post_no = postService.getPostSeq();
+		postVo.setPost_no(post_no);
+		
+		// 회원정보 가져오기
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		postVo.setMem_id(memVo.getMem_id());
+		postVo.setMem_nick(memVo.getMem_nick());
+		
+		// 게시판 분류 저장
+		String post_kind = (String) session.getAttribute("post_kind");
+		postVo.setPost_kind(post_kind);
+		
+		// model 저장
+		model.addAttribute("postVo", postVo);
+		
+		// insert
+		int insertCnt = postService.insertPost(postVo);
+		
+		if(insertCnt > 0){
+			
+			String files_path = "C:\\Flowolf\\files";	// 파일 경로
+			String files_name = "";
+			String files_upload = UUID.randomUUID().toString();	// 파일 업로드명
+			String files_size = "";
+			Map<String, Object> paramMap;
+			
+			DecimalFormat df = new DecimalFormat("#,###.0");
+			DecimalFormat df1 = new DecimalFormat("#,###");
+			
+			// 첨부파일 List
+			if(fileList != null) {
+				for (MultipartFile artFile : fileList) {
+					
+					if (!artFile.isEmpty()) {				
+					
+						files_name = artFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = artFile.getSize();
+						files_size = df1.format(fileSize) + " byte";				
+						
+						if (Math.round(fileSize*10)/10 >= 1024) {
+							fileSize = fileSize/1024;
+							files_size = df.format(fileSize) + " KB";
+						}
+						if (Math.round(fileSize*10)/10 >= 1024) {			
+							files_size = df.format(fileSize/1024) + " MB";
+						}
+						
+						// paramMap setting
+						paramMap = new HashMap<String, Object>();
+						paramMap.put("files_name", files_name);
+						paramMap.put("files_path", files_path);
+						paramMap.put("files_upload", files_upload);
+						paramMap.put("files_size", files_size);
+						paramMap.put("timeline_col", "post_no");
+						paramMap.put("timeline_no", post_no);
+						paramMap.put("files_kind", "fil");
+						
+						int cnt = filesService.insertFiles(paramMap);
+						if (cnt == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							artFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+		}
+		
+		return "redirect:/adm/postDetail?post_no=" + post_no;
+		
+	}
+	
+	@RequestMapping("/updateView")
+	public String updatePostView(@RequestParam("post_no") int post_no, Model model){
+		PostVO postVo = postService.getPostDetail(post_no);
+		model.addAttribute("postVo", postVo);
+		
+		// 댓글 조회
+		List<PostReplyVO> postReplyList = postReplyService.getPostRepList(post_no);
+		model.addAttribute("postReplyList", postReplyList);
+		
+		// 첨부파일 조회 
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("timeline_col", "post_no");
+		paramMap.put("timeline_no", post_no);
+		
+		List<FilesVO> filesList = filesService.getFilesList(paramMap);
+		model.addAttribute("filesList", filesList);
+		
+		return "adminPostUpdate";
+	}
+	
+	@RequestMapping("/update")
+	public String updatePost(PostVO postVo, Model model,
+							@RequestParam(value="articleFile", required=false) List<MultipartFile> fileList,
+							@RequestParam(value="del_files_no", required=false) List<Integer> delFileList) throws IllegalStateException, IOException{
+		
+		// 파일 삭제
+		if (delFileList != null) {
+			for (Integer files_no : delFileList) {
+				filesService.deleteFilesR(files_no);
+			}			
+		}
+		
+		// update
+		int cnt = postService.updatePost(postVo);
+		
+		if(cnt > 0){
+			String files_path = "C:\\Flowolf\\files";	// 파일 경로
+			String files_name = "";
+			String files_upload = UUID.randomUUID().toString();	// 파일 업로드명
+			String files_size = "";
+			Map<String, Object> paramMap;
+			
+			DecimalFormat df = new DecimalFormat("#,###.0");
+			DecimalFormat df1 = new DecimalFormat("#,###");
+			
+			// 첨부파일 List
+			if(fileList != null) {
+				for (MultipartFile artFile : fileList) {
+					
+					if (!artFile.isEmpty()) {				
+					
+						files_name = artFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = artFile.getSize();
+						files_size = df1.format(fileSize) + " byte";				
+						
+						if (Math.round(fileSize*10)/10 >= 1024) {
+							fileSize = fileSize/1024;
+							files_size = df.format(fileSize) + " KB";
+						}
+						if (Math.round(fileSize*10)/10 >= 1024) {			
+							files_size = df.format(fileSize/1024) + " MB";
+						}
+						
+						// paramMap setting
+						paramMap = new HashMap<String, Object>();
+						paramMap.put("files_name", files_name);
+						paramMap.put("files_path", files_path);
+						paramMap.put("files_upload", files_upload);
+						paramMap.put("files_size", files_size);
+						paramMap.put("timeline_col", "post_no");
+						paramMap.put("timeline_no", postVo.getPost_no());
+						paramMap.put("files_kind", "fil");
+						
+						int cnt2 = filesService.insertFiles(paramMap);
+						if (cnt2 == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							artFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+		}
+		
+		return "redirect:/adm/postDetail?post_no=" + postVo.getPost_no();
+	}
+	
+	@RequestMapping("/delete")
+	public String postDelete(@RequestParam("timeline_no") int post_no, HttpSession session){
+		
+		// delete
+		int resultCnt = postService.deletePost(post_no);
+		
+		if (resultCnt == 1) {			
+			
+			session.setAttribute("msg", "글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		// 게시판 분류 불러오기
+		String post_kind = (String) session.getAttribute("post_kind");
+		
+		return "redirect:/adm/postList?post_kind=" + post_kind;
+	}
+	
+	/**
+	* Method : adminMemberChart
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @return
+	* Method 설명 : 회원 통계 페이지
+	*/
+	@RequestMapping("/memChart")
+	public String adminMemberChart(HttpSession session){
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		
+		List<MemberVO> memAllList = memService.getMemAllList(memVo.getMem_id());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		int janb = 0;
+		int febb = 0;
+		int marb = 0;
+		int aplb = 0;
+		int mayb = 0;
+		int junb = 0;
+		int julb = 0;
+		int augb = 0;
+		int sepb = 0;
+		int octb = 0;
+		int novb = 0;
+		int decb = 0;
+		int jank = 0;
+		int febk = 0;
+		int mark = 0;
+		int aplk = 0;
+		int mayk = 0;
+		int junk = 0;
+		int julk = 0;
+		int augk = 0;
+		int sepk = 0;
+		int octk = 0;
+		int novk = 0;
+		int deck = 0;
+		int jang = 0;
+		int febg = 0;
+		int marg = 0;
+		int aplg = 0;
+		int mayg = 0;
+		int jung = 0;
+		int julg = 0;
+		int augg = 0;
+		int sepg = 0;
+		int octg = 0;
+		int novg = 0;
+		int decg = 0;
+		
+		// 총 회원 가입자 수
+		int asum = memService.getMemAllCnt()-1;
+		
+		// 일반 회원 가입자 수
+		int bsum = memService.getMemHowjoinCnt("b")-1;
+		
+		// 카카오 회원 가입자 수
+		int ksum = memService.getMemHowjoinCnt("k");
+		
+		// 구글 회원 가입자 수
+		int gsum = memService.getMemHowjoinCnt("g");
+		
+		for(MemberVO mem : memAllList){
+			if(sdf.format(mem.getMem_date()).equals("2018-01") && mem.getMem_howjoin().equals("b")){
+				janb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-02") && mem.getMem_howjoin().equals("b")){
+				febb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-03") && mem.getMem_howjoin().equals("b")){
+				marb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-04") && mem.getMem_howjoin().equals("b")){
+				aplb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-05") && mem.getMem_howjoin().equals("b")){
+				mayb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-06") && mem.getMem_howjoin().equals("b")){
+				junb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-07") && mem.getMem_howjoin().equals("b")){
+				julb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-08") && mem.getMem_howjoin().equals("b")){
+				augb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-09") && mem.getMem_howjoin().equals("b")){
+				sepb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-10") && mem.getMem_howjoin().equals("b")){
+				octb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-11") && mem.getMem_howjoin().equals("b")){
+				novb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-12") && mem.getMem_howjoin().equals("b")){
+				decb++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-01") && mem.getMem_howjoin().equals("k")){
+				jank++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-02") && mem.getMem_howjoin().equals("k")){
+				febk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-03") && mem.getMem_howjoin().equals("k")){
+				mark++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-04") && mem.getMem_howjoin().equals("k")){
+				aplk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-05") && mem.getMem_howjoin().equals("k")){
+				mayk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-06") && mem.getMem_howjoin().equals("k")){
+				junk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-07") && mem.getMem_howjoin().equals("k")){
+				julk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-08") && mem.getMem_howjoin().equals("k")){
+				augk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-09") && mem.getMem_howjoin().equals("k")){
+				sepk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-10") && mem.getMem_howjoin().equals("k")){
+				octk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-11") && mem.getMem_howjoin().equals("k")){
+				novk++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-12") && mem.getMem_howjoin().equals("k")){
+				deck++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-01") && mem.getMem_howjoin().equals("g")){
+				jang++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-02") && mem.getMem_howjoin().equals("g")){
+				febg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-03") && mem.getMem_howjoin().equals("g")){
+				marg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-04") && mem.getMem_howjoin().equals("g")){
+				aplg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-05") && mem.getMem_howjoin().equals("g")){
+				mayg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-06") && mem.getMem_howjoin().equals("g")){
+				jung++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-07") && mem.getMem_howjoin().equals("g")){
+				julg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-08") && mem.getMem_howjoin().equals("g")){
+				augg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-09") && mem.getMem_howjoin().equals("g")){
+				sepg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-10") && mem.getMem_howjoin().equals("g")){
+				octg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-11") && mem.getMem_howjoin().equals("g")){
+				novg++;
+			}else if(sdf.format(mem.getMem_date()).equals("2018-12") && mem.getMem_howjoin().equals("g")){
+				decg++;
+			}
+		}
+		map.put("memAllList", memAllList);
+		map.put("asum", asum);
+		map.put("bsum", bsum);
+		map.put("ksum", ksum);
+		map.put("gsum", gsum);
+		
+		map.put("janb", janb);
+		map.put("febb", febb);
+		map.put("marb", marb);
+		map.put("aplb", aplb);
+		map.put("mayb", mayb);
+		map.put("junb", junb);
+		map.put("julb", julb);
+		map.put("augb", augb);
+		map.put("sepb", sepb);
+		map.put("octb", octb);
+		map.put("novb", novb);
+		map.put("decb", decb);
+		
+		map.put("jank", jank);
+		map.put("febk", febk);
+		map.put("mark", mark);
+		map.put("aplk", aplk);
+		map.put("mayk", mayk);
+		map.put("junk", junk);
+		map.put("julk", julk);
+		map.put("augk", augk);
+		map.put("sepk", sepk);
+		map.put("octk", octk);
+		map.put("novk", novk);
+		map.put("deck", deck);
+		
+		map.put("jang", jang);
+		map.put("febg", febg);
+		map.put("marg", marg);
+		map.put("aplg", aplg);
+		map.put("mayg", mayg);
+		map.put("jung", jung);
+		map.put("julg", julg);
+		map.put("augg", augg);
+		map.put("sepg", sepg);
+		map.put("octg", octg);
+		map.put("novg", novg);
+		map.put("decg", decg);
+		
+		session.setAttribute("map", map);
+		
+		return "adminMemberChart";
+	}
+	
+	private String makePageNavi(int page, int pageSize, int totCnt, Object post_kind){
+		
+		int cnt = totCnt / pageSize;
+		int mod = totCnt % pageSize;
+		
+		if (mod > 0) {
+			cnt++;
+		}
+		
+		StringBuffer pageNaviStr = new StringBuffer();
+		
+		// 페이지 전/후 넘기기
+		int prevPage = page == 1 ? 1 : page-1;
+		int nextPage = page == cnt ? page : page+1;
+		
+		// pagination previous arrow
+		String prevDisabledClass = "";
+		if (page==1) {
+			prevDisabledClass = "class=\"disabled\"";
+		}
+		pageNaviStr.append("<li " + prevDisabledClass + ">"
+				+ "<a href=\"/adm/postList?post_kind=" + post_kind + "&page=" + prevPage + "&pageSize=" + pageSize + "\" aria-label=\"Previous\">"
+						+ "<span aria-hidden=\"true\">&laquo;</span>"
+				+ "</a>"
+			+ "</li>");
+		
+		// pagination 숫자
+		for (int i = 1; i <= cnt; i++) {
+			String activeClass = "";
+			if (i == page) {
+				activeClass = "class=\"active\"";
+			}
+			pageNaviStr.append("<li " + activeClass + "><a href=\"/adm/postList?post_kind=" + post_kind + "&page=" + i + "&pageSize="+ pageSize + "\">" + i + "</a></li>");
+		}
+		
+		// pagination next arrow
+		String nextDisabledClass = "";
+		if (page==1) {
+			prevDisabledClass = "class=\"disabled\"";
+		}
+		pageNaviStr.append("<li " + nextDisabledClass + ">"
+				+ "<a href=\"/adm/postList?post_kind=" + post_kind + "&page=" + nextPage + "&pageSize=" + pageSize + "\" aria-label=\"Previous\">"
+						+ "<span aria-hidden=\"true\">&raquo;</span>"
+				+ "</a>"
+			+ "</li>");
+		
+		return pageNaviStr.toString();
+	}
+	
+	/**
+	* Method : makePageNavi
+	* 최초작성일 : 2018. 10. 10.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param page
+	* @param pageSize
+	* @param totCnt
+	* @param url
+	* @return
+	* Method 설명 : 회원과 프로젝트 페이지네이션
+	*/
+	private String makePageNavi(int page, int pageSize, int totCnt, String url){
+		
+		int cnt = totCnt / pageSize;
+		int mod = totCnt % pageSize;
+		
+		if (mod > 0) {
+			cnt++;
+		}
+		
+		StringBuffer pageNaviStr = new StringBuffer();
+		
+		// 페이지 전/후 넘기기
+		int prevPage = page == 1 ? 1 : page-1;
+		int nextPage = page == cnt ? page : page+1;
+		
+		// pagination previous arrow
+		String prevDisabledClass = "";
+		if (page==1) {
+			prevDisabledClass = "class=\"disabled\"";
+		}
+		pageNaviStr.append("<li " + prevDisabledClass + ">"
+				+ "<a href=\""+url+"?page=" + prevPage + "&pageSize=" + pageSize + "\" aria-label=\"Previous\">"
+						+ "<span aria-hidden=\"true\">&laquo;</span>"
+				+ "</a>"
+			+ "</li>");
+		
+		// pagination 숫자
+		for (int i = 1; i <= cnt; i++) {
+			String activeClass = "";
+			if (i == page) {
+				activeClass = "class=\"active\"";
+			}
+			pageNaviStr.append("<li " + activeClass + "><a href=\""+url+"?page=" + i + "&pageSize="+ pageSize + "\">" + i + "</a></li>");
+		}
+		
+		// pagination next arrow
+		String nextDisabledClass = "";
+		if (page==1) {
+			prevDisabledClass = "class=\"disabled\"";
+		}
+		pageNaviStr.append("<li " + nextDisabledClass + ">"
+				+ "<a href=\""+url+"?page=" + nextPage + "&pageSize=" + pageSize + "\" aria-label=\"Previous\">"
+						+ "<span aria-hidden=\"true\">&raquo;</span>"
+				+ "</a>"
+			+ "</li>");
+		
+		return pageNaviStr.toString();
+	}
+	
+}

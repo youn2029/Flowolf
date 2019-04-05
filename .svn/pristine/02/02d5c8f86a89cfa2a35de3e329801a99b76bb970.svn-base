@@ -1,0 +1,143 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<div class="timeline-content timeline-task con-task">
+
+	<!-- 업무명:s -->
+	<div class="input-box">
+		<input type="text" class="font-bold size-18" placeholder="업무명을 입력하세요." value="업무입니다. 빨리하세요." readonly>
+	</div>
+	<!-- 업무명:f -->
+		
+	<!-- 업무상태:s -->
+	<div class="input-box martop-15">
+		<dl>
+			<dt class="maright-20"><i class="fas fa-user-clock"></i></dt>
+			<dd>
+				<div class="task-state-list">
+					<label for="sRequest" class="checked">
+						요청<input type="radio" name="task-state" value="요청" id="sRequest" class="dis-none">
+					</label>
+					<label for="sPrograss">
+						진행<input type="radio" name="task-state" value="진행" id="sPrograss" class="dis-none">
+					</label>
+					<label for="sFeedback">
+						피드백<input type="radio" name="task-state" value="피드백" id="sFeedback" class="dis-none">
+					</label>
+					<label for="sComplete">
+						완료<input type="radio" name="task-state" value="완료" id="sComplete" class="dis-none">
+					</label>
+					<label for="sHold">
+						보류<input type="radio" name="task-state" value="보류" id="sHold" class="dis-none">
+					</label>
+				</div>
+			</dd>
+		</dl>
+	</div>
+	<!-- 업무상태:f -->
+		
+	<!-- 담당자:s -->
+	<div class="input-box martop-15" style="height:inherit">
+		<dl>
+			<dt class="maright-20"><i class="fas fa-user-plus"></i></dt>
+			<dd class="posi-re">
+				<input type="text" id="taskUser" placeholder="담당자 추가">
+				
+				<!-- 담당자 리스트 -->
+				<div class="task-user-list">
+				</div>
+				
+				<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):s -->
+				<div class="pro-user-list">
+					<!-- 아래 ".pro-user-info" 를 foreach 돌리면 됨 -->
+					<div class="pro-user-info">
+						<div class="pro-user-photo maright-10">
+							<i class="icon-circle circle-s"></i>
+							<img src="/image/user-pic-sample.png" onerror="this.src='/image/user-pic-sample.png'" width="40">
+						</div>
+						<span class="user-id">아이디</span>
+					</div>
+					<div class="pro-user-info">
+						<div class="pro-user-photo maright-10">
+							<i class="icon-circle circle-s"></i>
+							<img src="/image/user-pic-sample.png" onerror="this.src='/image/user-pic-sample.png'" width="40">
+						</div>
+						<span class="user-id">아이디2</span>
+					</div>
+				</div>
+				<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):f -->
+			</dd>
+		</dl>
+	</div>
+	<!-- 담당자:f -->
+		
+	<!-- 시작일:s -->
+	<div class="input-box martop-15 add-item-box">
+		<dl>
+			<dt class="maright-20"><i class="flow-icon icon-task icon-sDate"></i></dt>
+			<dd class="posi-re">
+				<label for="sdate" style="width:100%">
+					<span class="maright-15 font-normal color-gray-l">시작일설정</span>
+					<input type="date" id="sdate">
+				</label>
+			</dd>
+		</dl>
+	</div>
+	<!-- 시작일:f -->
+	
+	<!-- 마감일:s -->
+	<div class="input-box martop-15 add-item-box">
+		<dl>
+			<dt class="maright-20"><i class="flow-icon icon-task icon-fDate"></i></dt>
+			<dd class="posi-re">
+				<label for="fdate" style="width:100%">
+					<span class="maright-15 font-normal color-gray-l">마감일설정</span>
+					<input type="date" id="fdate">
+				</label>
+			</dd>
+		</dl>
+	</div>
+	<!-- 마감일:f -->
+	
+	<!-- 작업진척도:s -->
+	<div class="input-box martop-15 add-item-box">
+		<dl>
+			<dt class="maright-20"><i class="far fa-chart-bar"></i></dt>
+			<dd>
+				<div class="work-range">
+					<span class="work-percent"></span>
+					<div class="pcnt-bar"></div>
+					<div class="pcnt-btn pcnt-20"><span>20</span></div>
+					<div class="pcnt-btn pcnt-40"><span>40</span></div>
+					<div class="pcnt-btn pcnt-60"><span>60</span></div>
+					<div class="pcnt-btn pcnt-80"><span>80</span></div>
+					<div class="pcnt-btn pcnt-100"><span>100</span></div>
+				</div>
+			</dd>
+		</dl>
+	</div>
+	<!-- 작업진척도:f -->
+	
+	<!-- 우선순위:s -->
+	<div class="input-box martop-15 add-item-box">
+		<dl>
+			<dt class="maright-20"><i class="fas fa-flag"></i></dt>
+			<dd class="posi-re">
+				<input type="text" class="task-rank-input" placeholder="우선순위 선택" readonly>
+				<span class="task-rank"></span>
+				
+				<!-- 프로젝트 참여자 리스트(담당자 설정 리스트):s -->
+				<ul class="task-rank-list">
+					<li><i class="flow-icon rank-icon icon-low"></i>낮음</li>
+					<li><i class="flow-icon rank-icon icon-basic"></i>보통</li>
+					<li><i class="flow-icon rank-icon icon-high"></i>높음</li>
+					<li><i class="flow-icon rank-icon icon-emer"></i>긴급</li>
+				</ul>
+			</dd>
+		</dl>
+	</div>
+	<!-- 우선순위:f -->
+	
+	<button type="button" class="add-item-btn"><i class="fas fa-angle-down maright-10"></i> 추가 항목 입력</button>
+	
+</div>

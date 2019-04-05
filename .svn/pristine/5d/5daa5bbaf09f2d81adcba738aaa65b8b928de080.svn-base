@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<section class="col-md-10 admin-con-wrap">
+	
+	<!-- title -->
+	<div class="dis-block posi-re">
+		<strong class="dis-inblock size-30 color-black">공지사항</strong>
+		<span class="dis-inblock marleft-15 size-18 color-gray">Notice</span>
+		
+		<!-- search -->
+		<div class="mem-search-box">
+			<form action="">
+				<select class="flow-icon">
+					<option value="all">ALL</option>
+					<option value="noticeTit">제목</option>
+					<option value="noticeCon">내용</option>
+				</select>
+				<input type="text" name="" class="marleft-5" placeholder="검색할 내용을 입력하세요">
+				<button type="submit" class="default-back-color"><i class="fas fa-search color-white"></i></button>
+			</form>
+		</div>
+	</div>
+	
+	<!-- article list box:s -->
+	<div class="admin-content martop-20">
+		<table class="table table-hover">
+			<colgroup>
+				<col width="5%">
+				<col width="50%">
+				<col width="20%">
+				<col width="25%">
+			</colgroup>
+			<thead>
+				<tr>
+					<td>No</td>
+					<td>제목</td>
+					<td>작성자</td>
+					<td>작성일</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>추석연휴 FLOWOLF 고객센터 휴무 안내</td>
+					<td>GM.FLOWOLF</td>
+					<td>2018-09-21 08:00</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>FLOWOLF Ver.01 출시</td>
+					<td>GM.FLOWOLF</td>
+					<td>2018-09-01 08:00</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- article list box:f -->
+	
+</section>

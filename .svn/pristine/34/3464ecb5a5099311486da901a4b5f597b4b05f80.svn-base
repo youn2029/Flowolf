@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="box">
+
+	<!-- 회원별 보관함 조회 -->
+	<select id="getBoxMyList" parameterType="String" resultType="boxVo">
+		SELECT *
+		  FROM box
+		 WHERE mem_id = #{mem_id}
+		   AND box_del_chk = 'n'
+	  ORDER BY box_index ASC
+	</select>
+	
+	<!-- 보관함 조회순번 최대수 조회 -->
+	<select id="getBoxMaxIndex" parameterType="String" resultType="int">
+		SELECT count(*)
+		  FROM box
+		 WHERE mem_id = #{mem_id}
+	</select>
+	
+	<!-- 보관함 등록 -->
+	<insert id="insertBox" parameterType="boxVo">
+		INSERT INTO box (box_no, box_name, box_index, box_date, mem_id, box_del_chk)
+			VALUES (box_no_seq.nextval, #{box_name}, #{box_index}, sysdate, #{mem_id}, 'n')
+	</insert>
+	
+	<!-- 보관함 수정 -->
+	<update id="updateBox" parameterType="boxVo">
+		UPDATE box
+		   SET box_name = #{box_name}
+		     , box_index = #{box_index}
+		 WHERE box_no = #{box_no}		
+	</update>
+	
+	<!-- 보관함 삭제 -->
+	<update id="deleteBox" parameterType="int">
+		UPDATE box
+		   SET box_del_chk = 'y'
+		 WHERE box_no = #{box_no}
+	</update>
+	
+	<!-- 보관함 상세조회 -->
+	<select id="getBoxDetail" parameterType="int" resultType="boxVo">
+		SELECT *
+		  FROM box
+		 WHERE box_no = #{box_no}
+	</select>
+
+</mapper>

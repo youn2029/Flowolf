@@ -1,0 +1,112 @@
+package kr.or.dev.files.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.common.Format;
+import kr.or.dev.files.model.FilesVO;
+
+public interface FilesDaoInf {
+	
+	/**
+	* Method : insertFiles
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param filesVo
+	* @return
+	* Method 설명 : 첨부파일 추가
+	*/
+	int insertFiles(FilesVO filesVo);
+	
+	/**
+	* Method : deleteFilesR
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param files_no
+	* @return
+	* Method 설명 : 첨부파일 삭제
+	*/
+	int deleteFilesR(int files_no);
+	
+	/**
+	* Method : getFilesDetail
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param files_no
+	* @return
+	* Method 설명 : 첨부파일 상세 조회
+	*/
+	FilesVO getFilesDetail(int files_no);
+	
+	/**
+	* Method : getFilesBasicList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @return
+	* Method 설명 : 일반글의 첨부파일 조회
+	*/
+	List<FilesVO> getFilesBasicList(int basic_no);
+	
+	/**
+	* Method : getFilesTaskList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글의 첨부파일 조회
+	*/
+	List<FilesVO> getFilesTaskList(int task_no);
+	
+	/**
+	* Method : getFilesRepList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param rep_no
+	* @return
+	* Method 설명 : 댓글의 첨부파일 조회
+	*/
+	List<FilesVO> getFilesRepList(int rep_no);
+	
+	/**
+	* Method : getFilesPostList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param post_no
+	* @return
+	* Method 설명 : 게시글의 첨부파일 조회
+	*/
+	List<FilesVO> getFilesPostList(int post_no);
+	
+	/**
+	* Method : getFilesAllList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 전체 첨부파일 조회
+	*/
+	List<FilesVO> getFilesAllList(int pro_no);
+	
+	/**
+	* Method : getFilesSearchList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 파일 검색 조회
+	*/
+	List<FilesVO> getFilesSearchList(Map<String, String> searchMap);
+	
+
+
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="voteItemUser">
+
+	<!-- 투표항목을 선택한 회원 등록 -->
+	<insert id="insertViu" parameterType="viuVo">
+		INSERT INTO vote_item_user(vi_no, mem_id, viu_date)
+			VALUES(#{vi_no}, #{mem_id}, sysdate) 
+	</insert>
+	
+	<!-- 투표항목을 선택한 회원 삭제 -->
+	<delete id="deleteViu" parameterType="viuVo">
+		DELETE 
+		  FROM vote_item_user
+		 WHERE vi_no = #{vi_no}
+		   AND mem_id = #{mem_id}
+	</delete>
+	
+	<!-- 투표항목을 선택한 회원 list 조회 -->
+	<select id="getViuList" parameterType="int" resultType="viuVo">
+		SELECT *
+		  FROM vote_item_user 
+		 WHERE vi_no = #{vi_no}
+	</select>
+
+</mapper>

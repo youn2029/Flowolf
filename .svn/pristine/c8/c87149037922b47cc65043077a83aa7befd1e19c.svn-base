@@ -1,0 +1,264 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<style>
+.pop-con dl,
+.pop-con dl dt,
+.pop-con dl dd {float:left}
+.pop-con dl {width:100%;height:70px;padding:15px 0}
+.pop-con dl dt {width:40px;height:40px}
+.pop-con dl dd {
+	width:-webkit-calc(100% - 55px);
+	width:-moz-calc(100% - 55px);
+	width:-o-calc(100% - 55px);
+	width:calc(100% - 55px);
+	height:40px
+}
+.pop-con dl dd .invite-add-btn {
+	position:absolute;
+	top:5px;
+	right:0;
+	height:30px;
+	padding:0 15px;
+	line-height:30px;
+	border:1px solid #ccc
+}
+</style>
+
+<!-- right : s -->
+<!-- 이전화면으로 -->
+<div class="dis-block back-color-white text-center cursor-point prev">
+	<br>
+	<h4>이전화면</h4>
+	<br>
+</div>
+
+<!-- 파일함,업무,일정,할일,투표 -->
+<div class="dis-block back-color-white martop-15 text-center">
+	<br><br>
+	<h4>파일함 / 업무 / 일정 / 할일 / 투표</h4>
+	<br><br>
+</div>
+
+<!-- 초대하기 -->
+<div class="dis-block default-back-color color-white martop-15 text-center cursor-point invite">
+	<br>
+	<h4>초대하기</h4>
+	<br>
+</div>
+
+<!-- 참여자 리스트 -->
+<h5 class="martop-15">전체 참여자</h5>
+<div class="dis-block martop-10 back-color-white" style="padding:15px;">
+
+	<!-- 프로젝트 채팅 -->
+	<div class="default-back-color color-white cursor-point cursor-point text-center">
+		<br>
+		<h4>프로젝트 채팅</h4>
+		<br>
+	</div>
+	<!-- 프로젝트 화상채팅 -->
+	<div class="default-back-color color-white martop-15 cursor-point text-center">
+		<br>
+		<h4>화상회의</h4>
+		<br>
+	</div>
+	
+	<h5 class="color-gray size-16 martop-10">프로젝트 관리자</h5>
+	<div class="back-color-white">
+		<br><br><br>
+	</div>
+	
+	<h5 class="color-gray size-16 martop-10 padtop-10" style="border-top:1px solid #999">참여자</h5>
+	<div class="back-color-white">
+		<br><br><br>
+	</div>
+</div>
+<!-- right : f -->
+
+<!-- 초대하기  pop -->
+<div class="dim-layer">
+	<div class="dimBg"></div>
+	
+	<!-- 프로젝트 참여자 초대 : s -->
+	<div id="proUserList" class="pop-layer" style="display:block; width:500px;">
+		<!-- pop header -->
+		<header class="pop-top border-box">
+			초대하기
+			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+		</header>
+		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   			<!-- 선택한 유저목록이 나올 부분 -->
+   			<div class="select-user-list">
+   			</div>
+   			
+   			<!-- 유저목록 -->
+   			<dl class="posi-re cursor-point">
+   				<dt class="posi-re maright-15">
+	   				<i class="icon-circle circle-s"></i>
+					<img src="" width="40px">
+				</dt>
+   				<dd class="posi-re">
+   					<!-- name, nick, btn -->
+   					<strong class="dis-block size-18 color-black">이름</strong>
+   					<span class="dis-block martop-5 size-14 color-gray-l">닉네임</span>
+   					
+   					<!-- 추가버튼 -->
+   					<div class="invite-add-btn size-16 color-gray-l">
+   						<i class="fas fa-plus maright-15"></i>
+   						<span>추가</span>
+   					</div>
+   				</dd>
+   			</dl>
+   		</section>
+	</div>
+	<!-- 프로젝트 참여자 초대 : f -->
+	
+	<!-- Email invite pop : s -->
+	<div id="emailInvite" class="pop-layer invite-email-con" style="display:none; width:500px;">
+		<form action="/test/sendMail" method="post">
+			<!-- pop header -->
+			<header class="pop-top border-box">
+				초대하기
+				<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+			</header>
+			
+			<!-- pop con -->
+	   		<section class="pop-con border-box">
+	   			<div>
+		   			<input type="text" id="folderName" name="toEmail" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+		   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+	   			</div>
+	   			<div>
+		   			<input type="text" id="folderName" name="toEmail" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+		   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+	   			</div>
+	   			<div>
+		   			<input type="text" id="folderName" name="toEmail" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+		   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+	   			</div>
+	   			<div>
+		   			<input type="text" id="folderName" name="toEmail" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+		   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+	   			</div>
+	   			<div>
+		   			<input type="text" id="folderName" name="toEmail" class="pop-input" style="width:90%;" placeholder="example@flowolf.team">
+		   			<a class="input-delete martop-10 maright-10 float-right cursor-point">삭제</a>
+	   			</div>
+	   			<div class="martop-20">
+	   				<strong class="dis-block color-blue-l marleft-10 marbtm-10 size-14">[아래 내용은 편집하실 수 있습니다.]</strong>
+	   				<textarea name="email_con" placeholder="Flowolf로 업무관리, 채팅, 파일공유, 일정 공지를 한 곳에서! pc에서 사용해보세요."></textarea>
+	   			</div>
+	   			
+			</section>
+			
+			<!-- pop footer -->
+			<footer class="pop-footer border-box">
+				<input type="submit" name="" class="pop-btn submit-btn marleft-5 back-color-pupple-l" value="초대">
+			</footer>
+		</form>
+	</div>
+	<!-- Email invite pop : f -->	
+		
+	<!-- 초대하기 List pop : s -->
+	<div id="inviteList" class="pop-layer" style="display:none; width:500px">
+	
+   		<!-- pop header -->
+   		<header class="pop-top border-box text-center" style="background-color:transparent; height:120px">
+   			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+   			<strong class="dis-block size-24 color-black text-center" style="line-height:120px; border-bottom:1px solid #ccc">프로젝트 제목</strong>
+   		</header>
+   		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   			<div class="back-color-white cursor-point" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">동료 초대</strong>
+   				<strong class="dis-block size-12 color-gray-l">동료를 초대할 수 있습니다.</strong>
+   			</div>
+   			<div class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">프로젝트 참여자</strong>
+   				<strong class="dis-block size-12 color-gray-l">프로젝트를 함께 했던 사람을 초대할 수 있습니다.</strong>
+   			</div>
+   			<div id="emailInv" class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block dis-block size-24 color-gray">이메일로 초대장 발송</strong>
+   				<strong class="dis-block size-12 color-gray-l">초대장을 이메일로 발송할 수 있습니다</strong>
+   			</div>
+   			<div class="back-color-white cursor-point martop-10" style="height:70px; border:1px solid #999; border-radius: 10px;">
+   				<strong class="dis-block size-24 color-gray">초대 링크</strong>
+   				<strong class="dis-block size-12 color-gray-l">초대링크.....</strong>
+   			</div>
+		</section>
+	</div>
+	<!-- 초대하기 List pop : f -->
+	
+</div>
+
+<!-- prev form -->
+<form id="prev" action="/pro/main"></form>
+
+<script type="text/javascript">
+$(function(){
+	
+
+	// 이전으로
+	$(".prev").click(function(){
+		$("#prev").submit();
+	});
+
+	// 초대하기 
+	$(".invite").click(function(){
+// 		layer_popup("#inviteList");	
+// 		layer_popup("#emailInvite");
+		layer_popup("#proUserList");
+	});
+	
+// 	$("#emailInv").click(function(){
+// 		$(this).parents("#invite").css("display", "none");
+// 		$(this).parents("#invite").siblings(".invite-email-con").css("display", "block");
+// 	});
+	
+// 	$(".invite-email-con .btn-close").click(function(){
+// 		$(this).parents('.invite-email-con').css("display", "none");
+// 		$(this).parents('.invite-email-con').siblings(".invite-con").css("display", "block");
+// 	});
+
+	$(".input-delete").click(function(){
+		$(this).siblings("input").val("");
+	});
+
+
+	$(".pop-con dl").click(function(){
+		var item = $(this);
+		var name = item.children('dd').children('strong').text();
+		var nick = item.children('dd').children('span').text();
+		var addBtn = item.children('dd').children('.invite-add-btn');
+		var addBtnIcon = addBtn.children('i');
+		var userList = item.siblings('.select-user-list');
+		
+		userList.append(
+			"<div class=\"select-user-box\" data-id=\"" + nick + "\">"
+				+ "<div class=\"posi-re float-left maright-5\">"
+					+ "<i class=\"icon-circle circle-xs\"></i>"
+					+ "<img src=\"\" onerror=\"this.src='/image/user-pic-sample.png'\" width=\"24\">"
+				+ "</div>"
+				+ "<strong class=\"float-left size-14 color-black\">" + name + "</strong>"
+				+ "<i class=\"fas fa-times float-left marleft-10\"></i>"
+			+ "</div>"
+		);
+		addBtnIcon.removeClass('fa-plus');
+		addBtnIcon.addClass('fa-times');
+		addBtn.children('span').text('취소');
+		
+// 		userList.find(".select-user-box").each(function(){
+// 			if($(this).attr("data-id") == nick){
+// 				$(this).remove();
+// 			}
+// 		});
+	});
+	
+	
+});
+</script>
+

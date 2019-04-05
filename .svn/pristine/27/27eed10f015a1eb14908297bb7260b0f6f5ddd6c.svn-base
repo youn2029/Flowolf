@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mem">
+
+<!-- parameterType =>내가 직접 입력하는 값, String 타입으로 입력을 하는 것 
+     resultType    =>결과값,			 memVo 타입의 결과 -->	
+	
+	<!--회원가입생성(insert=create) -->
+	<insert id="insertMem" parameterType="memVo">
+		INSERT INTO member( mem_id,			    <!-- 이메일              -->
+							mem_name,		    <!-- 이름                -->
+							mem_nick,		    <!-- 닉네임              -->
+							mem_pw,		        <!-- 비밀번호            -->
+							mem_date,			<!-- 가입일              -->
+							mem_chk,			<!-- 활성화유무          -->
+							mem_alim_kind,	    <!-- 알림구분            -->
+							mem_pic_name,	    <!-- 프로필사진명        --> 
+							mem_pic_path,	    <!-- 프로필사진경로      -->
+							mem_pic_upload,	    <!-- 프로필업로드명	  -->
+							mem_phone,			<!-- 핸드폰번호          -->
+							mem_howjoin)	    <!-- 회원가입방법          -->    
+					VALUES(	#{mem_id},
+							#{mem_name},
+							#{mem_nick},
+							#{mem_pw},
+							sysdate,
+							'y',
+							'y',
+							#{mem_pic_name},
+							#{mem_pic_path},
+							#{mem_pic_upload},
+							#{mem_phone},
+							#{mem_howjoin} )       
+	</insert>
+	
+	<!--회원가입수정(update) 이름 닉네임 비번 프로필-->
+	<update id="updateMem" parameterType="memVo" >
+		UPDATE member 
+		   SET mem_name = #{mem_name}
+		     , mem_nick = #{mem_nick}
+		     , mem_pw = #{mem_pw}
+		     , mem_alim_kind = #{mem_alim_kind}
+		     , mem_pic_name = #{mem_pic_name}
+		     , mem_pic_path = #{mem_pic_path}
+		     , mem_pic_upload = #{mem_pic_upload}
+		 WHERE mem_id = #{mem_id}
+	</update>
+	
+	<!--비활성화(delete) -->
+	<update id="deleteMem" parameterType="String">
+		UPDATE member 
+		   SET mem_chk = 'n'
+		 WHERE mem_id = #{mem_id}
+	</update>
+	
+	<!-- 회원 상세보기 -->
+	<select id="getMemDetail" parameterType="String" resultType="memVo">
+		SELECT *
+		  FROM member
+		 WHERE mem_id = #{mem_id}
+	</select>
+	
+	<!-- 이메일 중복 검사 -->
+	<select id="chkMemId" parameterType="String" resultType="int">
+		SELECT count(*) 
+		  FROM member 
+		 WHERE mem_id = #{mem_id}   
+	</select>
+	
+	<!-- 닉네임 중복 검사 -->
+	<select id="chkMemNick" parameterType="String" resultType="int">
+		SELECT count(*) 
+		  FROM member 
+		 WHERE mem_nick = #{mem_nick}    
+	</select>
+	
+	<!-- 전체 회원 조회 -->
+	<select id="getMemAllList" resultType="memVo" parameterType="String"> 
+		SELECT a.*
+		  FROM (SELECT *  
+				  FROM member 
+				 WHERE mem_id not in #{mem_id}
+				 ORDER BY mem_date DESC) a
+		
+	</select>
+	
+	<!-- 회원 검색-->
+	<select id="getMemSearchList" parameterType="map" resultType="memVo">
+		SELECT * 
+		  FROM member 
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+	
+	<!-- 아이디 찾기(이름,핸드폰 번호) -->
+	<select id="findId" parameterType="map" resultType="String">
+		SELECT mem_id 
+		  FROM member 
+		 WHERE mem_name = #{mem_name}
+		   AND mem_phone = #{mem_phone}
+	</select>
+	
+	<!-- 비밀번호를 찾을때 회원 조회 -->
+	<select id="getMemChk" parameterType="map" resultType="String">
+		SELECT mem_id
+		  FROM member
+		 WHERE mem_name = #{mem_name}
+		   AND mem_id = #{mem_id}
+		   AND mem_phone = #{mem_phone}
+	</select>
+	
+	<!-- 관리자 -->
+	
+	<!-- 회원 페이지네이션 조회 -->
+	<select id="getMemPageAllList" parameterType="map" resultType="memVo">
+		SELECT *
+		  FROM (SELECT p.*
+		  			 , ROWNUM rn
+		     	  FROM (SELECT *
+		           		  FROM member
+		           		 WHERE mem_id not in 'admin' 
+		           	  ORDER BY mem_date DESC) p)
+		 WHERE rn BETWEEN (#{page}-1) * #{pageSize} + 1 AND #{page}*#{pageSize}
+	</select>
+	
+	<!-- 총 회원 수 조회 -->
+	<select id="getMemAllCnt" resultType="int">
+		SELECT count(*)
+		  FROM member
+	</select>
+	
+	<!-- 월별 가입자 수 조회 -->
+	<select id="getMemMonthCnt" parameterType="int" resultType="int">
+		SELECT count(*)
+		  FROM member
+		 WHERE TO_CHAR(mem_date, 'YYYYMM') = #{month}
+	</select>
+	
+	<!-- 가입 방법별 가입자 수 조회 -->
+	<select id="getMemHowjoinCnt" parameterType="String" resultType="int">
+		SELECT count(*)
+		  FROM member
+		 WHERE mem_howjoin = #{mem_howjoin}
+	</select>
+	
+</mapper>

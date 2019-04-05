@@ -1,0 +1,25 @@
+package kr.or.dev;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/test")
+public class TestController {
+	
+	@RequestMapping("/login")
+	public String loginTest(){
+		return "login/login";
+	}
+	
+	@RequestMapping("/main")
+	public String mainTest(){
+		return "main";
+	}
+	
+	@RequestMapping("/project")
+	public String projectTest(){
+		return "project";
+	}
+
+}

@@ -1,0 +1,232 @@
+package kr.or.dev.group.project.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.box.model.BoxVO;
+import kr.or.dev.group.box.service.BoxServiceInf;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project.service.ProjectServiceInf;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("proController")
+@RequestMapping("/pro")
+public class ProjectController {
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;	
+	
+	// 프로젝트
+	@Resource(name="proService")
+	private ProjectServiceInf proService;
+	
+	// 프로젝트 참여자
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	// 보관함
+	@Resource(name="boxService")
+	private BoxServiceInf boxService;
+	
+	/**
+	* Method : proMain
+	* 최초작성일 : 2018. 9. 5.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @return
+	* Method 설명 : 프로젝트 메인
+	*/
+	@RequestMapping("/main")
+	public String proMain(HttpSession session){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 회원의 프로젝트 조회
+		List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+		session.setAttribute("myProList", myProList);
+		
+		// 프로젝트 분류 정보
+		List<KindVO> kindList = kindService.getKindAllList();
+		session.setAttribute("kindList", kindList);
+		
+		// 보관함 정보
+		List<BoxVO> boxList = boxService.getBoxMyList(memVo.getMem_id());
+		session.setAttribute("boxList", boxList);
+		
+		// 채팅목록
+		
+		// 프로젝트 참여자 목록
+		
+		// 동료목록
+		
+		return "main";
+	}
+	
+	/**
+	* Method : proInsert
+	* 최초작성일 : 2018. 9. 13.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param proVo
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 생성
+	*/
+	@RequestMapping("/insert")
+	public String proInsert(ProjectVO proVo, HttpSession session){		
+		
+		// pro_no 가져오기
+		int pro_no = proService.getProSeq();
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		proVo.setPro_no(pro_no);
+		proVo.setMem_id(memVo.getMem_id());
+		
+		int resultCnt = proService.insertPro(proVo);
+		if (resultCnt == 1) {
+			// 프로젝트 참여자
+			ProjectUserVO proUserVo = new ProjectUserVO();
+			proUserVo.setPro_no(pro_no);
+			proUserVo.setMem_id(memVo.getMem_id());
+			proUserVo.setPro_user_man_chk("y");
+			
+			// 프로젝트 참여자 등록
+			resultCnt = proUserService.insertProUser(proUserVo);
+			
+			if (resultCnt == 1) {
+				
+				session.setAttribute("msg", "프로젝트가 추가되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+			
+			return "redirect:/pro/detail?pro_no="+pro_no;
+			
+		}
+		return "redirect:/pro/main";
+	}
+	
+	/**
+	* Method : proUpdate
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param proVo
+	* @param model
+	* @return
+	* Method 설명 : 프로젝트 수정
+	*/
+	@RequestMapping("/update")
+	public String proUpdate(ProjectVO proVo, HttpSession session){
+		
+		int resultCnt = proService.updatePro(proVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "프로젝트가 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : proDelete
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트 삭제처리
+	*/
+	@RequestMapping("/delete")
+	public String proDelete(@RequestParam("pro_no")int pro_no, HttpSession session){
+		
+		int resultCnt = proService.deletePro(pro_no);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "프로젝트가 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/main";
+		
+	}
+	
+	/**
+	* Method : allPro
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param model
+	* @return
+	* Method 설명 : 전체 프로젝트 list 
+	*/
+	@RequestMapping("/all")
+	public String allPro(HttpSession session, Model model){
+		
+		model.addAttribute("what", "전체");
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 회원의 프로젝트 조회
+		List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+		model.addAttribute("myProList", myProList);
+		
+		return "projectList";
+	}
+	
+	/**
+	* Method : detailPro
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 상세 조회
+	*/
+	@RequestMapping("/detail")
+	public String detailPro(@RequestParam("pro_no")int pro_no, HttpSession session){
+		
+		// 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("pro_no", pro_no);
+		paramMap.put("mem_id", memVo.getMem_id());
+		
+		// 프로젝트 정보
+		ProjectVO proVo = proService.getProDetail(paramMap);
+		session.setAttribute("proVo", proVo);
+		
+		// 프로젝트 참여자 list
+		
+		// 해당 프로젝트의 보관유무를 확인할 수 있는 보관함 리스트
+		List<BoxVO> proBoxList = boxService.getProBoxList(paramMap);
+		session.setAttribute("proBoxList", proBoxList);
+		
+		return "project";
+	}
+}

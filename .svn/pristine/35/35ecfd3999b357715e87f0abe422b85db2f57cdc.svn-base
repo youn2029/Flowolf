@@ -1,0 +1,197 @@
+/*******************************************
+* FLOWOLF CUSTOM JS
+* 팀명 : #DEV
+* 최초작성일 : 2018-09-10
+* 작성자 : UA(Kim ji su)
+*******************************************/
+
+
+
+/*******************************************
+* 
+* Category : Navigation Bar(aside MenuBar)
+* 
+*******************************************/ 
+
+/*******************************************
+* Note : navigation mouseOver event
+* 설명 : aside navigation(메뉴) 중 'MY FOLRDER'에
+* 		각 메뉴에 mouseOver시 'edit-box' show() & hide()
+*******************************************/ 
+function navOver(nav){
+	
+	var item = $(nav);
+	
+	item.on("mouseenter", function(){
+		$(this).find("div.edit-btn").show();
+	}).on("mouseleave", function(){
+		$(this).find("div.edit-btn").hide();
+	});
+
+}
+
+
+/*******************************************
+* 
+* Category : Project - to do (할일) 
+* 
+*******************************************/ 
+
+var conTodo = $('.con-todo');	// 할일 전체 wrap box
+var todoBox = conTodo.find('.todo-box');	// 할일 내용 박스
+var todoLength = todoBox.length;	// 할일 내용 개수(Default = 1)
+
+
+/*******************************************
+* Note : Date-picker
+* 설명 : '할 일' 달력아이콘을 눌렀을 때, 노출되는 Date-picker의 Option 설정
+*******************************************/
+
+// Create start date
+var start = new Date();
+
+function datePick(el){
+	
+	var item = $(el);
+	var datePickBox = item.siblings("div.date-pick-box");
+	var userList = item.parents(".todo-icon-box").find(".pro-user-list");
+	
+	if(datePickBox.css("display") == "none") {
+		datePickBox.fadeIn();
+		userList.fadeOut();
+	} else {
+		datePickBox.fadeOut();
+	}
+	
+	datePickBox.find(".datepicker--time").addClass("dis-none");
+	
+	datePickBox.children(".datepicker-here").datepicker({
+		timepicker: false,
+		language: 'ko',
+		startDate: start,
+		dateFormat: 'mm/dd',
+		minHours: 23,
+		minMinutes: 59,
+		onSelect: function (fd, d, picker) {
+			// Do nothing if selection was cleared
+			if (!d) {
+				item.addClass("flow-icon todo-icon icon-calendar-plus").css("width", "20px").html('');
+			} else {
+				item.html(fd);
+				
+				item.removeClass("flow-icon todo-icon icon-calendar-plus");
+				if(start > d){
+					item.removeClass("color-gray").addClass("color-red").css("width", "40px");
+				} else {
+					item.removeClass("color-red").addClass("color-gray").css("width", "40px");
+				}
+				
+				datePickBox.fadeOut();
+			}
+		}
+	});
+}
+
+
+
+/*******************************************
+* Note : Enter or Tab key event
+* 설명 : '할 일' input 에서 Enter or Tab 키를 눌렀을 때,
+* 		'할 일'내용을 복제하여 아래에 추가한다.
+*******************************************/
+function fn_keyDown(event){
+	var key = event.keyCode;
+	
+	if(key == "13" || key == "9") { // Enter or Tab 키 입력시
+		event.preventDefault(); // Enter 키 값 초기화(submit event reset)
+		
+		if(todoLength < 5){
+			
+			// 0번째 복사 >> 마지막으로 붙혀넣기
+			$(".con-todo dl").eq(0).clone().appendTo(".todo-box").addClass("eq-"+todoLength);
+			
+			// date pick box hide
+			$(".date-pick-box").hide();
+			
+			// user list box hide
+			$(".pro-user-list").hide();
+			
+			// date reset
+			$(".con-todo dl").last().find("#dateResult").val('');
+			$(".con-todo dl").last().find("#dateResult").addClass('flow-icon todo-icon icon-calendar-plus').css("width", "20px");
+			
+			// user(manager) select button reset
+			$(".con-todo dl").last().find(".user-add-btn i.icon-circle").addClass("dis-none");
+			$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").addClass("flow-icon todo-icon icon-user-plus");
+			$(".con-todo dl").last().find(".user-add-btn i.icon-circle").siblings("i").css({
+				"display" : "",
+				"width" : "",
+				"height" : "",
+				"margin-left" : "",
+				"background" : "",
+				"background-size" : "",
+				"background-positoin" : ""
+			});
+			
+			// 할일 내용 개수 + 1
+			todoLength += 1;
+		} else {
+			alert("할일은 5개까지만 등록 가능합니다.");
+		}
+	}
+}
+
+
+/*******************************************
+* Note : user(manager) add button clicked
+* 설명 : '할 일' 내용에서 담당자 추가 버튼(아이콘)을 클릭했을 때,
+* 		프로젝트 참가자 리스트가 보여진다.
+*******************************************/
+function addUser(el){
+	var item = $(el);
+	var userList = item.parent("div").siblings(".pro-user-list");
+	var userListAll = $(".pro-user-list").not(userList);
+	var datePickBox = item.parents(".todo-icon-box").find(".date-pick-box");
+	
+	userListAll.hide();
+	
+	if(userList.css("display") == "none"){
+		userList.fadeIn();
+		datePickBox.fadeOut();
+	} else {
+		userList.fadeOut();
+	}
+			
+}
+
+
+/*******************************************
+* Note : user(manager) clicked
+* 설명 : '할 일' 내용에서 담당자 선택시
+* 		선택한 담당자의 프로필사진이 담당자 추가 버튼(아이콘)에
+* 		background-image로 들어간다.
+*******************************************/
+
+function userSelect(el){
+	var item = $(el);
+	var userList = item.parents(".pro-user-list");
+	var iconCircle = userList.siblings("div.user-add-btn").children("i.icon-circle");
+	var userImgPlace = iconCircle.siblings("i");
+	var userImgSrc = item.children(".pro-user-photo").children("img").attr("src");
+	
+	iconCircle.removeClass("dis-none");	// 사진 이미지 원형으로 보이게 해주는 태그를 보이게 한 후,
+	userImgPlace.removeClass();	// 유저의 이미지가 들어갈 태그에 클래스들을 지워주고,
+	userImgPlace.css({
+		"display" : "block",
+		"overflow" : "hidden",
+		"width" : "24px",
+		"height" : "24px",
+		"background" : "url('" + userImgSrc + "') no-repeat",
+		"background-size" : "cover",
+		"background-position" : "center"
+	});	// 유저의 이미지가 들어가도록 style을 넣어준 후,
+	userList.fadeOut();	// 유저목록을 감춘다
+}
+
+
+

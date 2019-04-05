@@ -1,0 +1,315 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/datepicker.css">
+<script src="<%=request.getContextPath() %>/js/datepicker.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/datepicker.en.js"></script>
+<script src="<%=request.getContextPath() %>/js/datepicker.ko.js"></script>
+<script src="<%=request.getContextPath() %>/js/datepicker.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.datetimepicker.full.js"></script>
+
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmxDFvVfjjBQ0eWrQ2Pgv8odc0L8rbJU4&libraries=places&callback=initMap" async defer></script>
+<script>
+	function getSelectValue(frm) {
+		frm.textValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].text;
+		frm.optionValue.value = frm.selectBox.options[frm.selectBox.selectedIndex].value;
+	}
+</script>
+<script>
+(function(){
+	var poll = function(){
+		$.ajax({
+			url : '/schd/dbcheck', 	//요청 보내는 url
+			type : 'get',			//메서드 타입
+			dataType : 'json', 		//서버로부터 되돌려 받는 데이터타입 명시
+			data : 
+				{
+				"member_id" : "${vo.mem_id}"
+				},
+			success : function(data){
+				console.log(data.test);
+// 				console.log(data.string);
+// 				console.log(data.test.t2);
+				$('#t1').val(data.test.length);
+				for(var i=0 ; i<data.test.length ; i++){
+					$('#h'+(i+1)).html(data.test[i].schd_title);
+				}
+				console.log(data);	
+				if(data.test.length>0){
+					alert('현재 알림은'+data.test.length+'입니다');
+				}
+					
+			},
+			error:function(request, status, error){
+				console.log("[ajax error]");
+				console.log("code:"+request.status+"\n"+"message : "+request.responseText+"\n"+"error:"+error);
+			}
+		});	
+	};
+	poll();
+	
+	setInterval(function(){
+		poll();
+	}, 10000);
+})
+();
+	
+</script>
+<script>
+	function initMap() {
+		var map = new google.maps.Map(document.getElementById('map'), {
+			center : {
+				lat : -33.8688,
+				lng : 151.2195
+			},
+			zoom : 13
+		});
+		var input = document.getElementById('searchInput');
+		map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+		var autocomplete = new google.maps.places.Autocomplete(input);
+		autocomplete.bindTo('bounds', map);
+
+		var infowindow = new google.maps.InfoWindow();
+		var marker = new google.maps.Marker({
+			map : map,
+			anchorPoint : new google.maps.Point(0, -29)
+		});
+
+		autocomplete
+				.addListener(
+						'place_changed',
+						function() {
+							infowindow.close();
+							marker.setVisible(false);
+							var place = autocomplete.getPlace();
+							if (!place.geometry) {
+								window.alert("장소를 선택해주세요");
+								return;
+							}
+
+							// 지역정보가 있으면 맵에 표시하기
+							if (place.geometry.viewport) {
+								map.fitBounds(place.geometry.viewport);
+							} else {
+								map.setCenter(place.geometry.location);
+								map.setZoom(17);
+							}
+							marker.setIcon(({
+								url : place.icon,
+								size : new google.maps.Size(71, 71),
+								origin : new google.maps.Point(0, 0),
+								anchor : new google.maps.Point(17, 34),
+								scaledSize : new google.maps.Size(35, 35)
+							}));
+							marker.setPosition(place.geometry.location);
+							marker.setVisible(true);
+
+							var address = '';
+							if (place.address_components) {
+								address = [
+										(place.address_components[0]
+												&& place.address_components[0].short_name || ''),
+										(place.address_components[1]
+												&& place.address_components[1].short_name || ''),
+										(place.address_components[2]
+												&& place.address_components[2].short_name || '') ]
+										.join(' ');
+							}
+
+							infowindow.setContent('<div><strong>' + place.name
+									+ '</strong><br>' + address);
+							infowindow.open(map, marker);
+
+							$('#location').val(place.formatted_address);
+							$('#schd_lat').val(place.geometry.location.lat());
+							$('#schd_lon').val(place.geometry.location.lng());
+							console.log('위도'+place.geometry.location.lat());
+							console.log('경도'+place.geometry.location.lng());
+						});
+	}
+</script>
+</head>
+<body>
+	<div class="timeline-article con-schedule">
+	<div class="container">
+		<div class="schedule-header">
+			<dl>
+				<dt class="maright-15">
+					<span class="dis-block font-thin size-20 color-red text-center">${month }월</span>
+					<strong class="dis-block font-bold size-40 color-black text-center">${day }</strong>
+				</dt>
+				<dd class="font-bold size-20 color-black">${vo.schd_title }</dd>
+				<dd class="martop-10 font-bold size-16 color-black">${start } ~  ${end }</dd>
+			</dl>
+		</div>
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box">
+			<c:choose >
+				<c:when test="${vo.schd_loc != ''}">
+				<span>위치 : ${vo.schd_loc }</span>
+				<dl>
+					<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+					<dd>
+						<div class="dis-block marbtm-15">${vo.schd_loc }<a href="${callback }" target="google_blank" class="marleft-15">지도보기</a></div>
+						<div id="googleMap" class="dis-block">
+							<img src="${miniMap }">
+						</div>
+					</dd>
+				</dl>
+				</c:when>
+			</c:choose>
+			<br>
+			loc : ${vo.schd_loc }<br>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					
+					메모 : ${vo.schd_memo }
+					mem_id : ${vo.mem_id }
+					pro_no : ${vo.pro_no }
+					schd_no : ${vo.schd_no}
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15" style="border:0">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					${minute} 전 미리알림
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+$("#delchk").on("click", function(){
+		alert("삭제하시겠습니까?");
+	});
+});
+</script>
+<form action="/schd/delete">
+	<input type="submit" id="delchk" value="삭제처리버튼">
+	<input type="hidden" value="${vo.schd_no }" name="schd_no">
+	<input type="hidden" value="${vo.pro_no }" name="pro_no">
+	
+</form>
+
+<form action="redirect:/pro/detail?pro_no="+"${vo.pro_no }">
+	<input type="submit">
+</form>
+
+<!-- 수정버튼 -->
+<form action="/schd/update" class="article-edit-form">
+	<!-- article edit box:s -->
+	<div class="article-edit-box">
+		<input type="hidden" name="schd_no" value="${vo.schd_no }">
+		<input type="hidden" name="mem_id" value="${vo.mem_id}">
+		<input type="hidden" name="pro_no" value="${vo.pro_no}">
+		
+		<!-- 일정제목:s -->
+		<div class="input-box">
+			<input type="text" name="schd_title" class="font-bold size-18" value="${vo.schd_title }" required="required">
+		</div>
+		<!-- 일정제목:f -->
+		
+		<!-- 일정 시간 설정:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20">
+					<i class="far fa-clock"></i>
+				</dt>
+				<dd>
+					<input type="text" value="${start } - ${end}" data-range="true" data-multiple-dates-separator="   -   " class="datepicker-here" id="datetime" name="datetime" style="width: 100%" />
+				</dd>
+			</dl>
+		</div>
+		<!-- 일정 시간 설정:f -->
+		<script>
+			$('#datetime').datepicker({
+				timepicker : true,
+				language : 'ko',
+				startMinute : 0,
+				maxMinutes : 50,
+				minutesStep : 10
+			})
+		</script>
+		<!-- 위치 검색:s -->
+		<!-- 위치 검색:f -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<input id="searchInput" name ="schd_loc" class="controls" type="text" placeholder="${vo.schd_loc }" style="width:90%">
+					<div id="map"></div>
+					<input type="hidden" id="schd_lat" name="schd_lat" value="${vo.schd_lat }"> 
+					<input type="hidden" id="schd_start_time" name="schd_start_time" value="${start }">
+					<input type="hidden" id="schd_end_time" name="schd_end_time" value="${end}">
+					<input type="hidden" id="schd_lon" name="schd_lon" value="${vo.schd_lon }">
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					<textarea rows="2" cols="" name="schd_memo" >${vo.schd_memo }</textarea>
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					<select name="alert_time" onchange="getSelectValue(this.form);">
+						<option value="0">없음</option>
+						<option value="10">10분전 미리알림</option>
+						<option value="30">30분전 미리알림</option>
+						<option value="60">1시간전 미리알림</option>
+						<option value="120">2시간전 미리알림</option>
+						<option value="180">3시간전 미리알림</option>
+						<option value="1440">1일전</option>
+						<option value="2880">2일전</option>
+						<option value="10080">7일전</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+	<!-- article edit box:f -->
+	
+	<!-- article edit dn:s -->
+	<div class="article-edit-dn">		
+		<!-- submit & cancel 버튼 -->
+		<input type="submit" value="수정하기">
+		<input type="button" value="취소" onclick="fn_editCancel(this)" 
+		class="article-submit-btn maright-10 font-bold size-16 color-gray text-center back-color-white"
+		style="border:1px solid #ddd">
+	</div>
+	<!-- article edit dn:f -->
+</form>
+</body>
+</html>

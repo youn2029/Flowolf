@@ -1,0 +1,236 @@
+package kr.or.dev.timeline.basic.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.files.model.FilesVO;
+import kr.or.dev.files.service.FilesServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.timeline.basic.model.BasicVO;
+import kr.or.dev.timeline.basic.service.BasicServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+@Controller("basicController")
+@RequestMapping("/basic")
+public class BasicController {
+	
+	// basicService
+	@Resource(name="basicService")
+	private BasicServiceInf basicService;
+	
+	// filesService
+	@Resource(name="filesService")
+	private FilesServiceInf filesService;
+	
+	/**
+	* Method : basicInsert
+	* 최초작성일 : 2018. 9. 24.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basicVo
+	* @return
+	* Method 설명 : 일반글 등록
+	 * @throws IOException 
+	 * @throws IllegalStateException 
+	*/
+	@RequestMapping("/insert")
+	public String basicInsert(BasicVO basicVo
+							, HttpSession session
+							, @RequestParam("articleFile") List<MultipartFile> fileList
+							, @RequestParam("imageFile") List<MultipartFile> imgList) throws IllegalStateException, IOException{		
+		
+		// 일반글 시퀀스
+		int basic_no = basicService.getBasicSeq();
+				
+		// 일반글 등록
+		basicVo.setBasic_no(basic_no);
+		int resultCnt = basicService.insertBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			String files_path = "C:\\Flowolf\\files";	// 파일 경로
+			String files_name = "";
+			String files_upload = UUID.randomUUID().toString();	// 파일 업로드명
+			String files_size = "";
+			Map<String, Object> paramMap;
+			
+			// 첨부파일 List
+			for (MultipartFile artFile : fileList) {
+				
+				files_name = artFile.getOriginalFilename();		// 파일 이름
+				
+				// 파일 크기
+				double fileSize = artFile.getSize();
+				files_size = fileSize + " byte";
+				if (fileSize >= 1024) {
+					files_size = Math.round(fileSize*10)/10.0 + " KB";
+				}
+				if (fileSize >= 1024) {
+					files_size = Math.round(fileSize/1024.0*10)/10.0 + " MB";
+				}		
+				
+				// paramMap setting
+				paramMap = new HashMap<String, Object>();
+				paramMap.put("files_name", files_name);
+				paramMap.put("files_path", files_path);
+				paramMap.put("files_upload", files_upload);
+				paramMap.put("files_size", files_size);
+				paramMap.put("timeline_col", "basic_no");
+				paramMap.put("timeline_no", basic_no);
+				paramMap.put("files_kind", "fil");
+				
+				int cnt = filesService.insertFiles(paramMap);
+				
+				if (cnt == 1) {					
+					// 경로에 파일 저장
+					File uploadFile = new File(files_path+File.separator+files_upload);				
+					artFile.transferTo(uploadFile);					
+				}
+			}
+			
+			// ImageFile List
+			for (MultipartFile imgFile : imgList) {
+				
+				files_name = imgFile.getOriginalFilename();		// 파일 이름
+				
+				// 파일 크기
+				double fileSize = imgFile.getSize()/1024.0;
+				files_size = Math.round(fileSize*10)/10.0 + " KB";
+				if (fileSize >= 1000) {
+					files_size = Math.round(fileSize/1024.0*10)/10.0 + " MB";
+				}		
+				
+				// paramMap setting
+				paramMap = new HashMap<String, Object>();
+				paramMap.put("files_name", files_name);
+				paramMap.put("files_path", files_path);
+				paramMap.put("files_upload", files_upload);
+				paramMap.put("files_size", files_size);
+				paramMap.put("timeline_col", "basic_no");
+				paramMap.put("timeline_no", basic_no);
+				paramMap.put("files_kind", "img");
+				
+				int cnt = filesService.insertFiles(paramMap);
+				
+				if (cnt == 1) {					
+					// 경로에 파일 저장
+					File uploadFile = new File(files_path+File.separator+files_upload);				
+					imgFile.transferTo(uploadFile);					
+				}
+			}
+			
+			session.setAttribute("msg", "글이 등록되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	/**
+	* Method : basicFix
+	* 최초작성일 : 2018. 9. 28.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @param basic_fix_chk
+	* @return
+	* Method 설명 : 일반글 상단 고정
+	*/
+	@RequestMapping("/fix")
+	public String basicFix(@RequestParam("timeline_no")int basic_no
+						 , @RequestParam("fix_chk")String basic_fix_chk
+						 , HttpSession session){		
+		
+		// 일반글 정보
+		BasicVO basicVo = basicService.getBasicDetail(basic_no);
+		basicVo.setBasic_fix_chk(basic_fix_chk);	// 고정 유무
+		
+		// 일반글 수정
+		int resultCnt = basicService.updateBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			if (basic_fix_chk.equals("y")) {
+				session.setAttribute("msg", "상단에 고정되었습니다.");
+				session.setAttribute("className", "alert-warning");				
+			}else{
+				session.setAttribute("msg", "상단고정 해제되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	/**
+	* Method : basicUpdate
+	* 최초작성일 : 2018. 9. 28.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @param basic_cont
+	* @return
+	* Method 설명 : 일반글 수정 
+	*/
+	@RequestMapping("/update")
+	public String basicUpdate(@RequestParam("basic_no")int basic_no
+							, @RequestParam("basic_cont")String basic_cont
+							, HttpSession session){
+		
+		// 일반글 정보
+		BasicVO basicVo = basicService.getBasicDetail(basic_no);
+		basicVo.setBasic_cont(basic_cont);	// 일반글 내용
+		
+		// 일반글 수정
+		int resultCnt = basicService.updateBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	/**
+	* Method : basicDelete
+	* 최초작성일 : 2018. 9. 28.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param basic_no
+	* @return
+	* Method 설명 : 일반글 삭제
+	*/
+	@RequestMapping("/delete")
+	public String basicDelete(HttpSession session 
+							, @RequestParam("timeline_no")int basic_no){
+		
+		// 프로젝트 Vo
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 일반글 삭제
+		int resultCnt = basicService.deleteBasic(basic_no);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="coll">
+
+	<!-- 담아두기 시퀸스 조회-->
+	<select id="getCollSeq" resultType="int">
+		SELECT coll_no_seq.nextval
+		  FROM DUAL
+	</select>
+
+	<!-- 담아두기 추가 -->
+	<insert id="insertColl" parameterType="map">
+		INSERT INTO collection (coll_no, coll_date, mem_id, ${timeline_col})
+			VALUES (#{coll_no}, sysdate, #{mem_id}, #{timeline_no})
+	</insert>
+	
+	<!-- 담아두기 삭제 -->
+	<delete id="deleteCollR" parameterType="int">
+		DELETE
+		  FROM collection
+		 WHERE coll_no = #{coll_no}
+	</delete>
+	
+
+</mapper>

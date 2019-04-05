@@ -1,0 +1,21 @@
+package kr.or.dev.files.web;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.files.service.FilesServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller("filesController")
+@RequestMapping("/files")
+public class FilesController {
+
+	@Resource(name="filesService")
+	private FilesServiceInf filesService;
+	
+	@RequestMapping("/view")
+	public void filesView(){
+		
+	}
+}

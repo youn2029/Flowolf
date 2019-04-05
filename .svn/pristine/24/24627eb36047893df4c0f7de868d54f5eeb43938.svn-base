@@ -1,0 +1,45 @@
+package kr.or.dev.talk.facechat_user.model;
+
+import java.util.Date;
+
+public class FaceChatUserVO {
+	
+	private int fc_user_no;			// 화상회의참여자번호
+	private Date fc_user_date;		// 참여일
+	private String mem_id;			// 참여자ID	
+	private int fc_no;				// 화상회의번호
+
+	public int getFc_user_no() {
+		return fc_user_no;
+	}
+
+	public void setFc_user_no(int fc_user_no) {
+		this.fc_user_no = fc_user_no;
+	}
+
+	public Date getFc_user_date() {
+		return fc_user_date;
+	}
+
+	public void setFc_user_date(Date fc_user_date) {
+		this.fc_user_date = fc_user_date;
+	}
+
+	public String getMem_id() {
+		return mem_id;
+	}
+
+	public void setMem_id(String mem_id) {
+		this.mem_id = mem_id;
+	}
+
+	public int getFc_no() {
+		return fc_no;
+	}
+
+	public void setFc_no(int fc_no) {
+		this.fc_no = fc_no;
+	}
+
+	
+}

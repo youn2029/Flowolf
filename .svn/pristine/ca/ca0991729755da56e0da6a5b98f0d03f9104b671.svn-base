@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="emoUser">
+
+	<!-- 이모티콘 사용자 등록 -->
+	<insert id="insertEmoUser" parameterType="map">
+		INSERT INTO emoticon_user (emo_user_no, emo_user_date, emo_no, ${timeline_col}, mem_id)
+			VALUES (emo_user_no_seq.nextval, sysdate, #{emo_no}, #{timeline_no}, #{mem_id})
+	</insert>
+	
+	<!-- 이모티콘 사용자 삭제 -->
+	<delete id="deleteEmoUserR" parameterType="int">
+		DELETE
+		  FROM emoticon_user
+		 WHERE emo_user_no = #{emo_user_no}
+	</delete>
+	
+	<!-- 해당 글의 이모티콘 사용자 조회 -->
+	<select id="getEmoUserList" parameterType="Map" resultType="emoUserVo">
+		SELECT eu.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = eu.mem_id) as mem_nick
+		  FROM emoticon_user eu
+		 WHERE ${timeline_col} = #{timeline_no}
+	</select>
+
+</mapper>

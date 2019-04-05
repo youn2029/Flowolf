@@ -1,0 +1,75 @@
+package kr.or.dev.files.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.files.model.FilesVO;
+
+public interface FilesServiceInf {
+	
+	/**
+	* Method : insertFiles
+	* 최초작성일 : 2018. 9. 26.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 첨부파일 추가
+	*/
+	int insertFiles(Map<String, Object> paramMap);
+	
+	/**
+	* Method : deleteFilesR
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param files_no
+	* @return
+	* Method 설명 : 첨부파일 삭제
+	*/
+	int deleteFilesR(int files_no);
+	
+	/**
+	* Method : getFilesDetail
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param files_no
+	* @return
+	* Method 설명 : 첨부파일 상세 조회
+	*/
+	FilesVO getFilesDetail(int files_no);
+	
+	/**
+	* Method : getFilesList
+	* 최초작성일 : 2018. 9. 26.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 해당 글의 첨부파일 조회
+	*/
+	List<FilesVO> getFilesList(Map<String, Object> paramMap);
+		
+	/**
+	* Method : getFilesSearchList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 파일 검색 조회
+	*/
+	List<FilesVO> getFilesSearchList(Map<String, String> searchMap);
+
+	/**
+	* Method : getFilesSeq
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @return
+	* Method 설명 : 게시글 저장에 사용되는 게시글 번호 반환
+	*/
+	int getFilesSeq();
+
+}

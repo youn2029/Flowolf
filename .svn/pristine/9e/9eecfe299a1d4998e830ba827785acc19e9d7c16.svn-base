@@ -1,0 +1,132 @@
+package kr.or.dev.timeline.basic.web;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.timeline.basic.model.BasicVO;
+import kr.or.dev.timeline.basic.service.BasicServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("basicController")
+@RequestMapping("/basic")
+public class BasicController {
+	
+	// basicService
+	@Resource(name="basicService")
+	private BasicServiceInf basicService;
+	
+	/**
+	* Method : basicInsert
+	* 최초작성일 : 2018. 9. 24.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param basicVo
+	* @return
+	* Method 설명 : 일반글 등록
+	*/
+	@RequestMapping("/insert")
+	public String basicInsert(BasicVO basicVo, HttpSession session){
+		
+		// 일반글 등록
+		int resultCnt = basicService.insertBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 등록되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	/**
+	* Method : basicFix
+	* 최초작성일 : 2018. 9. 28.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @param basic_fix_chk
+	* @return
+	* Method 설명 : 일반글 상단 고정
+	*/
+	@RequestMapping("/fix")
+	public String basicFix(@RequestParam("timeline_no")int basic_no
+						 , @RequestParam("fix_chk")String basic_fix_chk
+						 , HttpSession session){		
+		
+		// 일반글 정보
+		BasicVO basicVo = basicService.getBasicDetail(basic_no);
+		basicVo.setBasic_fix_chk(basic_fix_chk);	// 고정 유무
+		
+		// 일반글 수정
+		int resultCnt = basicService.updateBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			if (basic_fix_chk.equals("y")) {
+				session.setAttribute("msg", "상단에 고정되었습니다.");
+				session.setAttribute("className", "alert-warning");				
+			}else{
+				session.setAttribute("msg", "상단고정 해제되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	/**
+	* Method : basicUpdate
+	* 최초작성일 : 2018. 9. 28.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @param basic_cont
+	* @return
+	* Method 설명 : 일반글 수정 
+	*/
+	@RequestMapping("/update")
+	public String basicUpdate(@RequestParam("basic_no")int basic_no
+							, @RequestParam("basic_cont")String basic_cont
+							, HttpSession session){
+		
+		// 일반글 정보
+		BasicVO basicVo = basicService.getBasicDetail(basic_no);
+		basicVo.setBasic_cont(basic_cont);	// 일반글 내용
+		
+		// 일반글 수정
+		int resultCnt = basicService.updateBasic(basicVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+basicVo.getPro_no();
+	}
+	
+	@RequestMapping("/delete")
+	public String basicDelete(HttpSession session 
+							, @RequestParam("timeline_no")int basic_no){
+		
+		// 프로젝트 Vo
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 일반글 삭제
+		int resultCnt = basicService.deleteBasic(basic_no);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+
+}

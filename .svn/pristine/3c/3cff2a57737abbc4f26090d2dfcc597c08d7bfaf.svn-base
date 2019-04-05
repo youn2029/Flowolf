@@ -1,0 +1,227 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+		<!-- custom style -->
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/common.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_color.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_font.min.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_margin.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_padding.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_chat_icon_popup.css">
+		
+		<style type="text/css">
+		dl dt, dl dd {float:left}
+		dl dt {margin-right:10px}
+		.invite-chk-btn {position:absolute;right:20px;top:15px}
+		</style>
+		
+		<!-- jQuery 3.3.1 -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		
+		<script type="text/javascript">
+		// chat, ptn, project user popup toggle
+		$(function(){
+			
+			$(".ptn-btn").on("click", function(){ // 동료 버튼 클릭
+				$("input[name='ptn']").prop("checked", false);
+				$(".ptn-box").css("display","block");
+				$(".pro-box").css("display","none");
+				$(".pop-search-input").css("display","inline");
+				$(".pop-search-input2").css("display","none");
+				$(".invate").css({'background':'#f7f7f7',
+					'color':'#a1a1a1',
+					'border-color':"#d2d2d2"});
+				$("#invite").val('초대');
+			});
+			
+			$(".pro-btn").on("click", function(){ // 프로젝트 유저 클릭
+				$("input[name='pro']").prop("checked", false);
+				$(".pro-box").css("display","block");
+				$(".ptn-box").css("display","none");
+				$(".pop-search-input").css("display","none");
+				$(".pop-search-input2").css("display","inline");
+				
+				$(".invate").css({'background':'#f7f7f7',
+					'color':'#a1a1a1',
+					'border-color':"#d2d2d2"});
+				$("#invite").val('초대');
+			});
+			
+	        $(".pop-search-input").keyup(function() {
+	            var k = $(this).val();
+	            $(".ptn-box .frind-box .frind-profile").hide();
+	            var temp = $(".ptn-box .frind-box .frind-profile .frind-info-box:contains('" + k + "')");
+
+	            $(temp).parent().show();
+	        });
+	        
+	        $(".pop-search-input2").keyup(function() {
+	            var k = $(this).val();
+	            $(".pro-box .frind-box .frind-profile").hide();
+	            var temp = $(".pro-box .frind-box .frind-profile .frind-info-box:contains('" + k + "')");
+
+	            $(temp).parent().show();
+	        });
+		});
+		</script>
+</head>
+
+
+<body style="background:#fff; overflow:hidden;">
+	<div id="create-chat-wrap">
+			<div class="header-top-wrap">
+				<div class="header-top">
+					<header>
+						<p>대화상대 초대</p>
+					</header>
+					<ul class="top">
+						<li class="ptn-btn liLeft" >동료</li>
+						<li class="pro-btn liRight">프로젝트참여자</li>
+					</ul>
+				</div>
+				
+				<!-- 파트너 -->
+				<div class="ptn-wrap" style="clear: both;">
+					<!-- 검색 -->
+					<div class="pop-search-box">
+						<div class="search-input-wrap">
+							<img src="/image/sear_icon.png" />
+							<input type="text" name="" class="pop-search-input" placeholder="이메일,닉네임 검색" style="display:inline">
+							<input type="text" name="" class="pop-search-input2" placeholder="이메일,닉네임 검색" style="display:none">
+						</div>
+				</div>
+			</div>
+		
+	
+			<div class="ptn-box" style="display:block">
+				<div class="frind-box">
+					<p class="title">전체 연락처</p>
+					<c:forEach items="${ptnMyList }" var="list">
+					<div class="posi-re frind-profile border-box">
+						<dl class="frind-info-box">
+							<dt>
+							<img src="/mem/pic?mem_id=${list.mem_id }" />
+							</dt>
+							<dd>
+								<span class="dis-block size-12 color-black">${list.mem_nick }</span>
+								<span class="dis-block size-11 color-gray">${list.mem_id }</span>
+								<input type="checkbox" id="${list.mem_id }" name="ptn" value="${list.mem_nick }" class="dis-none invite-chk-btn">
+								<label for="${list.mem_id }" class="crateChatLabel"></label>
+								
+								<!-- 체크박스 횟수 -->
+								<script>
+								$(document).ready(function(){
+									$("input[name='ptn']").prop("checked", false);
+								    $("#${list.mem_id}").change(function(){
+										var checked = $('input[name=ptn]:checked');
+										var count = checked.length;
+										
+								        if($("#${list.mem_id}").is(":checked")){
+								        	$("#invite").val(count+'명 초대');
+								        }else{
+								        	$("#invite").val(count+'명 초대');
+								        }
+								        
+								        if(count>0){
+											$(".invate").css({'background':'#5f5ab9', 
+													'border-color':'#5954ae',
+													'color':'#fff'});
+								        }else{
+								        	$(".invate").css({'background':'#f7f7f7',
+													'color':'#a1a1a1',
+													'border-color':"#d2d2d2"});
+								        	$("#invite").val('초대');
+								        }
+										
+								    });
+								});
+								</script>
+							</dd>
+						</dl>
+					</div>
+					</c:forEach>
+				</div>
+			</div>
+			<!-- 프로젝트 참여자들-->
+		
+			<div class="pro-box" style="display:none">
+				<div class="frind-box">
+					<p class="title">전체 연락처</p>
+					<c:forEach items="${getMemProUserList }" var="list">
+					<div class="posi-re frind-profile border-box">
+						<dl class="frind-info-box">
+							<dt><img src="/mem/pic?mem_id=${list.mem_id }" /></dt>
+							<dd>
+								<span class="dis-block size-12 color-black">${list.mem_nick }</span>
+								<span class="dis-block size-11 color-gray">${list.mem_id }</span>
+								<input type="checkbox" name="pro" value="${list.mem_nick }" id="${list.mem_nick }" class="dis-none invite-chk-btn">
+								<label for="${list.mem_nick }"  class="crateChatLabel"></label>
+								
+								<script>
+								$(document).ready(function(){
+									$("input[name='pro']").prop("checked", false);
+								    $("#${list.mem_nick}").change(function(){
+										var checked = $('input[name=pro]:checked');
+										var count = checked.length;
+										
+								        if($("#${list.mem_nick}").is(":checked")){
+								        	$("#invite").val(count+'명 초대');
+								        }else{
+								        	$("#invite").val(count+'명 초대');
+								        }
+								        
+								        if(count>0){
+											$(".invate").css({'background':'#5f5ab9', 
+													'border-color':'#5954ae',
+													'color':'#fff'});
+								        }else{
+								        	$(".invate").css({'background':'#f7f7f7',
+													'color':'#a1a1a1',
+													'border-color':"#d2d2d2"});
+								        	$("#invite").val('초대');
+								        }
+										
+								    });
+								});
+								</script>
+								
+							</dd>
+						</dl>
+					</div>
+					
+					
+					</c:forEach>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="btnWrap">
+		<input type="button" value="취소" id="cancel" class="uButton">
+		<input type="button" value="초대" id="invite" class="uButton invate">
+	</div>
+	
+	<script type="text/javascript">
+		$("#invite").on("click", function(){
+			if($(".invite-chk-btn:clicked")){
+				
+			}
+		});
+		
+		// 취소버튼 클릭시 팝업창 닫힘
+		$("#cancel").on("click", function(){
+			window.close();
+		})
+		
+		
+	</script>
+			
+</body>
+</html>

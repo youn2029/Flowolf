@@ -1,0 +1,49 @@
+package kr.or.dev.timeline.vote.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.timeline.vote.dao.VoteDaoInf;
+import kr.or.dev.timeline.vote.model.VoteVO;
+
+@Service("voteService")
+public class VoteService implements VoteServiceInf {
+	
+	@Resource(name="voteDao")
+	private VoteDaoInf voteDao;
+
+	@Override
+	public int insertVote(VoteVO voteVo) {
+		return voteDao.insertVote(voteVo);
+	}
+
+	@Override
+	public int updateVote(VoteVO voteVo) {
+		return voteDao.updateVote(voteVo);
+	}
+
+	@Override
+	public int deleteVote(int vote_no) {
+		return voteDao.deleteVote(vote_no);
+	}
+
+	@Override
+	public VoteVO getVoteDetail(int vote_no) {
+		return voteDao.getVoteDetail(vote_no);
+	}
+
+	@Override
+	public List<VoteVO> getVoteProList(int pro_no) {
+		return voteDao.getVoteProList(pro_no);
+	}
+
+	@Override
+	public List<VoteVO> getVoteSearchList(Map<String, String> searchMap) {
+		return voteDao.getVoteSearchList(searchMap);
+	}
+
+}

@@ -1,0 +1,60 @@
+package kr.or.dev.timeline.schedule.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.schedule.dao.ScheduleDaoInf;
+import kr.or.dev.timeline.schedule.model.ScheduleVO;
+
+import org.springframework.stereotype.Service;
+
+@Service("scheduleService")
+public class ScheduleService implements ScheduleServiceInf{
+
+	@Resource(name="schdDao")
+	private ScheduleDaoInf schdDao;
+	
+
+	@Override
+	public List<ScheduleVO> getSchdProList(int pro_no) {
+		return schdDao.getSchdProList(pro_no);
+	}
+
+	@Override
+	public int insertSchd(ScheduleVO schdVo) {
+		return schdDao.insertSchd(schdVo);
+	}
+
+	@Override
+	public int updateSchd(ScheduleVO schdVo) {
+		return schdDao.updateSchd(schdVo);
+	}
+
+	@Override
+	public int deleteSchd(int schd_no) {
+		return schdDao.deleteSchd(schd_no);
+	}
+
+	@Override
+	public ScheduleVO getSchdDetail(int schd_no) {
+		return schdDao.getSchdDetail(schd_no);
+	}
+
+	@Override
+	public int updateFix(ScheduleVO schdVo) {
+		return schdDao.updateFix(schdVo);
+	}
+
+	@Override
+	public List<ScheduleVO> getSchdSearchList(Map<String, String> searchMap) {
+		return schdDao.getSchdSearchList(searchMap);
+	}
+
+	@Override
+	public List<ScheduleVO> getSchdMyList(String mem_id) {
+		return schdDao.getSchdMyList(mem_id);
+	}
+
+}

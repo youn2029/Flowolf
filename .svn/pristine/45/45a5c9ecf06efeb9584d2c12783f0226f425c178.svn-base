@@ -1,0 +1,39 @@
+package kr.or.dev.alim.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.alim.model.AlimVO;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository("alimDao")
+public class AlimDao implements AlimDaoInf{
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public List<AlimVO> getAlimList(String mem_id) {
+		return template.selectList("alim.getAlimList", mem_id);
+	}
+
+	@Override
+	public AlimVO getAlimDetail(int alim_no) {
+		return template.selectOne("alim.getAlimDetail", alim_no);
+	}
+
+	@Override
+	public int insertAlim(Map<String, Object> map) {
+		return template.insert("alim.insertAlim", map);
+	}
+
+	@Override
+	public int updateAlim(int alim_no) {
+		return template.update("alim.updateAlim", alim_no);
+	}
+
+}

@@ -1,0 +1,981 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maxium-scale=1.0, minimum-scale=1.0, width=device-width"/>
+		<title>FLOWOLF</title>
+		
+		<!-- font-awesome css -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+		
+		<!-- kakao login js -->
+		<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+		
+		<!-- bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		
+		<!-- bootstrap-theme CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		
+		<!-- bootstrap JS -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		
+		<!-- jquery 3.3.1 -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		
+		<!-- custom style -->
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/common.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_color.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_font.min.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_margin.css">
+		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/style_padding.css">
+		
+		<!-- alert box css -->
+		<style type="text/css">
+		.alert-box {display:none;width:100%;top:45px;left:0;padding:10px;font-size:14px;color:#676767;border:1px solid #777;border-radius:5px;z-index:9999}
+		</style>
+		
+	</head>
+	<body>
+	
+		<!-- body-wrap-full:s -->
+		<div class="body-wrap-full">
+			<!-- body-wrap-basic:s -->
+			<div class="body-wrap-basic login-wrap">
+				
+				<!-- logo -->
+				<div class="login-logo marbtm-30">
+					<img src="/image/logo_b.png">
+				</div>
+				
+				<!-- login nav -->
+				<ul class="login-nav">
+					<li class="mem-Join-link default-back-color">회원가입</li>
+					<li class="find-id-link back-color-green">아이디</li>
+					<li class="find-pw-link back-color-red">비밀번호</li>
+				</ul>
+				
+				<!-- page script -->
+				<script type="text/javascript">
+				$(function(){
+					
+					// set
+					var $bodyWrap = $(".body-wrap-full")
+						, $loginNav = $bodyWrap.find("ul.login-nav")
+						, $signUpLink = $loginNav.find("li.mem-Join-link")
+						, $findIdLink = $loginNav.find("li.find-id-link")
+						, $findPwLink = $loginNav.find("li.find-pw-link")
+						, $logo = $bodyWrap.find(".login-logo img")
+						, $loginForm = $bodyWrap.find(".login-form")
+						, $signUpForm = $bodyWrap.find(".mem-join-form")
+						, $findIdForm = $bodyWrap.find(".find-id-form")
+						, $findPwForm = $bodyWrap.find(".find-pw-form");
+					
+					// logo click
+					$logo.on("click", function(){
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","block");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","none");
+					});
+					
+					// sign-up lick
+					$signUpLink.on("click", function() {
+						$signUpLink.animate({left:'20px'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","block");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","none");
+					});
+					
+					// find-id lick
+					$findIdLink.on("click", function() {
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'20px'}, 500);
+						$findPwLink.animate({left:'0'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","block");
+						$findPwForm.css("display","none");
+					});
+					
+					// find-pw lick
+					$findPwLink.on("click", function() {
+						$signUpLink.animate({left:'0'}, 500);
+						$findIdLink.animate({left:'0'}, 500);
+						$findPwLink.animate({left:'20px'}, 500);
+						
+						$loginForm.css("display","none");
+						$signUpForm.css("display","none");
+						$findIdForm.css("display","none");
+						$findPwForm.css("display","block");
+					});
+				});
+				</script>
+				
+				<!-- login form wrap box:s -->
+				<div class="login-box border-box">
+				
+					<!-- login:s -->
+					<form name="" action="/login/main" class="login-form">
+						<!-- id input -->
+						<div class="input-box dis-block border-box">
+							<input type="text" id="mem_id0" name="mem_id" placeholder="이메일 아이디">
+						</div>
+						
+						<!-- password input -->
+						<div class="input-box dis-block martop-20 border-box">
+							<input type="password" name="mem_pw" placeholder="비밀번호">
+						</div>
+
+						<!-- remember id -->
+						<div class="remember-box martop-20">
+							<input type="checkbox" id="rememberId" name="rememberId">
+							<label for="rememberId">아이디 기억</label>
+						</div>
+						
+						<!-- remember id script -->
+						<script type="text/javascript">
+							function getCookie(name){
+					    		var cookies = document.cookie;
+					    		
+					    		var cookieArr = cookies.split("; ");
+					    		var cookieResult = "";
+					    		
+					    		for(var i in cookieArr){
+					    			var cookie = cookieArr[i];
+					    			var cookieNameValue = cookie.split("=");
+					    			
+					    			var cookieName = cookieNameValue[0];
+					    			var cookieValue = cookieNameValue[1];
+					    			
+					    			if(name == cookieName){
+					    				cookieResult = cookieValue;
+					    				break;
+					    			}
+					    		}
+					    		return cookieResult;
+					    	}
+					    	
+					    	// 쿠키 추가
+					    	function setCookie(cookieName, cookieValue, expires){
+					    		var dt = new Date();
+					    		dt.setDate(dt.getDate() + parseInt(expires));
+					    		document.cookie = cookieName + "=" + cookieValue + "; path=/; expires=" + dt.toGMTString();
+					    	}
+					    	
+					    	// 쿠키 삭제
+					    	function deleteCookie(cookieName){
+						    	setCookie(cookieName, "", -1);	
+					    	}
+					    	
+					    	// 문서 로딩 완료후 실행
+					    	$(function(){
+					    		if(getCookie("rememberId") == "y"){
+						    		// userId input에 userId cookie 값을 설정
+						    		$(".login-form #mem_id").val(getCookie("mem_id"));
+						    		$("#rememberId").attr("checked", true);
+						    		$("#rememberId").val(getCookie("rememberId"));
+						    	}	
+					    		
+					    		// rememberId 체크박스 클릭이벤트
+					    		$("#rememberId").on("click", function(){
+					    			if($(this).is(":checked")){
+					    				// rememberMe cookie 설정
+					    				setCookie("rememberId", "y", 30);
+					    				setCookie("mem_id", $(".login-form #mem_id").val(), 30);
+					    			}else{
+					    				// 쿠키 제거
+					    				deleteCookie("rememberId");
+					    			}
+					    		});
+					    	});
+						</script>
+						
+						<!-- login btn -->
+						<button type="submit" name="loginBtn" class="login-btn dis-block martop-50 default-back-color">로그인</button>
+						
+						<!-- basic login script -->
+						<script type="text/javascript">
+						</script>	
+											
+						<!-- kakao login btn -->
+						<!-- 기본스크립트만 넣어놨으니 아래수정 후에 작업완료되면 이 주석은 지워주세요 -->
+						<a href="#" id="kakao-login-btn" class="login-btn login-kakao martop-10">
+							<i class="login-icon icon-talk">icon-talk</i>
+							카카오계정으로 로그인
+						</a>						
+						
+						<!-- kakao login script -->
+						<script type='text/javascript'>							
+						//<![CDATA[
+						    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+						    Kakao.init('YOUR APP KEY');
+						    // 카카오 로그인 버튼을 생성합니다.
+						    Kakao.Auth.createLoginButton({
+						    	container: '#kakao-login-btn',
+						    	success: function(authObj) {
+						    		alert(JSON.stringify(authObj));
+						    	},
+						    	fail: function(err) {
+						    		alert(JSON.stringify(err));
+						    	}
+							});
+						//]]>
+						</script>
+						
+						<!-- google login btn -->
+						<a href="#" class="login-btn login-google martop-10">
+							<i class="login-icon icon-google">icon-google</i>
+							구글계정으로 로그인
+						</a>
+						
+						<!-- google login scripte -->
+						<script type="text/javascript">
+						</script>
+					</form>
+					
+					<!-- login:f -->
+					
+					<!-- sign up:s -->
+					<script src="<%=request.getContextPath() %>/js/regEx.js"></script>
+					
+					<form name="memJoin" action="/member/memJoin" class="mem-join-form" style="display:none">
+					
+						<!-- profile photo -->
+						<div class="photo-box">
+							<!-- img box -->
+							<div class="img-box">
+								<i class="icon-circle"></i>
+								<img src="/image/user-pic-sample.png" class="profile-pic">
+							</div>
+							
+							<!-- file btn -->
+							<div class="file-btn-box">
+								<i class="fa fa-camera upload-btn"></i>
+								<input type="file" name="mem_pic_name" class="photo-upload" accept=".png, .jpg, .jpeg">
+							</div>
+						</div>
+						
+						<!-- photo image change script //-->
+						<!-- 건들지 마세요 -->
+						<script type="text/javascript">
+						$(document).ready(function() {
+						    var readURL = function(input) {
+						        if (input.files && input.files[0]) {
+						            var reader = new FileReader();
+		
+						            reader.onload = function (e) {
+						                $('.profile-pic').attr('src', e.target.result);
+						            }
+						            reader.readAsDataURL(input.files[0]);
+						        }
+						    }
+		
+						    $(".photo-upload").on('change', function(){
+						        readURL(this);
+						    });
+						    
+						    $(".upload-btn").on('click', function() {
+						       $(".photo-upload").click();
+						    });
+						});
+						</script>
+						<!--// photo image change script -->
+						
+						<!-- name input -->						
+						<div class="input-box dis-block martop-30 border-box">
+							<input type="text" id="mem_name1" name="mem_name" placeholder="이름"> <!-- required-->
+							<div class="posi-ab back-color-white alert-box">
+							</div>
+						</div>
+						<script type="text/javascript">
+						$(function() {
+							$("input#joinMem").on("click", function(){
+								alertPop("#mem_name1", nameReg, "이름을 정확히 입력해주세요");
+							});
+							
+						});
+						
+						function alertPop(id, reg, text){
+							var alertBox = $(id).next(".alert-box");
+							if($(id).val().length() == 0){
+								alertBox.html(text);
+								alertBox.fadeIn();
+								setTimeout(function(){alertBox.fadeOut()}, 5000);
+							}else if(!reg.test($(id).val())){
+								alertBox.html(text);
+								alertBox.fadeIn();
+								setTimeout(function(){alertBox.fadeOut()}, 5000);
+							}
+						}
+						</script>
+						
+						<!-- email id input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_id1" name="mem_id" placeholder="이메일 아이디">
+							<a id="Id_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a>
+						</div>
+						
+						<!-- password input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="password" id="mem_pw" name="mem_pw" placeholder="비밀번호">
+						</div>
+						
+						<!-- password check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="password" id="findPw" name="findPw" placeholder="비밀번호 확인">
+						</div>
+						
+						<!-- nick name input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_nick" name="mem_nick" placeholder="닉네임">
+							<a id="nick_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone1" name="mem_phone" placeholder="핸드폰 번호">
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+						
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="confirmCode1" name="confirmCode" placeholder="인증번호">
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<input type="submit" id="joinMem" name="joinMem" value="회원가입" class="submit-btn default-back-color martop-30">
+						
+						<script type="text/javascript">
+						$(function(){
+							/* 
+								이름,비밀번호,핸드폰번호,인증번호    = 공백,정규식
+								아이디,닉네임				  = 공백,정규식,중복
+								
+								이름,비밀번호,핸드폰번호,인증번호,아이디,닉네임
+							 */
+							
+							// 정규식
+							var nameReg = /^[가-힣]{2,4}$/; // 이름
+							var idReg =  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i; //이메일
+							var phoneNumReg = /^01([0|1|6|7|8|9]?)([0-9]{3,4})([0-9]{4})$/; // 핸드폰번호
+							var checkNumReg = Math.floor(Math.random()*99000-(88000-1)+88000); // 인증번호
+							var pwReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/; // 비밀번호 정규식(하나이상의 영문대문자,적어도 하나의 영문소문자, 하나 이상의 숫자, 하나 이상의 특수문자, 최소길이 8인치)
+							var nickReg = /^[ㄱ-ㅎ가-힣0-9]*$/; // 닉네임 정규식
+							
+							// 체크 버튼 클릭시 grey,red,green
+							$(function(){
+								$(".check-btn").on("click", function(){
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									$(this).addClass("color-green-l"); //맞으면 addgreen
+	 							});
+							});
+							
+							// 회원가입 버튼 클릭했을 때(submit button clicked)=> 이름,아이디,폰번,인증 = 공백,정규식 check
+							$('#joinMemSubmit').click(function(){ 
+								
+						      //방법1
+						      //var nameInput = $(".find-id-form #men_name");
+						  
+							  //방법2 (joinMemForm이것 하나를 명시해서 여러개 를 넣은 것..) 
+								var joinMemForm = $("form.join-mem-form"); // <form class="find-pw-form">
+								var nameInput = joinMemForm.find("#mem_name1"); // name input value
+								var idInput = joinMemForm.find("#mem_id1"); // id input value
+								var nickInput = joinMemForm.find("#mem_nick"); 
+								var pwInput = joinMemForm.find("#mem_pw"); 
+								var findPwInput = joinMemForm.find("#findPw"); 
+								var phoneInput = joinMemForm.find("#Phone_msgBtn"); // phone number input value
+								var phoneConfInput = joinMemForm.find("#Conf_chBtn"); // phone confirmCode mesg input value
+								
+								//이름, 이메일 아이디v, 비밀번호, 비밀번호 확인, 닉네임v, 핸드폰번호ㅁ, 인증번호v
+								if (nameInput.val().length == 0){                           //이름 공백 
+									alert("이름을 입력해 주세요");
+									nameInput.focus();
+									return false;  
+								} else if (!(nameInput.val().match(nameReg))){              //이름 정규식                               // 이름이 영문이 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_name").val();을 넣어야한다.
+									alert("2-4글자의 한글로만 입력해 주세요");
+									nameInput.focus();
+									return false;
+								} else if (idInput.val().length == 0) {                     //아이디 공백 
+									alert("아이디를 입력해주세요");
+									idInput.focus();
+									return false;
+								} else if (!(idInput.val().match(idReg))){         		    //아이디 정규식                               
+									alert("영문 대소문자와 숫자를 쓴 후 @mail주소를 입력해주세요");
+									idInput.focus();
+									return false;
+								} else if (pwInput.val().length == 0) {                     //비밀번호 공백 
+									alert("비밀번호를 입력해주세요");
+									pwInput.focus();
+									return false;
+								} else if (!(pwInput.val().match(pwReg))){         		    //비밀번호 정규식                               
+									alert("하나이상의 영문대문자,적어도 하나의 영문소문자, 하나 이상의 숫자, 하나 이상의 특수문자, 최소길이 8인치를 입력해주세요");
+									pwInput.focus();
+									return false;
+								} else if (findPwInput.val().length == 0) {                  //비밀번호확인 공백 
+									alert("비밀번호를 입력해주세요(확인)");
+									findPwInput.focus();
+									return false;
+								} else if (!(findPwInput.val().match(pwReg))){         		    //비밀번호확인 정규식                               
+									alert("하나이상의 영문대문자,적어도 하나의 영문소문자, 하나 이상의 숫자, 하나 이상의 특수문자, 최소길이 8인치를 입력해주세요");
+									findPwInput.focus();
+									return false;
+								} else if (!(pwInput.val()==findPwInput.val())) { 			// 비번일치하는지 체크 
+									alert("비밀번호가 일치하지 않습니다.");
+								} else if (nickInput.val().length == 0) {                  //닉네임 공백 
+									alert("닉네임을 입력해주세요");
+									nickInput.focus();
+									return false;
+								} else if (!(nickInput.val().match(nickReg))){   	       //닉네임  정규식                               
+									alert("11자리의 숫자로만 입력해주세요");
+									nickInput.focus();
+									return false;
+								} else if (phoneInput.val().length == 0) {                 //폰번 공백 
+									alert("핸드폰 번호를 입력해주세요"); 
+									phoneInput.focus();
+									return false;
+								} else if (!(phoneInput.val().match(phoneReg))){    	   //폰번 정규식                               
+									alert("11자리의 숫자로만 입력해주세요");
+									phoneInput.focus();
+									return false;
+								} else if (phoneConfInput.val().length == 0) { 			    //인증 공백
+									alert("인증번호를 입력해주세요");
+									phoneConfInput.focus();
+								} else if (!(phoneConfInput.val().match(phoneConfReg)))	{   //인증 정규식
+									alert("5자리의 숫자로만 입력해주세요");
+									phoneConfInput.focus();
+									return false;
+								} else {
+									alert("회원가입이 완료되었습니다");
+								}	
+								
+							});
+								
+							//회원가입 (이름,아이디 체크v)
+							$('.mem-join-form #Id_chBtn').on("click", function(){
+								var nameCheck= $(".mem-join-form #mem_name1").val(); // 입력한 이름를 Check하기 위해 가져옴 
+								var idCheck= $(".mem-join-form #mem_id1").val();     // 입력한 아이디를 Check하기 위해 가져옴 
+								
+								if (nameCheck.length==0){ 				 //이름 공백
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("이름을 입력해 주세요"); 
+									$('.mem-join-form #mem_name1').focus(); 
+									return false;  
+								}else if (!(nameCheck.match(phoneReg))){ //이름 정규식 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("2-4자리의 한글만 입력해주세요"); 
+									$('.mem-join-form #mem_name1').focus(); 
+									return false;
+								}else if (idCheck.length==0){ 	       //아이디 공백
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("아이디를 입력해 주세요"); 
+									$('.mem-join-form #mem_id1').focus(); 
+									return false;  
+								}else if (!(idCheck.match(idReg))){	   //아이디 정규식 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("아이디 조건에 맞게 입력해주세요"); 
+									$('.mem-join-form #mem_id1').focus(); 
+									return false;	
+								}else {
+									alert("해당 아이디 사용이 가능합니다."); 
+									return false;
+								}
+							}); 	
+							
+							//회원가입 (비밀번호, 닉네임 체크v)
+							$('.mem-join-form #nick_chBtn').on("click", function(){
+								var pwCheck = $(".mem-join-form #mem_pw").val(); // 입력한 ID를 Check하기 위해 가져옴 
+								var nickCheck = $(".mem-join-form #mem_nick").val(); // 입력한 nick을 Check하기 위해 가져옴 
+								
+								//ajax
+        						var nick = {mem_nick : $(".mem-join-form #mem_nick").val()};
+								alert("닉체크 : "+$(".mem-join-form #mem_nick").val());
+								
+								 
+						        $.ajax({
+						            async: true,     		 //비동기방식
+						            type : 'POST',			 //전송 방식 선택하기 GET도 가능
+						            data : mem_nick,    		 //전송할 데이터(KEY값)
+						            url : "/member/nickChk",    //전송할 주소,서버페이지
+						            dataType : "json", 		 //KEY값,VALUE값 개념
+						            contentType: "application/json; charset=UTF-8", //타잎
+						            
+						            success : function(data) {
+						            	alert(data);
+						            	if(data.cnt < 0){
+					                        alert("사용가능한 닉네임입니다.");
+					                   }else{
+					                	    alert("중복된 닉네임입니다.");
+					                   }
+						            },
+						            error : function(error) {
+						                alert("에러발생함.." + error);
+						            }
+						        });
+								
+								
+// 								if (hpCheck.length==0){ //아무값도 없을 때 
+// 									$(this).removeClass("color-grey"); //원래는 grey
+// 									$(this).addClass("color-red");     //틀리면 addred
+// 									alert("비밀번호를 입력해 주세요"); 
+// 									$('#mem_pw').focus(); 
+// 									return false;  
+// 								}else if (!(hpCheck.match(phoneReg))){ // 핸드폰번호가 숫자가 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+// 									$(this).removeClass("color-grey"); //원래는 grey
+// 									$(this).addClass("color-red");     //틀리면 addred
+// 									alert("비밀번호의 형식에 맞게 입력해주세요"); 
+// 									$('#mem_pw').focus(); 
+// 									return false;
+// 								}else if (nickCheck.length==0){ //아무값도 없을 때 
+// 									$(this).removeClass("color-grey"); //원래는 grey
+// 									$(this).addClass("color-red");     //틀리면 addred
+// 									alert("닉네임을 입력하세요"); 
+// 									$('#mem_nick').focus(); 
+// 									return false;  
+// 								}else if (!(nickCheck.match(nickReg))){ //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+// 									$(this).removeClass("color-grey"); //원래는 grey
+// 									$(this).addClass("color-red");     //틀리면 addred
+// 									alert("한글로만 별명을 입력해주세요"); 
+// 									$('#mem_nick').focus(); 
+// 									return false;
+// 								}else {
+// 									alert("닉네임은 '대덕'입니다."); 
+// 									$(this).removeClass("color-grey"); //원래는 grey
+// 									$(this).addClass("color-green-l"); //맞으면 addclass
+// 									$('#mem_nick').focus(); 
+// 									return false;
+// 								}
+
+							}); 	
+							
+							//회원가입 (핸드폰번호ㅁ)
+								$('.join-mem-form #Phone_msgBtn').on("click", function(){
+									var hpCheck = $(".join-mem-form #mem_phone1").val(); // 입력한 ID를 Check하기 위해 가져옴 
+									
+									if (hpCheck.length==0){ //아무값도 없을 때 
+										$(this).removeClass("color-grey"); //원래는 grey
+										$(this).addClass("color-red");     //틀리면 addred
+										alert("핸드폰 번호를 입력해 주세요"); 
+										$('.join-mem-form #mem_phone1').focus(); 
+										return false;  
+									}else if (!(hpCheck.match(phoneReg))){ // 핸드폰번호가 숫자가 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+										$(this).removeClass("color-grey"); //원래는 grey
+										$(this).addClass("color-red");     //틀리면 addred
+										alert("11개의 숫자로만 입력해주세요"); 
+										$('.join-mem-form #mem_phone1').focus(); 
+										return false;
+									}else {
+										$(this).removeClass("color-grey"); //원래는 grey
+										$(this).addClass("color-green-l"); //맞으면 addgreen
+										alert("인증번호 보내기를 성공했습니다"); 
+										$('.join-mem-form #confirmCode1').focus(); 
+										return false;
+									}
+								}); 	
+								
+							//회원가입 (인증번호 체크v) 
+							 $('.join-mem-form #PhoneCf_chBtn').on("click", function(){
+								var hpConfirm = $(".join-mem-form #confirmCode1").val();
+								
+								if (hpConfirm.length==0){ //아무값도 없을 때 
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("인증번호를 입력하세요"); 
+									$('.join-mem-form #confirmCode1').focus(); 
+									return false;  
+								}else if (!(hpConfirm.match(phoneConfReg))){ //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-red");     //틀리면 addred
+									alert("5개의 숫자로만 입력해주세요"); 
+									$('.join-mem-form #confirmCode1').focus(); 
+									return false;
+								}else {
+									alert("비밀번호는 '1234'입니다."); 
+									$(this).removeClass("color-grey"); //원래는 grey
+									$(this).addClass("color-green-l"); //맞으면 addclass
+									$('.join-mem-form #confirmCode1').focus(); 
+									return false;
+								}
+							});
+						    
+						}); //$(function(){ end
+						
+						</script>
+						
+						
+						<!-- 
+						check style script sample test //
+						이 부분은 샘플로 작성한 부분이니 작업시 삭제 후 중복확인에 대한 스크립트를 작성해주세요
+						<script type="text/javascript">
+						$(function(){
+							$(".check-btn").on("click", function(){
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								$(this).addClass("color-green-l"); //맞으면 addgreen
+ 							});
+						});
+						</script>
+						// check style script sample test
+					 	-->	
+						
+					</form>
+					<!-- sign up:f -->
+					
+					
+					<!-- 아이디 찾기 -->
+					<!-- find id:s -->
+					<form action="findId" class="find-id-form" style="display:none">
+						<!-- name input -->
+						<div class="input-box dis-block border-box">
+							<input type="text" id="mem_name2" name="mem_name" placeholder="이름">
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone2" name="mem_phone" placeholder="핸드폰 번호">
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+				
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="confirmCode2" name="confirmCode" placeholder="인증번호">
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<input type="button" id="findIdSubmit" name="findIdbtn" value="아이디 찾기" class="submit-btn default-back-color martop-30">
+					</form>
+					
+					<script type="text/javascript">
+					$(function(){
+						/*이름을 입력했는지, 정규식이 맞는지 아이디 찾기 버튼을 눌러서 함,
+						   핸드폰 번호가 비어있는지, 정규식이 맞는지 봉투 버튼을 눌러서 함,
+						   메시지 발송 (폰번호만! 맞아도
+						   임의의 숫자 발송(랜덤값..)하고 그것을 변수에 저장하고,
+						   인증번호체크 할때 변수값과 회원이 입력한 값을 비교해서 맞을 때 처리(체크가 파란색으로 바뀌게 해준다.)
+						   아이디 찾기를 눌렀을때 위에 조건이 전부다 했을 때
+						   컨트롤러로 넘겨서(넘어가서?) db에있는 아이디vo를 가져오게 함.
+						*/
+					    
+						// 정규식
+						var nameReg = /^[가-힣]{2,4}$/; // 이름
+						var phoneReg = /^01([0|1|6|7|8|9]?)([0-9]{3,4})([0-9]{4})$/; // 핸드폰번호
+						var phoneConfReg = Math.floor(Math.random()*99000-(88000-1)+88000); // 인증번호
+						
+						// 체크 버튼 클릭시 grey,red,green
+						$(function(){
+							$(".check-btn").on("click", function(){
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								$(this).addClass("color-green-l"); //맞으면 addgreen
+ 							});
+						});
+						
+	 					// 아이디 찾기 버튼 클릭했을 때(submit button clicked)=> 이름,폰번,인증 = 공백,정규식 check
+						$('#findIdSubmit').click(function(){ //클릭할 때마다 값이 아무것도 없는"idCheck"가 띄워지게 되는 것.
+							
+					      //방법1
+					      //var nameInput = $(".find-id-form #men_name");
+					  
+						  //방법2 (findIdForm이것 하나를 명시해서 여러개 를 넣은 것..) 
+							var findIdForm = $("form.find-id-form"); // <form class="find-id-form">
+							var nameInput = findIdForm.find("#mem_name2"); // name input value
+							var phoneInput = findIdForm.find("#mem_phone2"); // phone number input value
+							var phoneConfInput = findIdForm.find("#confirmCode2"); // phone confirmCode mesg input value
+							
+							if (nameInput.val().length == 0){                         //이름 공백 
+								alert("이름을 입력해 주세요");
+								nameInput.focus();
+								return false;  
+							} else if (!(nameInput.val().match(nameReg))){            //이름 정규식                               // 이름이 영문이 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_name").val();을 넣어야한다.
+								alert("2-4글자의 한글로만 입력해 주세요");
+								nameInput.focus();
+								return false;
+							} else if (phoneInput.val().length == 0) {                //폰번 공백 
+								alert("핸드폰 번호를 입력해주세요");
+								phoneInput.focus();
+								return false;
+							} else if (!(phoneInput.val().match(phoneReg))){    	   //폰번 정규식                               
+								alert("11자리의 숫자로만 입력해주세요");
+								phoneInput.focus();
+								return false;
+							} else if (phoneConfInput.val().length == 0) { 			   //인증 공백
+								alert("인증번호를 입력해주세요");
+								phoneConfInput.focus();
+							} else if (!(phoneConfInput.val().match(phoneConfReg)))	{  //인증 정규식
+								alert("5자리의 숫자로만 입력해주세요");
+								phoneConfInput.focus();
+								return false;
+							}	
+							
+						});
+							
+						//아이디 찾기(핸드폰 번호 입력) //이름, 폰번호의 정규식, 공백 두개 다 맞으면 녹색
+						$('.find-id-form #Phone_msgBtn').on("click", function(){
+							var nameCheck = $("#mem_name2").val();
+							var hpCheck = $("#mem_phone2").val(); // 입력한 ID를 Check하기 위해 가져옴 
+							
+							if (nameCheck.val().length == 0){                         //이름 공백 
+								alert("이름을 입력해 주세요");
+								$("#mem_name2").focus();
+								return false;  
+							} else if (!(nameCheck.val().match(nameReg))){            //이름 정규식                               // 이름이 영문이 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_name").val();을 넣어야한다.
+								alert("2-4글자의 한글로만 입력해 주세요");
+								$("#mem_name2").focus();
+								return false;
+							} else if (hpCheck.length==0){ 							  //핸드폰 번호 공백
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("핸드폰 번호를 입력해 주세요"); 
+								$('#mem_phone2').focus(); 
+								return false;  
+							} else if(!(hpCheck.match(phoneReg))){  				  //핸드폰 번호 정규식  //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("11개의 숫자로만 입력해주세요"); 
+								$('#mem_phone2').focus(); 
+								return false;
+							}
+						}); 	
+						
+						//임의의 숫자 발송(랜덤값..)하고 그것을 변수에 저장하고,
+	    				//인증번호체크 할때 변수값과 회원이 입력한 값을 비교해서 맞을 때 처리(체크가 파란색으로 바뀌게 해준다.)
+				  	    //아이디 찾기를 눌렀을때 위에 조건이 전부다 했을 때
+					    //컨트롤러로 넘겨서(넘어가서?) db에있는 아이디vo를 가져오게 함.
+					
+					    //아이디 찾기(인증번호 입력) // 폰에 온 인증번호랑 입력한 인증번호랑 같으면 녹색 
+						 $('.find-id-form #PhoneCf_chBtn').on("click", function(){
+							var hpConfirm = $("#confirmCode2").val();
+							
+							if (hpConfirm.length==0){ 			   		//인증번호 공백
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("인증번호를 입력하세요"); 
+								$('#confirmCode2').focus(); 
+								return false;  
+							} else if (!(hpConfirm.match(phoneConfReg))){ //인증번호 정규식 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("5개의 숫자로만 입력해주세요"); 
+								$('#confirmCode2').focus(); 
+								return false;
+							} else {
+								alert("아이디는 'nohmiso'입니다."); 
+								return false;
+							}
+						});
+					});
+						
+					</script>
+					
+					<!-- find id:f -->
+					
+					<!-- 비밀번호 찾기 -->
+					<!-- find password:s -->
+					<form action="findPw" class="find-pw-form" style="display:none">
+						<!-- name input -->
+						<div class="input-box dis-block border-box">
+							<input id="mem_name" type="text" name="mem_name" placeholder="이름">
+						</div>
+						
+						<!-- id input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input id="mem_id" type="text" name="mem_id" placeholder="이메일 아이디">
+						</div>
+						
+						<!-- phone number input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" id="mem_phone" name="mem_phone" placeholder="핸드폰 번호">
+							<a id="Phone_msgBtn" class="check-btn color-grey"><i class="far fa-envelope"></i></a>
+						</div>
+						
+						<!-- phone number check input -->
+						<div class="input-box dis-block martop-10 border-box">
+							<input type="text" name="confirmCode" placeholder="인증번호">
+							<a id="PhoneCf_chBtn" class="check-btn color-grey"><i class="fas fa-check"></i></a><!-- default -->
+						</div>
+						
+						<!-- submit btn-->
+						<input type="submit" name="findPwSubmit" value="비밀번호 찾기" class="submit-btn default-back-color martop-30">
+						
+					</form>
+					
+					<script type="text/javascript"></script>
+					<script>
+					$(function(){
+						
+						// 정규식
+						var nameReg = /^[가-힣]{2,4}$/; // 이름
+						var idReg =  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i; //이메일
+						var phoneReg = /^01([0|1|6|7|8|9]?)([0-9]{3,4})([0-9]{4})$/; // 핸드폰번호
+						var phoneConfReg = Math.floor(Math.random()*99000-(88000-1)+88000); // 인증번호
+						
+						// 체크 버튼 클릭시 grey,red,green
+						$(function(){
+							$(".check-btn").on("click", function(){
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								$(this).addClass("color-green-l"); //맞으면 addgreen
+ 							});
+						});
+						
+						// 비밀번호 찾기 버튼 클릭했을 때(submit button clicked)=> 이름,아이디,폰번,인증 = 공백,정규식 check
+						$('#findPwSubmit').click(function(){ //클릭할 때마다 값이 아무것도 없는"PwCheck"가 띄워지게 되는 것.
+							
+					      //방법1
+					      //var nameInput = $(".find-id-form #men_name");
+					  
+						  //방법2 (findPwForm이것 하나를 명시해서 여러개 를 넣은 것..) 
+							var findIdForm = $("form.find-id-form"); // <form class="find-pw-form">
+							var nameInput = findInForm.find("#mem_name"); // name input value
+							var idInput = findInForm.find("#mem_id"); // id input value
+							var phoneInput = findInForm.find("#phone_msgBtn"); // phone number input value
+							var phoneConfInput = findInForm.find("#phoneConf_chBtn"); // phone confirmCode mesg input value
+							
+							if (nameInput.val().length == 0){                           //이름 공백 
+								alert("이름을 입력해 주세요");
+								nameInput.focus();
+								return false;  
+							} else if (!(nameInput.val().match(nameReg))){              //이름 정규식                               // 이름이 영문이 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_name").val();을 넣어야한다.
+								alert("2-4글자의 한글로만 입력해 주세요");
+								nameInput.focus();
+								return false;
+							} else if (idInput.val().length == 0) {                     //아이디 공백 
+								alert("아이디를 입력해주세요");
+								idInput.focus();
+								return false;
+							} else if (!(idInput.val().match(idReg))){          	    //아이디 정규식                               
+								alert("영문 대소문자와 숫자를 쓴 후 @mail주소를 입력해주세요");
+								idInput.focus();
+								return false;
+							} else if (phoneInput.val().length == 0) {                  //폰번 공백 
+								alert("핸드폰 번호를 입력해주세요");
+								phoneInput.focus();
+								return false;
+							} else if (!(phoneInput.val().match(phoneReg))){   	    //폰번 정규식                               
+								alert("11자리의 숫자로만 입력해주세요");
+								phoneInput.focus();
+								return false;
+							} else if (phoneConfInput.val().length == 0) { 			    //인증 공백
+								alert("인증번호를 입력해주세요");
+								phoneConfInput.focus();
+							} else if (!(phoneConfInput.val().match(phoneConfReg)))	{   //인증 정규식
+								alert("5자리의 숫자로만 입력해주세요");
+								phoneConfInput.focus();
+								return false;
+							}	
+							
+						});
+							
+						//비밀번호 찾기(이메일 아이디 입력)
+						
+						$('#mem_phone').on("click", function(){
+							var hpCheck = $("#mem_phone").val(); // 입력한 ID를 Check하기 위해 가져옴 
+							
+							if (hpCheck.length==0){ //아무값도 없을 때 
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("핸드폰 번호를 입력해 주세요"); 
+								$('#mem_phone').focus(); 
+								return false;  
+							}else if (!(hpCheck.match(phoneReg))){ // 핸드폰번호가 숫자가 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("11개의 숫자로만 입력해주세요"); 
+								$('#mem_phone').focus(); 
+								return false;
+							}else {
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-green-l"); //맞으면 addgreen
+								alert("인증번호 보내기를 성공했습니다"); 
+								$('#confirmCode').focus(); 
+								return false;
+							}
+						}); 	
+						
+						//비밀번호 찾기(핸드폰 번호 입력)
+						$('.find-pw-form #Phone_msgBtn').on("click", function(){
+							var hpCheck = $("#mem_phone").val(); // 입력한 ID를 Check하기 위해 가져옴 
+							
+							if (hpCheck.length==0){ //아무값도 없을 때 
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("핸드폰 번호를 입력해 주세요"); 
+								$('#mem_phone').focus(); 
+								return false;  
+							}else if (!(hpCheck.match(phoneReg))){ // 핸드폰번호가 숫자가 아닐때 //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("11개의 숫자로만 입력해주세요"); 
+								$('#mem_phone').focus(); 
+								return false;
+							}else {
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-green-l"); //맞으면 addgreen
+								alert("인증번호 보내기를 성공했습니다"); 
+								$('#confirmCode').focus(); 
+								return false;
+							}
+						}); 	
+						
+					    //비밀번호 찾기(인증번호 입력) 
+						 $('.find-pw-form #PhoneConf_ckBtn').on("click", function(){
+							var hpConfirm = $("#confirmCode").val();
+							
+							if (hpConfirm.length==0){ //아무값도 없을 때 
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("인증번호를 입력하세요"); 
+								$('#confirmCode').focus(); 
+								return false;  
+							}else if (!(hpConfirm.match(phoneConfReg))){ //idCheck(값이 없는것)를 넣는게 아니라 값을 넣어준 $("#mem_phone").val();을 넣어야한다.
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-red");     //틀리면 addred
+								alert("5개의 숫자로만 입력해주세요"); 
+								$('#confirmCode').focus(); 
+								return false;
+							}else {
+								alert("비밀번호는 '1234'입니다."); 
+								$(this).removeClass("color-grey"); //원래는 grey
+								$(this).addClass("color-green-l"); //맞으면 addclass
+								$('#confirmCode').focus(); 
+								return false;
+							}
+						});
+						
+					}); //$(function(){ end
+					
+					</script>
+					<!-- find password:f -->
+					
+					<!-- copyright -->
+					<div class="dn-copy martop-20">&copy;Copyright 2018 #DEV. All Rights Reserved.</div>
+					
+				</div>
+				<!-- login form wrap box:f -->
+				
+			</div>
+			<!-- body-wrap-basic:f -->
+		</div>
+		<!-- body-wrap-full:f -->
+
+	</body>
+</html>

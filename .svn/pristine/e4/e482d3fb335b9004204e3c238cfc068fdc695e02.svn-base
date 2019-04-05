@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+
+<!-- parameterType =>내가 직접 입력하는 값, String 타입으로 입력을 하는 것
+	 resultType    =>결과값,   	     memVo 타입의 결과 -->
+	 
+	<!-- 공지사항 게시판(notice), 문의게시판(qa) -->
+	
+	<!-- 게시판 등록 -->
+	<insert id="insertPost" parameterType="postVo">
+		INSERT INTO post (post_no,      <!-- 게시글번호  -->
+						  post_kind,    <!-- 게시판분류  -->
+						  post_title,   <!-- 제목		 -->
+						  post_cont, 	<!-- 내용		 -->
+						  post_date,	<!-- 작성일	 -->
+						  post_pw_chk,  <!-- 비밀글유무  -->
+						  post_pw, 		<!-- 비밀번호	 -->
+						  post_del_chk, <!-- 삭제유무 	 -->
+						  mem_id, 		<!-- 작성자ID  -->
+						  mem_nick		<!-- 작성자Nick -->		
+			      VALUES (#{post_no}, 
+			   			  #{post_kind}, 
+			   		      #{post_title}, 
+			   		   	  #{post_cont}, 
+			   		      sysdate,
+			   		   	  #{post_pw_chk}, 
+			   		   	  #{post_pw},
+			   		   	  'n', 
+			   		   	  #{mem_id}, 
+			   		      #{mem_nick} )			
+	</insert>
+
+	<!-- 게시판 수정 (제목,내용,비밀글유무,비밀번호,작성일) -->
+	<update id="updatePost" parameterType="postVo">
+		UPDATE post
+		   SET post_title=#{post_title},
+		   	   post_cont=#{post_cont},
+		   	   post_pw_chk=#{post_pw_chk},
+		   	   post_pw=#{post_pw},
+		   	   post_date=sysdate
+		WHERE  post_no=#{post_no}
+	</update>
+
+	<!-- 게시판 삭제유무(임시삭제와 같은 의미) -->
+	<update id="deletePost" parameterType="int">
+		UPDATE post
+		   SET post_del_chk='y'
+		 WHERE post_no=#{post_no}
+	</update>
+
+	<!-- 게시글 전체리스트조회 -->
+	<select id="getPostList" parameterType="map" resultType="postVo">
+		SELECT *
+		  FROM post
+	</select>
+	
+	<!-- 게시판 검색 -->
+	<select id="getPostSearchList" parameterType="map" resultType="postVo">
+		SELECT * FROM post
+		 WHERE #{SELECT}=#{SEARCH}
+	</select>
+	
+	<!-- 게시판 상세보기 -->
+	<select id="getPostDetail" parameterType="int" resultType="postVo">
+		SELECT *
+		  FROM post
+		 WHERE post_no=#{post_no}
+	</select>
+	
+	<!-- 게시글 번호 반환 -->
+	<select id="getPostSeq" resultType="int">
+	  	 SELECT post_no_seq.nextval 
+	  	   FROM dual	
+	</select>
+	
+</mapper>

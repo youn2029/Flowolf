@@ -1,0 +1,39 @@
+package kr.or.dev.alim.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.alim.dao.AlimDaoInf;
+import kr.or.dev.alim.model.AlimVO;
+
+import org.springframework.stereotype.Service;
+
+@Service("alimService")
+public class AlimService implements AlimServiceInf{
+	
+	@Resource(name="alimDao")
+	private AlimDaoInf alimDao;
+
+	@Override
+	public List<AlimVO> getAlimList(String mem_id) {
+		return alimDao.getAlimList(mem_id);
+	}
+
+	@Override
+	public AlimVO getAlimDetail(int alim_no) {
+		return alimDao.getAlimDetail(alim_no);
+	}
+
+	@Override
+	public int insertAlim(Map<String, Object> map) {
+		return alimDao.insertAlim(map);
+	}
+
+	@Override
+	public int updateAlim(int alim_no) {
+		return alimDao.updateAlim(alim_no);
+	}
+
+}

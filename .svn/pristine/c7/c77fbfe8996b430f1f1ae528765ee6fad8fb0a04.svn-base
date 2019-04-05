@@ -1,0 +1,99 @@
+package kr.or.dev.board.post.model;
+
+import java.util.Date;
+
+public class PostVO {
+	
+	private int post_no;			// 게시글번호
+	private String post_kind;		// 게시판분류
+	private String post_title;		// 제목
+	private String post_cont;		// 내용
+	private Date post_date;			// 작성일
+	private String post_pw_chk;		// 비밀글유무
+	private String post_pw;			// 비밀번호
+	private String post_del_chk;	// 삭제유무	
+	private String mem_id;			// 작성자ID
+	private String mem_nick;		// 작성자Nick
+
+	public int getPost_no() {
+		return post_no;
+	}
+
+	public void setPost_no(int post_no) {
+		this.post_no = post_no;
+	}
+
+	public String getPost_kind() {
+		return post_kind;
+	}
+
+	public void setPost_kind(String post_kind) {
+		this.post_kind = post_kind;
+	}
+
+	public String getPost_title() {
+		return post_title;
+	}
+
+	public void setPost_title(String post_title) {
+		this.post_title = post_title;
+	}
+
+	public String getPost_cont() {
+		return post_cont;
+	}
+
+	public void setPost_cont(String post_cont) {
+		this.post_cont = post_cont;
+	}
+
+	public Date getPost_date() {
+		return post_date;
+	}
+
+	public void setPost_date(Date post_date) {
+		this.post_date = post_date;
+	}
+
+	public String getPost_pw_chk() {
+		return post_pw_chk;
+	}
+
+	public void setPost_pw_chk(String post_pw_chk) {
+		this.post_pw_chk = post_pw_chk;
+	}
+
+	public String getPost_pw() {
+		return post_pw;
+	}
+
+	public void setPost_pw(String post_pw) {
+		this.post_pw = post_pw;
+	}
+
+	public String getPost_del_chk() {
+		return post_del_chk;
+	}
+
+	public void setPost_del_chk(String post_del_chk) {
+		this.post_del_chk = post_del_chk;
+	}
+
+	public String getMem_id() {
+		return mem_id;
+	}
+
+	public void setMem_id(String mem_id) {
+		this.mem_id = mem_id;
+	}
+
+	public String getMem_nick() {
+		return mem_nick;
+	}
+
+	public void setMem_nick(String mem_nick) {
+		this.mem_nick = mem_nick;
+	}
+	
+
+}

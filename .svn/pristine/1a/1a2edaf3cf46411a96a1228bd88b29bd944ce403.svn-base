@@ -1,0 +1,126 @@
+package kr.or.dev.timeline.todo.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.timeline.todo.model.TodoVO;
+
+@Repository("todoDao")
+public class TodoDao implements TodoDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	/**
+	* Method : getTodoSeq
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @return
+	* Method 설명 : todo_no의 시퀀스 조회
+	*/
+	@Override
+	public int getTodoSeq() {
+		return template.selectOne("todo.getTodoSeq");
+	}
+
+	/**
+	* Method : insertTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todoVo
+	* @return
+	* Method 설명 : 할일 등록
+	*/
+	@Override
+	public int insertTodo(TodoVO todoVo) {
+		return template.insert("todo.insertTodo", todoVo);
+	}
+
+	/**
+	* Method : updateTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todoVo
+	* @return
+	* Method 설명 : 할일 수정
+	*/
+	@Override
+	public int updateTodo(TodoVO todoVo) {
+		return template.update("todo.updateTodo", todoVo);
+	}
+
+	/**
+	* Method : deleteTodo
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todo_no
+	* @return
+	* Method 설명 : 할일 삭제 처리
+	*/
+	@Override
+	public int deleteTodo(int todo_no) {
+		return template.update("todo.deleteTodo", todo_no);
+	}
+
+	/**
+	* Method : getTodoDetail
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param todo_no
+	* @return
+	* Method 설명 : 할일 상세조회
+	*/
+	@Override
+	public TodoVO getTodoDetail(int todo_no) {
+		return template.selectOne("todo.getTodoDetail", todo_no);
+	}
+
+	/**
+	* Method : getTodoProList
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 프로젝트의 할일 조회
+	*/
+	@Override
+	public List<TodoVO> getTodoProList(Map<String, Object> paramMap) {
+		return template.selectList("todo.getTodoProList", paramMap);
+	}
+
+	/**
+	* Method : getTodoSearchList
+	* 최초작성일 : 2018. 9. 21.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 할일 검색 조회
+	*/
+	@Override
+	public List<TodoVO> getTodoSearchList(Map<String, String> searchMap) {
+		return template.selectList("todo.getTodoSearchList", searchMap);
+	}
+
+	@Override
+	public List<TodoVO> getTodoCollList(String mem_id) {
+		return template.selectList("todo.getTodoCollList", mem_id);
+	}
+
+	@Override
+	public List<TodoVO> getMyTodoList(String mem_id) {
+		return template.selectList("todo.getMyTodoList", mem_id);
+	}
+
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="postRep">
+
+	<!-- 댓글 시퀀스 조회 -->
+	<select id="getPostRepSeq" resultType="int">
+		SELECT post_rep_no_seq.nextval
+		  FROM dual
+	</select>
+
+ 	<!-- 댓글 리스트 조회  -->
+ 	<select id="getPostRepList" parameterType="int" resultType="postRepVo">
+ 		SELECT r.*
+ 			, (SELECT mem_nick
+ 			 	 FROM member m
+ 			 	WHERE m.mem_id = r.mem_id) AS mem_nick
+ 		  FROM post_reply r
+ 		 WHERE post_no = #{post_no}
+ 	</select>
+ 	
+ 	<!-- 댓글 등록 -->
+ 	<insert id="insertPostRep" parameterType="postRepVo">
+		INSERT INTO post_reply (post_rep_no, post_rep_cont, post_rep_del_chk, post_rep_date, post_no, mem_id)
+			 VALUES (#{post_rep_no}, #{post_rep_cont}, 'n', sysdate, #{post_no}, #{mem_id} )	
+ 	</insert>
+ 	
+ 	<!-- 댓글 수정 -->
+ 	<update id="updatePostRep" parameterType="postRepVo">
+ 		UPDATE post_reply
+ 		   SET post_rep_cont = #{post_rep_cont}
+ 		 WHERE post_rep_no = #{post_rep_no}
+ 	</update>
+ 	
+ 	<!-- 댓글 삭제 -->
+ 	<update id="deletePostRep" parameterType="int">
+ 		UPDATE post_reply
+ 		   SET post_rep_del_chk = 'y'
+ 		 WHERE post_rep_no = #{post_rep_no}
+ 	</update> 	
+ 	
+</mapper>

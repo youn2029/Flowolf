@@ -1,0 +1,97 @@
+package kr.or.dev.timeline.task.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.timeline.task.model.TaskVO;
+
+public interface TaskDaoInf {
+	
+	/**
+	* Method : insertTask
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 등록
+	*/
+	int insertTask(TaskVO taskVo);
+	
+	/**
+	* Method : updateTask
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 수정
+	*/
+	int updateTask(TaskVO taskVo);
+	
+	/**
+	* Method : deleteTask
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 삭제처리
+	*/
+	int deleteTask(int task_no);
+	
+	/**
+	* Method : getTaskProList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 업무글 조회
+	*/
+	List<TaskVO> getTaskProList(int pro_no);
+	
+	/**
+	* Method : getTaskSearchList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 업무글 검색 조회
+	*/
+	List<TaskVO> getTaskSearchList(Map<String, String> searchMap);
+	
+	/**
+	* Method : getTaskDetail
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 상세 조회
+	*/
+	TaskVO getTaskDetail(int task_no);
+	
+	/**
+	 * Method : getTaskMyList
+	 * 최초작성일 : 2018. 8. 30.
+	 * 작성자 : 윤성호
+	 * 변경이력 :
+	 * @param mem_id
+	 * @return
+	 * Method 설명 : 회원이 요청한 업무글 조회
+	 */
+	List<TaskVO> getTaskMyList(String mem_id);
+	
+	/**
+	* Method : selectAllTask
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : 회원이 참여하고 있는 프로젝트의 모든 업무 조회
+	*/
+	List<TaskVO> selectAllTask(String mem_id);
+}

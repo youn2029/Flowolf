@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="todoItem">
+
+	<!-- 할일 항목 등록 -->
+	<insert id="insertTi" parameterType="tiVo">
+		INSERT INTO todo_item (ti_no, ti_cont, ti_date, ti_chk, todo_no, ti_mem_id)
+			 VALUES (TI_NO_SEQ.NEXTVAL, #{ti_cont}, #{ti_date}, 'n', #{todo_no}, #{ti_mem_id})
+	</insert>
+	
+	<!-- 할일 항목 수정 -->
+	<update id="updateTi" parameterType="tiVo">
+		UPDATE todo_item
+		   SET ti_cont = #{ti_cont}
+		   	 , ti_chk = #{ti_chk}
+		 WHERE ti_no = #{ti_no}
+	</update>
+	
+	<!-- 할일 항목 삭제 -->
+	<delete id="deleteTiR" parameterType="int">
+		DELETE FROM todo_item
+		 WHERE ti_no = #{ti_no}
+	</delete>
+	
+	<!-- 할일의 항목 조회 -->
+	<select id="getTiList" parameterType="int" resultType="tiVo">
+		SELECT *
+		  FROM todo_item
+		 WHERE todo_no = #{todo_no}
+		 ORDER BY ti_date
+	</select>
+
+
+</mapper>

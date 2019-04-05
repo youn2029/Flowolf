@@ -1,0 +1,248 @@
+package kr.or.dev.group.project_user.web;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("proUserController")
+@RequestMapping("/proUser")
+public class ProjectUserController {
+
+	// projectUserService
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	// mainSender
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	/**
+	* Method : proUserUpdate
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_user_color
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 사용자 색상 변경
+	*/
+	@RequestMapping("/update")
+	@ResponseBody
+	public int proUserUpdate(@RequestParam("pro_user_color")String pro_user_color
+						   , HttpSession session){
+		// 회원 정보, 프로젝트 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// vo
+		ProjectUserVO proUserVo = new ProjectUserVO();
+		proUserVo.setMem_id(memVo.getMem_id());
+		proUserVo.setPro_no(proVo.getPro_no());
+		proUserVo.setPro_user_color(pro_user_color);
+		
+		return proUserService.updateProUser(proUserVo);
+	}
+	
+	/**
+	* Method : proUserDeleteR
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트 나가기
+	*/
+	@RequestMapping("/deleteR")
+	public String proUserDeleteR(HttpSession session
+							, @RequestParam("pro_no")int pro_no){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 프로젝트 참여자 정보
+		ProjectUserVO proUserVo = new ProjectUserVO();
+		proUserVo.setPro_no(pro_no);
+		proUserVo.setMem_id(memVo.getMem_id());
+		
+		// 관리자 유무 체크
+		ProjectUserVO resultVo = proUserService.getProUserDetail(proUserVo);
+		
+		if (resultVo.getPro_user_man_chk().equals("y")) {			
+			
+			session.setAttribute("msg", "프로젝트 관리자는 최소 한명이 존재해야합니다.");
+			session.setAttribute("className", "alert-danger");
+			
+			return "redirect:/pro/detail?pro_no="+pro_no;
+			
+		}else{
+			
+			// 삭제
+			int resultCnt = proUserService.deleteProUserR(proUserVo);
+			
+			// 삭제 성공
+			if (resultCnt == 1) {
+				
+				session.setAttribute("msg", "나가기 되었습니다.");
+				session.setAttribute("className", "alert-warning");				
+			}			
+			
+			return "redirect:/pro/main";	
+		}		
+	}
+	
+	/**
+	* Method : proUserCheck
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param proUserVo
+	* @return
+	* Method 설명 : 해당 회원이 프로젝트에 참여되어있는지 체크
+	*/
+	@RequestMapping("/chk")
+	@ResponseBody
+	public int proUserCheck(ProjectUserVO proUserVo){
+		
+		// 해당 프로젝트 참여자 정보
+		ProjectUserVO resultVo = proUserService.getProUserDetail(proUserVo);
+		
+		if (resultVo == null) {
+			return 0;
+		}
+		
+		return 1;
+	}
+	
+	/**
+	* Method : invite
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @return
+	* Method 설명 : 동료 , 프로젝트 참여자 초대
+	*/
+	@RequestMapping("/invite")
+	public String invite(@RequestParam("mem_id")List<String> memList
+					   , HttpSession session){
+		// 프로젝트 정보
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 프로젝트 참여자 등록
+		ProjectUserVO proUserVo = new ProjectUserVO();
+		proUserVo.setPro_no(proVo.getPro_no());
+		proUserVo.setPro_user_man_chk("n");
+		
+		for (String mem_id : memList) {
+			proUserVo.setMem_id(mem_id);
+			
+			// 프로젝트 참여자 등록
+			proUserService.insertProUser(proUserVo);
+		}
+		
+		session.setAttribute("msg", "초대하였습니다.");
+		session.setAttribute("className", "alert-warning");	
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : sendMail
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param emailList
+	* @param email_con
+	* @return
+	* @throws MessagingException
+	* Method 설명 : 이메일 전송으로 프로젝트 초대
+	*/
+	@RequestMapping("/sendMail")
+	public String sendMail(@RequestParam("toEmail") List<String> emailList
+						 , @RequestParam(value="email_con", defaultValue="Flowolf로 업무관리, 채팅, 파일공유, 일정 공지를 한 곳에서!\n pc에서 사용해보세요.")String email_con 
+						 , HttpSession session) throws MessagingException{
+		
+		// 유저 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 프로젝트 정보
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 메세지 생성
+		MimeMessage message = mailSender.createMimeMessage();		
+		
+		message.setFrom("Flowolf <cocoa8090@gmail.com>");	// 보내는 사람
+		message.setSubject("[Flowolf] " + memVo.getMem_nick() + "님이 프로젝트에 초대합니다.");	// 제목
+		//message.setText(email_con);							// 내용
+		
+		
+		String htmlContent = "";
+		htmlContent += "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:500px;margin:0;padding:60px;text-align:left;font-family:'MalgunGothic','맑은 고딕','Malgun Gothic','돋움',Dotum,'굴림',Gulim,Arial,sans-serif;\">";
+		htmlContent += 		"<tbody>";
+		htmlContent += 			"<tr>";
+		htmlContent += 				"<td style=\"margin:0;\">";
+		htmlContent += 					"<h1 style=\"margin:0;padding:0;\"><img src=\"http://zchu.xyz/img/flowolf_logo_s.png\"></h1>";
+		//htmlContent += 					"<h2 style=\"margin:15px 0 0 0;font-weight:bold;font-size:24px;\">프로젝트 초대</h2>";
+		htmlContent += 				"</td>";
+		htmlContent += 			"</tr>";
+		htmlContent += 			"<tr>";
+		htmlContent += 				"<td style=\"margin:0;padding:30px 0 0 0;\">";
+		htmlContent += 					"<p style=\"font-size:15px;color:#333;line-height:30px;\">";
+		htmlContent +=						"<strong>" + memVo.getMem_nick() + "(" + memVo.getMem_id() + ")</strong> 님이<br><strong style=\"color:#746fcc;\">프로젝트(&quot;" + proVo.getPro_name() + "&quot;)</strong>에 초대합니다.";
+		htmlContent +=					"</p>";
+		htmlContent +=					"<pre style=\"width:466px;margin:20px 0 0 0;padding:15px;font-size:15px;color:#333;line-height:22px;border:2px dotted #ccc;border-radius:10px;\">";
+		htmlContent +=						email_con;
+		htmlContent +=					"</pre>";
+		htmlContent +=					"<p style=\"margin:20px 0 0 0;font-size:13px;color:#999;\">";
+		htmlContent +=						"아래의 버튼을 통해 프로젝트에 참여할 수 있습니다.";
+		htmlContent +=					"</p>";
+		
+		htmlContent +=					"<a href=\"http://localhost:8180/login/view?pro_no="+proVo.getPro_no()+"&apply="+memVo.getMem_id()+"&mem_nick="+memVo.getMem_nick()+"\""
+											+" style=\"text-decoration:none;display:block;width:100%;margin:20px 0 0 0;padding:15px 0;font-weight:bold;font-size:20px;color:#fff;text-align:center;background-color:#2b3991;border-radius:10px;\">";
+		htmlContent +=						"프로젝트 참여하기";
+		htmlContent +=					"</a>";
+		
+		htmlContent += 				"</td>";
+		htmlContent += 			"</tr>";
+		htmlContent += 			"<tr>";
+		htmlContent += 				"<td style=\"margin:0;padding:30px 0 0 0;\">";
+		htmlContent +=					"<p style=\"margin:0;font-size:13px;color:#aaa;letter-spacing:1;\">";
+		htmlContent +=						"Copyright &copy; 2018 #DEV. All rights reserved.<br>";
+		htmlContent +=						"본 메일은 발신 전용입니다.";
+		htmlContent +=					"</p>";
+		htmlContent += 				"</td>";
+		htmlContent += 			"<tr>";	
+		htmlContent += 			"</tr>";
+		htmlContent += 		"</tbody>";
+		htmlContent += "</table>";
+		message.setText(htmlContent, "UTF-8", "html");
+		
+		for (String toEmail : emailList) {					// 받는 사람
+			message.addRecipients(Message.RecipientType.TO, toEmail);
+		}		
+		
+		// 전송
+		mailSender.send(message);
+		
+		session.setAttribute("msg", "초대하였습니다.");
+		session.setAttribute("className", "alert-warning");	
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+}

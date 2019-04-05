@@ -1,0 +1,95 @@
+package kr.or.dev.group.project_user.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project_user.dao.ProjectUserDaoInf;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+
+import org.springframework.stereotype.Repository;
+
+@Repository("proUserService")
+public class ProjectUserService implements ProjectUserServiceInf {
+	
+	// projectUserDao
+	@Resource(name="proUserDao")
+	private ProjectUserDaoInf proUserDao;
+
+	@Override
+	public List<ProjectUserVO> getProUserList(int pro_no) {
+		return proUserDao.getProUserList(pro_no);
+	}
+
+	@Override
+	public int insertProUser(ProjectUserVO proUserVo) {
+		
+		// 프로젝트 색상 랜덤
+		String[] color = {"default-back-color", "back-color-red"
+				         ,"back-color-pink", "back-color-orange"
+				         ,"back-color-yellow-d", "back-color-green"
+				         ,"back-color-green-l", "back-color-blue-l"
+				         ,"back-color-blue-d", "back-color-pupple"
+				         ,"back-color-pupple-l", "back-color-gray"
+				         ,"back-color-black"
+				         };
+		
+		int index = (int)(Math.random() * color.length);
+		proUserVo.setPro_user_color(color[index]);
+		
+		return proUserDao.insertProUser(proUserVo);
+	}
+
+	@Override
+	public int updateProUser(ProjectUserVO proUserVo) {
+		return proUserDao.updateProUser(proUserVo);
+	}
+
+	@Override
+	public int deleteProUserR(ProjectUserVO proUserVo) {
+		return proUserDao.deleteProUserR(proUserVo);
+	}
+
+	@Override
+	public List<ProjectUserVO> getProUserSearchList(Map<String, String> searchMap) {
+		return proUserDao.getProUserSearchList(searchMap);
+	}
+
+	@Override
+	public List<Map<String, Object>> getMyProList(String mem_id) {
+		
+		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		
+		// 로그인 된 회원이 참여중인 프로젝트 목록
+		List<ProjectVO> myProList = proUserDao.getMyProList(mem_id);
+		
+		for (ProjectVO proVo : myProList) {
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+						
+			// 프로젝트 vo
+			map.put("proVo", proVo);
+			
+			// 로그인 된 회원이 참여중인 프로젝트의 참여자 리스트
+			List<ProjectUserVO> proUserList = proUserDao.getProUserList(proVo.getPro_no());
+			map.put("proUserList", proUserList);
+			
+			// 반환될 List에 추가
+			resultList.add(map);
+		}
+		
+		return resultList;
+	}
+
+	@Override
+	public ProjectUserVO getProUserDetail(ProjectUserVO proUserVo) {
+		return proUserDao.getProUserDetail(proUserVo);
+	}
+
+	
+
+}

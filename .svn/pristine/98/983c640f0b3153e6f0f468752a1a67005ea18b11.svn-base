@@ -1,0 +1,85 @@
+package kr.or.dev.timeline.emoticon_user.dao;
+
+import java.util.List;
+
+import kr.or.dev.timeline.emoticon_user.model.EmoticonUserVO;
+
+public interface EmoticonUserDaoInf {
+	
+	/**
+	* Method : insertEmoUser
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param emoUserVo
+	* @return
+	* Method 설명 : 이모티콘 사용자 등록
+	*/
+	int insertEmoUser(EmoticonUserVO emoUserVo);	
+	
+	/**
+	* Method : deleteEmoUserR
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param emo_user_no
+	* @return
+	* Method 설명 : 이모티콘 사용자 삭제
+	*/
+	int deleteEmoUserR(int emo_user_no);
+	
+	/**
+	* Method : getEmoUserTaskList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글의 이모티콘 정보 조회
+	*/
+	List<EmoticonUserVO> getEmoUserTaskList(int task_no);
+	
+	/**
+	* Method : getEmoUserSchdList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param schd_no
+	* @return
+	* Method 설명 : 일정글의 이모티콘 사용자 조회
+	*/
+	List<EmoticonUserVO> getEmoUserSchdList(int schd_no);
+	
+	/**
+	* Method : getEmoUserVoteList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param vote_no
+	* @return
+	* Method 설명 : 투표글의 이모티콘 사용자 조회
+	*/
+	List<EmoticonUserVO> getEmoUserVoteList(int vote_no);	
+	
+	/**
+	* Method : getEmoUserTodoList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param todo_no
+	* @return
+	* Method 설명 : 할일의 이모티콘 사용자 조회
+	*/
+	List<EmoticonUserVO> getEmoUserTodoList(int todo_no);
+	
+	/**
+	* Method : getEmoUserBasicList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param basic_no
+	* @return
+	* Method 설명 : 일반글의 이모티콘 사용자 조회
+	*/
+	List<EmoticonUserVO> getEmoUserBasicList(int basic_no);
+}

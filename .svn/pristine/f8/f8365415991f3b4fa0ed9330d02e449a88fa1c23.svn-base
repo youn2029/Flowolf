@@ -1,0 +1,152 @@
+package kr.or.dev.user.member.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.encrypt.kisa.sha256.KISA_SHA256;
+import kr.or.dev.group.kind.model.KindVO;
+import kr.or.dev.group.kind.service.KindServiceInf;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.dao.MemberDaoInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("loginController")
+@RequestMapping("/login")
+public class LoginController {
+	
+	// 회원
+	@Resource(name="memDao")
+	private MemberDaoInf memDao;
+	
+	// 프로젝트 참여자
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	// 분류
+	@Resource(name="kindService")
+	private KindServiceInf kindService;	
+	
+	// login 화면
+	@RequestMapping("/view")
+	public String loginView(){
+		return "login/login";
+	}
+	
+	// login
+	@RequestMapping("/login")
+	public String loginProcess(@RequestParam("mem_id") String mem_id
+							 , @RequestParam("mem_pw") String mem_pw
+							 , Model model
+							 , HttpSession session){
+		
+		MemberVO memVo = memDao.getMemDetail(mem_id);
+		
+		if (memVo.getMem_pw().equals(KISA_SHA256.encrypt(mem_pw))) {
+			
+			// 로그인 성공
+			System.out.println("로그인 성공");
+			
+			// 회원정보
+			session.setAttribute("memVo", memVo);
+			
+			// 참여중인 프로젝트 정보
+			List<Map<String, Object>> myProList = proUserService.getMyProList(memVo.getMem_id());
+			session.setAttribute("myProList", myProList);
+			
+			// 프로젝트 구분 정보
+			List<KindVO> kindList = kindService.getKindAllList();
+			session.setAttribute("kindList", kindList);
+			
+			return "main";
+		}else {
+			
+			System.out.println("로그인 실패");
+			
+			// 로그인 실패
+			return "redirect:/login/view";
+		}		
+	}
+	
+	// ID 중복체크
+	@RequestMapping("/idChk")
+	@ResponseBody
+	public int idChk(@RequestParam("mem_id") String mem_id){
+		return memDao.chkMemId(mem_id);
+	}
+	
+	// Nick 중복체크
+	@RequestMapping("/nickChk")
+	@ResponseBody
+	public int nickChk(@RequestParam("mem_nick") String mem_nick){		
+		return memDao.chkMemNick(mem_nick);
+	}
+	
+	// 회원가입
+	@RequestMapping("/singUp")
+	public String singUp(){
+		return "";
+	}
+	
+	// 해당 정보로 ID 조회
+	@RequestMapping("/findId")
+	@ResponseBody
+	public Map<String, String> findId(@RequestParam("mem_name") String mem_name, @RequestParam("mem_phone") String mem_phone){	
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("mem_name", mem_name);
+		paramMap.put("mem_phone", mem_phone);
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("mem_id", memDao.findId(paramMap));
+		
+		return result;
+	}
+	
+	// 해당 정보로 회원의 ID 조회
+	@RequestMapping("/memChk")
+	@ResponseBody
+	public Map<String, String> memChk(@RequestParam("mem_name") String mem_name
+									, @RequestParam("mem_id") String mem_id
+									, @RequestParam("mem_phone") String mem_phone){
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("mem_id", mem_id);
+		paramMap.put("mem_name", mem_name);
+		paramMap.put("mem_phone", mem_phone);
+		
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("mem_id", memDao.getMemChk(paramMap));
+		
+		return result;
+	}
+	
+	// 회원의 새 비밀번호 변경
+	@RequestMapping("/memPwSet")
+	@ResponseBody
+	public int memPwSet(@RequestParam("mem_id") String mem_id
+				   , @RequestParam("mem_pw") String mem_pw){
+		
+		MemberVO memVo = memDao.getMemDetail(mem_id);
+		
+		String pw = KISA_SHA256.encrypt(mem_pw);
+		memVo.setMem_pw(pw);
+		
+// 임시-------------------------------------
+		memVo.setMem_pic_name("");
+		memVo.setMem_pic_path("");
+		memVo.setMem_pic_upload("");
+		
+		return memDao.updateMem(memVo);
+	}
+
+}

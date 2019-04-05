@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="coll">
+
+	<insert id="insertColl" parameterType="map">
+		INSERT INTO collection (coll_no, coll_date, mem_id, ${timeline_col})
+			VALUES (coll_no_seq.nextval, sysdate, #{mem_id}, #{timeline_no})
+	</insert>
+	
+	<delete id="deleteCollR" parameterType="int">
+		DELETE
+		  FROM collection
+		 WHERE coll_no = #{coll_no}
+	</delete>
+	
+
+</mapper>

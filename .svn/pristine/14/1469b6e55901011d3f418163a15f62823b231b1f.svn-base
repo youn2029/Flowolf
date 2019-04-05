@@ -1,0 +1,117 @@
+package kr.or.dev.timeline.task.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.dev.timeline.task.dao.TaskDaoInf;
+import kr.or.dev.timeline.task.model.TaskVO;
+
+@Service("taskService")
+public class TaskService implements TaskServiceInf {
+
+	@Resource(name="taskDao")
+	private TaskDaoInf taskDao;
+	
+	/**
+	* Method : insertTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 등록
+	*/
+	@Override
+	public int insertTask(TaskVO taskVo) {
+		return taskDao.insertTask(taskVo);
+	}
+
+	/**
+	* Method : updateTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 수정
+	*/
+	@Override
+	public int updateTask(TaskVO taskVo) {
+		return taskDao.updateTask(taskVo);
+	}
+
+	/**
+	* Method : deleteTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 삭제처리
+	*/
+	@Override
+	public int deleteTask(int task_no) {
+		return taskDao.deleteTask(task_no);
+	}
+
+	/**
+	* Method : getTaskProList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 업무글 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskProList(int pro_no) {
+		return taskDao.getTaskProList(pro_no);
+	}
+
+	/**
+	* Method : getTaskSearchList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 업무글 검색 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskSearchList(Map<String, String> searchMap) {
+		return taskDao.getTaskSearchList(searchMap);
+	}
+
+	/**
+	* Method : getTaskDetail
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 상세 조회
+	*/
+	@Override
+	public TaskVO getTaskDetail(int task_no) {
+		return taskDao.getTaskDetail(task_no);
+	}
+
+	/**
+	* Method : getTaskMyList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : 회원이 요청한 업무글 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskMyList(String mem_id) {
+		return taskDao.getTaskMyList(mem_id);
+	}
+
+}

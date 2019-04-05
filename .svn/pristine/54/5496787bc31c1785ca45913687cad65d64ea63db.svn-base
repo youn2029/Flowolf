@@ -1,0 +1,288 @@
+package kr.or.dev.board.post.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.board.post.model.PostVO;
+import kr.or.dev.board.post.service.PostServiceInf;
+import kr.or.dev.board.post_reply.model.PostReplyVO;
+import kr.or.dev.board.post_reply.service.PostReplyServiceInf;
+import kr.or.dev.files.service.FilesServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.apache.maven.plugin.logging.Log;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+//@RequestMapping 요청에 대해 어떤 Controller, 어떤 메소드가 처리할지를 맵핑하기 위한 어노테이션
+@RequestMapping("/post")
+@Controller("postController")
+public class PostController {
+	
+	//파일 경로
+	private final String file_path = "C:\\Flowolf\\files\\"; 
+	
+	//@Resource 어플리케이션에서 필요로 하는 자원을 자동 연결할 때 사용
+	@Resource(name="postService")
+	private PostServiceInf postService;
+	
+	@Resource(name="postReplyService")
+	private PostReplyServiceInf postReplyService;
+	
+	@Resource(name="filesService")
+	private FilesServiceInf filesService;
+	
+	@RequestMapping("/list") //@RequestParam 간단하게 파라미터값을 가져올수 있음
+	 //value-파라미터 이름, defaultValue-해당 파라미터의 기본값
+	public String postList(@RequestParam(value="page", defaultValue="1")int page,
+					 	   @RequestParam(value="pageSize", defaultValue="10")int pageSize,
+					 	   @RequestParam(value="post_kind")String post_kind, 
+					 	   Model model){ //Model은 인터페이스
+		System.out.println(post_kind+"zzz");
+	
+	//page, pageSize parameter 확인
+	Map<String, Object> paramMap = new HashMap<String, Object>();
+	paramMap.put("page", page);
+	paramMap.put("pageSize", pageSize);
+	paramMap.put("post_kind", post_kind);
+	
+	//Map형으로 service에서 가져옴 
+	Map<String, Object> resultMap = postService.getPostList(paramMap);
+	
+	//addAllAttributes = resultMap의 모든 값()
+	//addAttribute 
+	model.addAllAttributes(resultMap);
+	model.addAttribute("post_kind", post_kind);
+	
+//	int seq = postService.getPostSeq();
+//	model.addAttribute("post_no", seq);
+	
+	return "postList";
+
+	} // postList end
+	
+	//상세보기 
+	@RequestMapping("/detail")
+	public String postDetail(@RequestParam(value="id")int post_no, 
+							 @RequestParam(value="pw")String pw,
+							 @RequestParam(value="post_kind")String post_kind ,Model model){
+		System.out.println("detail");
+		System.out.println("pw"+pw);
+		PostVO postVo = postService.getPostDetail(post_no);
+		
+		if(postVo.getPost_pw().equals(pw)){
+			List<PostReplyVO> postRepList = postReplyService.getPostRepList(post_no);
+			
+			model.addAttribute("postVo", postVo);
+			model.addAttribute("postRepList", postRepList);
+			return "postDetail";
+		}else if(pw == ""){
+			List<PostReplyVO> postRepList = postReplyService.getPostRepList(post_no);
+			
+			model.addAttribute("postVo", postVo);
+			model.addAttribute("postRepList", postRepList);
+			return "postDetail";
+		}
+		return "redirect:/post/list?post_kind="+post_kind;
+	}
+	
+	//생성하기 (제목 내용 칸을 보여주는 것 jsp)
+	//get방식 주소창에 뜨는 것. 
+	//맵방식은 주소창에 값이 뜨는 것.. 그것을 읽어올수 있는 것.(ex.request.getparameter(name값))
+	@RequestMapping(value="/insert", method=RequestMethod.GET)
+	public String postInsert(@RequestParam(value="post_kind")String post_kind, HttpServletRequest request, Model model){
+		model.addAttribute("post_kind", post_kind);
+		
+		return "postInsert";
+	}
+	
+	//생성하기2(생성 기능)
+	@RequestMapping(value="/insertPost", method=RequestMethod.POST)
+	public String InsertPost(PostVO postVo,
+							 HttpServletRequest request,
+							 @RequestParam(value="files")List<MultipartFile> files,
+							 Model model) throws IOException, ServletException{
+		HttpSession session = request.getSession();
+		
+		String id = "";
+		
+		MemberVO memberVo = (MemberVO) session.getAttribute("memberVo");
+		
+		System.out.println("postVo : " + postVo);
+		
+		System.out.println("files : " + files);
+		//임시처리(로그인 되어야함)
+		if(memberVo==null){
+			id = "test";
+		}else{
+			id = memberVo.getMem_id();
+		}
+		
+		//순서대로 숫자(1부터 ~ 숫자)를 맞춰주는 것..겹치지도 않게 
+		int post_no = postService.getPostSeq();
+		
+		//게시글내용 가져옴
+		//postVo (게시판 내용을 다 가져옴) post_no를 매개값으로 / jsp에? 값 다 저장해서 담아둠 
+		postVo.setPost_no(post_no);
+		
+		int cnt = postService.insertPost(postVo);
+		
+		if(cnt > 0){
+			System.out.println("게시글 등록 성공");
+			
+			
+//			//파일추가
+//			System.out.println("파일추가 기능");
+//			
+//			for (MultipartFile multipartFile : files) {
+//				String fileName = new String(multipartFile.getOriginalFilename().getBytes("8859_1"), "UTF-8");
+//				
+//				if("".equals(fileName)){	// 파일 이름이 빈칸이 아닐경우 계속 실행
+//					continue;
+//				}
+//				
+//				String file_upload = UUID.randomUUID().toString();
+//				
+//				File serverFile = new File(file_path + File.separator + fileName);
+//				multipartFile.transferTo(serverFile);
+//				
+//				Map<String, Object> map = new HashMap<String, Object>();
+//				map.put("timeline_col", "post_no");		// 첨부파일이 올라가는 타임라인의 종류
+//				map.put("timeline_no", post_no);		// 해당 첨부파일이 올라가는 타임라인 종류의 번호
+//				map.put("files_name", fileName);		// 파일 이름 저장
+//				map.put("files_path", file_path);		// 파일 경로 저장
+//				map.put("files_upload", file_upload);	// 파일 업로드명(랜덤값)
+//				map.put("files_kind", "test");			// 뭔지 몰라서 임시 값
+//				
+//				int cnt2 = filesService.insertFiles(map);
+//				
+//				if(cnt2 > 0){
+//					System.out.println("파일 첨부 성공");
+//				}else{
+//					System.out.println("파일 첨부 실패");
+//				}
+				
+			}
+			
+			//page, pageSize parameter 확인
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("page", 1);
+			paramMap.put("pageSize", 10);
+			paramMap.put("post_kind", postVo.getPost_kind());
+			
+			//Map형으로 service에서 가져옴 
+			//포스트
+			Map<String, Object> resultMap = postService.getPostList(paramMap);
+			
+			model.addAllAttributes(resultMap);
+			model.addAttribute("post_kind", postVo.getPost_kind());
+			
+			
+//		}else{
+//			System.out.println("게시글 등록 실패");
+//		}
+		
+		
+		return "postList";
+
+	}
+	
+	//수정하기 (수정하는 화면을 부르는 것, 원래 써 있는 값을 불러오는 것) jsp
+	@RequestMapping(value="/update", method=RequestMethod.GET)
+	public String postUpdate(@RequestParam(value="post_no")int post_no, Model model) {
+		System.out.println("수정하자");
+		
+		PostVO postVo = postService.getPostDetail(post_no);
+		List<PostReplyVO> postRepList = postReplyService.getPostRepList(post_no);
+				
+		model.addAttribute("postVo", postVo);
+		model.addAttribute("postRepList", postRepList);
+		
+		return "postUpdate";
+	}
+	
+	//게시글 수정하기 (원래글 내용을 삭제하고 수정)=> 곧 수정하는 기능 
+	@RequestMapping(value="/updatePost", method=RequestMethod.POST)
+	public String updatePost(PostVO postVo,
+							 Model model ) throws IOException, ServletException{
+		
+		postVo.setPost_pw("n");
+		postVo.setPost_pw_chk("n");
+								
+		int cnt = postService.updatePost(postVo);
+		
+		if (cnt > 0) {
+			System.out.println("게시글 수정 성공");  
+			
+			PostVO postvo = postService.getPostDetail(postVo.getPost_no());
+			List<PostReplyVO> postRepList = postReplyService.getPostRepList(postVo.getPost_no());
+					
+			model.addAttribute("postVo", postvo);
+			model.addAttribute("postRepList", postRepList);
+			
+			return "postDetail";
+		}else{
+			System.out.println("게시글 등록 실패");
+			return null;
+		}
+		 
+//		PostVo postvo = postService.getPostDetail(post_no);
+//		List<PostRepVO> postRepList = postRepService.getPostRepList(postVo.getPost_no());
+		
+	}
+	//댓글 생성하기 
+	
+	//댓글 삭제하기
+	
+	//삭제하기
+	@RequestMapping("/delete")
+	public String postDelete(PostVO postVo,
+											@RequestParam(value="page", defaultValue="1") int page,
+										    @RequestParam(value="pageSize", defaultValue="10") int pageSize, Model model){
+		System.out.println("post_no"+postVo.getPost_no());
+		System.out.println("post_kind"+postVo.getPost_kind());
+		
+		
+		//게시글을 삭제처리 start
+		int cnt = postService.deletePost(postVo.getPost_no());
+		
+		if (cnt > 0){
+			System.out.println("게시글 삭제 성공");
+
+			//리스트를 불러오는 것 start
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("page", page);
+			paramMap.put("pageSize", pageSize);
+			paramMap.put("post_kind", postVo.getPost_kind());
+			
+			Map<String, Object> resultMap = postService.getPostList(paramMap);
+			
+			model.addAllAttributes(resultMap);
+			model.addAttribute("post_kind", postVo.getPost_kind());
+			//리스트를 불러오는 것 end
+			
+			return "postList";
+			
+		}else{
+			System.out.println("게시글 삭제 실패");
+			return "";
+		}
+		//게시글을 삭제처리 end  
+		
+	}
+	
+	
+} //PostController end

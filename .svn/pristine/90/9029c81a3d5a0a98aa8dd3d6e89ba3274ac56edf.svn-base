@@ -1,0 +1,67 @@
+package kr.or.dev.timeline.collection.web;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.timeline.collection.service.CollectionServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("collController")
+@RequestMapping("/coll")
+public class CollectionController {
+	
+	@Resource(name="collService")
+	private CollectionServiceInf collService;
+	
+	/**
+	* Method : insertColl
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param timeline_col
+	* @param timeline_no
+	* @param session
+	* @return
+	* Method 설명 : 담아두기 등록
+	*/
+	@RequestMapping("/insert")
+	@ResponseBody
+	public int insertColl(@RequestParam("timeline_col")String timeline_col
+						, @RequestParam("timeline_no")int timeline_no
+						, HttpSession session){
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// paramMap
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("timeline_col", timeline_col);
+		paramMap.put("timeline_no", timeline_no);
+		paramMap.put("mem_id", memVo.getMem_id());
+		
+		return collService.insertColl(paramMap);
+	}
+	
+	/**
+	* Method : deleteColl
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param coll_no
+	* @return
+	* Method 설명 : 담아두기 삭제
+	*/
+	@RequestMapping("/delete")
+	@ResponseBody
+	public int deleteColl(@RequestParam("coll_no")int coll_no){
+		return collService.deleteCollR(coll_no);
+	}
+}

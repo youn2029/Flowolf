@@ -1,0 +1,77 @@
+package kr.or.dev.group.project_user.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+
+public interface ProjectUserDaoInf {
+	
+	/**
+	* Method : getProUserList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트의 참여자 조회
+	*/
+	List<ProjectUserVO> getProUserList(int pro_no);
+	
+	/**
+	* Method : getProMyList
+	* 최초작성일 : 2018. 9. 5.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : 회원의 프로젝트 조회
+	*/
+	List<ProjectVO> getMyProList(String mem_id);
+	
+	/**
+	* Method : insertProUser
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param ProUserVo
+	* @return
+	* Method 설명 : 프로젝트 참여 (프로젝트 참여자 등록)
+	*/
+	int insertProUser(ProjectUserVO proUserVo);
+	
+	/**
+	* Method : updateProUser
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param ProUserVo
+	* @return
+	* Method 설명 : 관리자 권한 (프로젝트 참여자 수정)
+	*/
+	int updateProUser(ProjectUserVO proUserVo);
+	
+	/**
+	* Method : deleteRProUser
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param ProUserVo - pro_no, mem_id
+	* @return
+	* Method 설명 : 프로젝트 나가기 (프로젝트 참여자 삭제)
+	*/
+	int deleteProUserR(ProjectUserVO proUserVo);
+	
+	/**
+	* Method : getProUserSearchList
+	* 최초작성일 : 2018. 8. 30.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 프로젝트참여자 검색 조회
+	*/
+	List<ProjectUserVO> getProUserSearchList(Map<String, String> searchMap);
+	
+}

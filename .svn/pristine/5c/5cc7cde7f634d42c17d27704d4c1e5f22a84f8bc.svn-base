@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="voteItem">
+	
+	<!-- 투표 항목 등록 -->
+	<insert id="insertVi" parameterType="viVo">
+		INSERT INTO vote_item(vi_no, vi_cont, vi_del_chk, vote_no)
+			VALUES(vi_no_seq.nextval, #{vi_cont}, 'n', #{vote_no})
+	</insert>
+	
+	<!-- 투표 항목 수정 -->
+	<update id="updateVi" parameterType="viVo">
+		UPDATE vote_item
+		   SET vi_cont = #{vi_cont}
+		 WHERE vi_no = #{vi_no}
+	</update>
+	
+	<!-- 투표 항목 삭제 -->
+	<update id="deleteVi" parameterType="int">
+		UPDATE vote_item
+		   SET vi_del_chk = 'y'
+		 WHERE vi_no = #{vi_no}
+	</update>
+	
+	<!-- 투표의 항목 조회 -->
+	<select id="getViList" parameterType="map" resultType="viVo">
+		SELECT vi.*
+			 , (SELECT count(*)
+				  FROM vote_item_user viu
+				 WHERE viu.vi_no = vi.vi_no) as viu_cnt
+			 , (SELECT count(*)
+				  FROM vote_item_user viu
+				 WHERE viu.vi_no = vi.vi_no
+				 AND viu.mem_id = #{mem_id}) as viu_chk
+		  FROM vote_item vi
+		 WHERE vi.vote_no = #{vote_no}
+		   AND vi.vi_del_chk = 'n'
+	</select>
+</mapper>

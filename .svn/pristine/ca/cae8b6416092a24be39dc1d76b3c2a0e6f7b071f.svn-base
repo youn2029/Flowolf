@@ -1,0 +1,63 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<form action="" name="">
+
+	<!-- top : pop invite project member : s -->
+	<div class="pop-top-sub">
+		<i class="fas fa-arrow-left size-20 cursor-point" onclick="fn_popupBack(this)"></i>
+		프로젝트 참여자 초대하기
+		<i class="flow-icon icon-close cursor-point" onclick="fn_popSubClose(this)"></i>
+	</div>
+	<!-- top : pop invite project member : f -->
+	
+	<!-- content : pop invite project member : s -->
+	<div class="pop-con-sub">
+	
+		<!-- 추가된 참여자 리스트가 나올 부분 -->
+		<div class="select-user-list">
+			<span class="user-all-del" onclick="fn_userListDelete(this)">전체 삭제</span>
+		</div>
+		
+		<!-- user list:s -->
+		<div class="invite-user-list over-y-scroll">
+			<dl class="pop-user-list" data-id="nickname" onclick="fn_inviteUserAdd(this)">
+				<dt class="maright-10">
+					<i class="icon-circle circle-s"></i>
+					<img src="" onerror="this.src='/image/user-pic-sample.png'" width="40">
+				</dt>
+				<dd>
+					<strong class="dis-block size-20 color-black">USER NAME</strong>
+					<span class="dis-block size-14 color-gray-l">nickname</span>
+					<button class="invite-add-btn">
+						<i class="fas fa-plus maright-15"></i>
+						<span>추가</span>
+					</button>
+				</dd>
+			</dl>
+			<dl class="pop-user-list" data-id="nickname2" onclick="fn_inviteUserAdd(this)">
+				<dt class="maright-10">
+					<i class="icon-circle circle-s"></i>
+					<img src="" onerror="this.src='/image/user-pic-sample.png'" width="40">
+				</dt>
+				<dd>
+					<strong class="dis-block size-20 color-black">USER NAME2</strong>
+					<span class="dis-block size-14 color-gray-l">nickname2</span>
+					<button class="invite-add-btn">
+						<i class="fas fa-plus maright-15"></i>
+						<span>추가</span>
+					</button>
+				</dd>
+			</dl>
+		</div>
+		<!-- user list:f -->
+	</div>
+	<!-- content : pop invite project member : f -->
+	
+	<!-- footer : pop invite project member : s -->
+	<div class="pop-footer-sub">
+		<input type="submit" class="submit-btn color-white default-back-color" value="초대">
+	</div>
+	<!-- footer : pop invite project member : f -->
+
+</form>

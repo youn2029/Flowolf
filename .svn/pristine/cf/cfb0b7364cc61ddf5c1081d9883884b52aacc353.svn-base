@@ -1,0 +1,29 @@
+package kr.or.dev.timeline.todo_item.model;
+
+import java.util.List;
+
+import kr.or.dev.timeline.todo.model.TodoVO;
+
+public class MultiTodo {
+	
+	public List<TodoItemVO> tiList;
+	
+	//public TodoVO todoVo;
+
+	public List<TodoItemVO> getTiList() {
+		return tiList;
+	}
+
+	public void setTiList(List<TodoItemVO> tiList) {
+		this.tiList = tiList;
+	}
+
+//	public TodoVO getTodoVo() {
+//		return todoVo;
+//	}
+//
+//	public void setTodoVo(TodoVO todoVo) {
+//		this.todoVo = todoVo;
+//	}
+
+}

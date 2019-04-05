@@ -1,0 +1,179 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<section class="col-md-10 admin-con-wrap">
+	
+	<!-- title -->
+	<div class="dis-block posi-re">
+		<strong class="dis-inblock size-30 color-black">회원 통계</strong>
+		<span class="dis-inblock marleft-15 size-18 color-gray">Member Statistics</span>
+	</div>
+	
+	<!-- 회원수 통계:s -->
+	<div class="container martop-30">
+		<div class="row">
+		
+			<div class="col-md-3">
+				<div class="posi-re pad-20 back-color-white">
+					<strong class="dis-block marbtm-30">FLOWOLF ALL MEMBER</strong>
+					<i class="far fa-chart-bar size-30 default-color"></i>
+					<span class="count-box color-white default-back-color">234</span>
+				</div>
+			</div>
+		
+			<div class="col-md-3">
+				<div class="posi-re pad-20 back-color-white">
+					<strong class="dis-block marbtm-30">General Members</strong>
+					<i class="far fa-chart-bar size-30 color-blue-l"></i>
+					<span class="count-box color-white back-color-blue-l">123</span>
+				</div>
+			</div>
+		
+			<div class="col-md-3">
+				<div class="posi-re pad-20 back-color-white">
+					<strong class="dis-block marbtm-30">KAKAO Members</strong>
+					<i class="far fa-chart-bar size-30 color-yellow-d"></i>
+					<span class="count-box color-white back-color-yellow-d">50</span>
+				</div>
+			</div>
+		
+			<div class="col-md-3">
+				<div class="posi-re pad-20 back-color-white">
+					<strong class="dis-block marbtm-30">GOOGLE Members</strong>
+					<i class="far fa-chart-bar size-30 color-red"></i>
+					<span class="count-box color-white back-color-red">61</span>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<!-- 회원수 통계:f -->
+	
+	
+	<!-- member chart box:s -->
+	<div id="curve_chart" class="admin-content martop-20" style="height:500px">
+	</div>
+	<!-- member chart box:f -->
+	
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+	google.charts.load('current', {'packages':['corechart']});
+	google.charts.setOnLoadCallback(drawChart);
+
+	function drawChart() {
+		var data = google.visualization.arrayToDataTable([
+			['Month', '월별가입자', '월별탈퇴수'],
+			['1',  10, 1],
+			['2',  20, 2],
+			['3',  30, 3],
+			['4',  20, 4],
+			['5',  10, 1],
+			['6',  20, 2],
+			['7',  30, 3],
+			['8',  20, 4],
+			['9',  10, 1],
+			['10',  20, 2],
+			['11',  30, 3],
+			['12',  20, 4]
+		]);
+		
+		var options = {
+			title: 'Company Performance',
+			curveType: 'function',
+			legend: { position: 'bottom' }
+		};
+		
+		var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+		
+		chart.draw(data, options);
+	}
+	</script>
+	
+	<script src="<%=request.getContextPath() %>/js/utils.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	
+	<!-- member chart box:s
+	<div id="curve_chart" class="admin-content martop-20">
+		
+		<div id="canvas-holder" style="width:40%">
+			<canvas id="chart-area"></canvas>
+		</div>
+		<script>
+			var randomScalingFactor = function() {
+				return Math.round(Math.random() * 100);
+			};
+	
+			var config = {
+				type: 'doughnut',
+				data: {
+					datasets: [{
+						data: [
+							50,
+							30,
+							20,
+							10,
+							40,
+						],
+						backgroundColor: [
+							window.chartColors.red,
+							window.chartColors.orange,
+							window.chartColors.yellow,
+							window.chartColors.green,
+							window.chartColors.blue,
+						],
+						label: 'Dataset 1'
+					}],
+					labels: [
+						'Red',
+						'Orange',
+						'Yellow',
+						'Green',
+						'Blue'
+					]
+				},
+				options: {
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Doughnut Chart'
+					},
+					animation: {
+						animateScale: true,
+						animateRotate: true
+					}
+				}
+			};
+	
+			window.onload = function() {
+				var ctx = document.getElementById('chart-area').getContext('2d');
+				window.myDoughnut = new Chart(ctx, config);
+			};
+	
+			var colorNames = Object.keys(window.chartColors);
+			document.getElementById('addDataset').addEventListener('click', function() {
+				var newDataset = {
+					backgroundColor: [],
+					data: [],
+					label: 'New dataset ' + config.data.datasets.length,
+				};
+	
+				for (var index = 0; index < config.data.labels.length; ++index) {
+					newDataset.data.push(randomScalingFactor());
+	
+					var colorName = colorNames[index % colorNames.length];
+					var newColor = window.chartColors[colorName];
+					newDataset.backgroundColor.push(newColor);
+				}
+	
+				config.data.datasets.push(newDataset);
+				window.myDoughnut.update();
+			});
+	
+		</script>
+	</div>
+	<!-- member chart box:f -->
+</section>

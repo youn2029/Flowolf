@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chat">
+
+	<select id="getChatList" resultType="chatVo" parameterType="String">
+	    SELECT c.*
+	       , (SELECT COUNT(*)
+	          FROM CHAT_USER b
+	          WHERE b.CHAT_NO = c.CHAT_NO) as in_mem_num
+	       , (SELECT mem_id 
+	          FROM chat_user b 
+	         WHERE (SELECT count(*)
+	                FROM CHAT_USER b
+	               WHERE b.CHAT_NO = c.CHAT_NO) = 2 
+	                 AND b.chat_no = c.chat_no 
+	                 AND b.mem_id not in #{mem_id}) AS ptn_id
+	    FROM chat c
+	       , (SELECT *
+	          FROM CHAT_USER
+	          WHERE mem_id = #{mem_id}) cu
+	   WHERE c.CHAT_NO = cu.chat_no
+      and EXISTS(SELECT * 
+		 	 	 				FROM chat_con cc
+		 	 	 			   WHERE c.chat_no = cc.chat_no)
+	   ORDER BY c.chat_time DESC
+	</select>
+	
+	<select id="getChatDetail" resultType="chatVo" parameterType="Integer">
+		SELECT * FROM chat WHERE chat_no = #{chat_no}
+	</select>
+	
+	<insert id="insertChat" parameterType="chatVo">
+		INSERT INTO chat
+			 VALUES(
+			  #{chat_no}
+			 ,#{chat_title}
+			 ,sysdate
+			 ,'n'
+			 ,#{mem_id}
+			 ,#{chat_ip}
+			 ,#{chat_port})
+	</insert>
+	
+	<select id="getChatSeq" resultType="Integer">
+		SELECT chat_no_seq.nextval
+		FROM dual
+	</select>
+	
+	<update id="deleteChat" parameterType="Integer" >
+		 UPDATE chat
+		 	SET chat_del_chk = 'y' 
+    	  WHERE CHAT_NO = #{chat_no}
+	</update>
+	
+	<update id="updateChat" parameterType="ChatVo">
+		 UPDATE chat
+		    SET chat_title = #{chat_title}
+	       WHERE CHAT_NO = #{chat_no}
+	</update>
+	
+</mapper>

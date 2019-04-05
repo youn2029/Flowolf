@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatCon">
+
+	<select id="getChatConList" parameterType="Integer" resultType="chatConVo">
+		SELECT a.chat_con_no
+				, a.chat_con_time
+				, a.chat_no
+				, a.chat_cont
+				, b.mem_nick
+				, a.mem_id
+		  FROM chat_con a, member b
+		 WHERE a.chat_no = #{chat_no} AND a.mem_id = b.mem_id ORDER BY chat_con_no 
+	</select>
+	
+	<insert id="insertChatCon" parameterType="chatConVo">
+		INSERT INTO CHAT_CON(chat_con_no,
+							chat_cont,
+							chat_con_time,
+							chat_no,
+							mem_id) 
+					VALUES(#{chat_con_no}
+							,#{chat_cont}
+							,sysdate
+							,#{chat_no}
+							,#{mem_id})
+	</insert>
+	
+	<select id="getChatConSeq" resultType="Integer">
+		SELECT chat_con_no_seq.nextval
+		FROM dual
+	</select>
+	
+	<select id="getChatCon" resultType="chatConVo" parameterType="Integer">
+	<!-- 요섭이 오빠 정리한거 가져옴 -->
+	SELECT to_char(a.chat_con_time,'HH24:MI') time
+				, chat_cont
+				, a.mem_id
+		  FROM chat_con a, chat b
+		  WHERE a.chat_con_no = #{chat_con_no}
+        	AND a.chat_no = b.chat_no 
+		  ORDER BY a.chat_con_no
+		  
+<!-- 		SELECT a.chat_con_no -->
+<!-- 				, to_char(a.chat_con_time,'HH24:MI') time -->
+<!-- 				, a.chat_no,chat_cont -->
+<!-- 				, a.mem_id -->
+<!--        			, b.chat_title -->
+<!--       			, (select count(*) from chat_user where chat_no = b.chat_no) in_mem_num -->
+<!--       			, b.chat_ip -->
+<!-- 		  FROM chat_con a, chat b -->
+<!-- 		  WHERE a.chat_con_no = #{chat_con_no} -->
+<!--         	AND a.chat_no = b.chat_no  -->
+<!-- 		  ORDER BY a.chat_con_no -->
+	</select>
+
+
+</mapper>

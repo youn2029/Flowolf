@@ -1,0 +1,310 @@
+package kr.or.dev.timeline.schedule.web;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.common.Format;
+import kr.or.dev.timeline.schedule.model.ScheduleVO;
+import kr.or.dev.timeline.schedule.service.ScheduleServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.google.gson.Gson;
+
+@Controller
+@RequestMapping("/schd")
+public class ScheduleController {
+
+	// Service injection
+	@Resource(name = "scheduleService")
+	private ScheduleServiceInf schService;
+	
+	
+	@RequestMapping(value = "/insert", method = RequestMethod.GET)
+	public String sendSchedule(Model model,
+			@RequestParam("alert_time") String alert_time,
+			@RequestParam("pro_no") int pro_no,
+			@RequestParam("datetime") String datetime,
+			ScheduleVO vo,
+			HttpSession session)
+			throws NumberFormatException, ParseException {
+		String lat = vo.getSchd_lat();
+		String lon = vo.getSchd_lon();
+		System.out.println("/////////////////");
+		System.out.println("lat은 : "+ lat + "lng는 : "+ lon);
+		System.out.println("프로젝트넘버는"+pro_no);
+		// 날짜 datetime
+		String[] time = datetime.split("   -   ");
+		String[] cut = datetime.split("-");
+		String month = cut[1];
+		String day = cut[2].substring(0,2);
+		// 알람 울릴시간(Format class의 메서드를 이용, 시작날짜로부터 계산해서 알림날짜를 추출)
+		String notificationTimer = Format.notificationFormatter(time[0],-Integer.parseInt(alert_time));
+
+		// 구글맵에 데이터보내기
+		String latLng = "https://maps.google.com?q=" + vo.getSchd_loc();
+		// 미니맵 띄울 데이터
+		String miniMap = "https://maps.googleapis.com/maps/api/staticmap?center="
+				+ lat
+				+ ","
+				+ lon
+				+ "&amp;zoom=15&amp;size=530x300&amp;markers=color:red|"
+				+ lat
+				+ ","
+				+ lon
+				+ "&amp;key=AIzaSyADjbtMn46r9DGFyo_ZRz3c6fOXzuOKWCw";
+		model.addAttribute("month",month);
+		model.addAttribute("day",day);
+		model.addAttribute("minute",formatter(alert_time) );
+		model.addAttribute("start", time[0]);
+		model.addAttribute("end", time[1]);
+		model.addAttribute("vo",vo);
+		model.addAttribute("timer", notificationTimer);
+		model.addAttribute("callback", latLng);
+		model.addAttribute("miniMap", miniMap);
+		
+		// 스케줄 작성한 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		String mem_id = memVo.getMem_id();
+
+		// 현재 프로젝트 번호
+		ScheduleVO svo = new ScheduleVO();
+		// 스케쥴넘버 자동으로입력됨
+		// 스케줄 이름 넣기
+		svo.setSchd_title(vo.getSchd_title());
+		// 스케줄 장소
+		svo.setSchd_loc(vo.getSchd_loc());
+		svo.setSchd_memo(vo.getSchd_memo());
+		svo.setSchd_start_time(time[0]);
+		svo.setSchd_end_time(time[1]);
+		svo.setSchd_alarm(notificationTimer);
+		svo.setSchd_time(new Date());
+		svo.setSchd_del_chk("n");
+		svo.setSchd_fix_chk("n");
+		svo.setSchd_fix_date(null);
+		svo.setSchd_lat(lat);
+		svo.setSchd_lon(lon);
+		svo.setPro_no(pro_no);
+		svo.setMem_id(mem_id);
+		System.out.println("알림시간은 " + notificationTimer);
+		int result = schService.insertSchd(svo);
+		return "last";
+//		return "redirect:/pro/detail?pro_no="+pro_no;
+	}
+	
+	// 일정 삭제
+	public String deleteSchedule(
+			@RequestParam("schd_no")int schd_no,
+			@RequestParam("pro_no") int pro_no
+			){
+		int result = schService.deleteSchd(schd_no);
+		return "redirect:/pro/detail?pro_no="+pro_no;
+	}
+	
+	// 일정 업데이트
+	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	public String updateSchd(Model model,ScheduleVO vo,
+			@RequestParam("alert_time") String alert_time,
+//			@RequestParam("datetime") String datetime,
+			HttpSession session)
+					throws NumberFormatException, ParseException {
+		String datetime = "2018-10-05 12:20   -   2018-10-05 17:20";
+		String lat = vo.getSchd_lat();
+		String lon = vo.getSchd_lon();
+		
+		System.out.println(lat+" "+ lon+" "+ alert_time+" "+vo.getSchd_loc());
+		System.out.println(vo.getMem_id()+" " + vo.getPro_no());
+		
+		// 날짜 datetime
+		String[] time = datetime.split("   -   ");
+		String[] cut = datetime.split("-");
+		String month = cut[1];
+		String day = cut[2].substring(0,2);
+		// 알람 울릴시간(Format class의 메서드를 이용, 시작날짜로부터 계산해서 알림날짜를 추출)
+		String notificationTimer = Format.notificationFormatter(time[0],-Integer.parseInt(alert_time));
+		
+		// 구글맵에 데이터보내기
+		String latLng = "https://maps.google.com?q=" + vo.getSchd_loc();
+		// 미니맵 띄울 데이터
+		String miniMap = "https://maps.googleapis.com/maps/api/staticmap?center="
+				+ lat
+				+ ","
+				+ lon
+				+ "&amp;zoom=15&amp;size=530x300&amp;markers=color:red|"
+				+ lat
+				+ ","
+				+ lon
+				+ "&amp;key=AIzaSyADjbtMn46r9DGFyo_ZRz3c6fOXzuOKWCw";
+		model.addAttribute("month",month);
+		model.addAttribute("day",day);
+		model.addAttribute("minute",formatter(alert_time) );
+		model.addAttribute("start", time[0]);
+		model.addAttribute("end", time[1]);
+		model.addAttribute("vo",vo);
+		model.addAttribute("timer", notificationTimer);
+		model.addAttribute("callback", latLng);
+		model.addAttribute("miniMap", miniMap);
+		//임시로
+		int pro_no = vo.getPro_no();
+		
+		
+		
+//		스케줄 작성한 회원정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		String mem_id = memVo.getMem_id();
+		
+//		스케줄 업데이트
+
+
+		// 현재 프로젝트 번호
+		ScheduleVO svo = new ScheduleVO();
+		// 스케쥴넘버 자동으로입력됨
+		svo.setSchd_title(vo.getSchd_title());
+		svo.setSchd_loc(vo.getSchd_loc());
+		svo.setSchd_memo(vo.getSchd_memo());
+		svo.setSchd_start_time(time[0]);
+		svo.setSchd_end_time(time[1]);
+		svo.setSchd_alarm(notificationTimer);
+		svo.setSchd_time(new Date());
+		svo.setSchd_del_chk("n");
+		svo.setSchd_fix_chk("n");
+		svo.setSchd_fix_date(new Date());
+		svo.setSchd_lon(vo.getSchd_lon());
+		svo.setSchd_lat(vo.getSchd_lat());
+		svo.setSchd_no(vo.getSchd_no());
+		int result = schService.updateSchd(svo);
+		return "project";
+//		return "redirect:/pro/detail?pro_no="+pro_no;
+	}
+	
+	public static String formatter(String stringFormatMinute) {
+		int minute = Integer.parseInt(stringFormatMinute);
+		String date = "";
+		if(minute == 0){
+			date = "0";
+		} else if (0 < minute && minute < 60) {
+			date = minute + "분";
+		} else if (minute!=0 && minute < 181 && minute / 60 < 4) {
+			date = minute / 60 + "시간";
+		} else if (1439 < minute && minute % 1440 == 0) {
+			date = minute / 1440 + "일";
+		}
+		return date;
+	}
+	
+	
+	// polling.jsp로부터 member_id를 받아 그에 해당하는 
+	// 알림을 조회하고 다시 뿌려주는 메서드 
+	@RequestMapping(value = "/dbcheck", method = RequestMethod.GET)
+	public ModelAndView testAjax(
+			Model model,
+			HttpSession session
+			) throws ParseException{
+		ModelAndView mv = new ModelAndView("jsonView");
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");		
+		System.out.println("testAjax called. . . .Q!	 ");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mem_id", memVo.getMem_id());
+		map.put("mem_id", "yshTest@naver.com");
+		map.put("schd_alarm", Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		System.out.println("회원 아이디는" + memVo.getMem_id());
+		List<ScheduleVO> schdvo = schService.getAlarmList(map);
+		System.out.println("알람갯수는 " + schdvo.size());
+		System.out.println("현재시간은 " + Format.timeFormat(new Date()));
+		mv.addObject("test", schdvo);
+		return mv;
+	}
+	
+	//전체일정클릭
+	//mem_id를 통해 해당 회원의 모든 스케줄을 조회
+	//순서 aside -> callCalendar -> fullCalendar -> callCalendar2 
+	@RequestMapping("/callCalendar" )
+	public String callCalendar(Model model ,HttpSession session,HttpServletRequest request){
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo"); 
+		model.addAttribute("mem_id", memVo.getMem_id());
+		return "allCalendar"; //tile에 맵핑되어있는 id
+	}
+	
+	@RequestMapping(value="/callCalendar2", method=RequestMethod.POST)
+	@ResponseBody
+	public void scheduleParser(@RequestParam("mem_id")String mem_id,
+		HttpServletResponse response){
+		Map<String,Object> map = schService.groupCalendarList(mem_id);
+		Gson gson = new Gson();
+		String json = "";
+		json = gson.toJson(map);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		try {
+			response.getWriter().print(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+		
+
+	//project_right.jsp에서 일정 클릭시 호출되는 메서드
+	//mem_id와 pro_no를 통해 해당 회원의 해당 프로젝트 스케줄을 조회
+	//순서 project_right -> callCalendarById_no -> profullCalendar -> searchProSchd
+	@RequestMapping("/callSchd")
+	public String callCalendarById_no(Model model, HttpSession session){
+		MemberVO memVo = (MemberVO)session.getAttribute("memVo"); 
+		model.addAttribute("mem_id", memVo.getMem_id());
+		return "proCalendar";//tile에 맵핑되어있는 id
+	}
+	
+	
+	//profullCalendar.jsp ajax에서 요청하는 메서드
+	@RequestMapping(value="/callSchd2", method=RequestMethod.POST)
+	@ResponseBody
+	public void projectScheduleParser(@RequestParam("mem_id")String mem_id,
+		@RequestParam("pro_no") int pro_no,
+		HttpServletResponse response){
+		Map<String,Object> map = schService.projectCalendarList(mem_id,pro_no);
+		Gson gson = new Gson();
+		String json = "";
+		json = gson.toJson(map);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		try {
+			response.getWriter().print(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@RequestMapping("/test")
+	public String test(Model model,HttpSession session) throws ParseException{
+		model.addAttribute("mem_id","yshTest@naver.com");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mem_id","yshTest@naver.com");
+		map.put("schd_alarm", Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		System.out.println(Format.notificationFormatter(Format.timeFormat(new Date()),0));
+		List<ScheduleVO> schdvo =  schService.getAlarmList(map);
+		model.addAttribute("svo",schdvo);
+		return "schedule/polling";
+	}
+	
+	
+}

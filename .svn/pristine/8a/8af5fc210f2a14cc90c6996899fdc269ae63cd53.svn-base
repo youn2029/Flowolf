@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<!-- basic layout -->
+	<definition name="basicLayout" template="/WEB-INF/views/tiles/basicLayout.jsp">
+		<put-attribute name="aside" value="/WEB-INF/views/tiles/aside.jsp"/>
+		<put-attribute name="top" value="/WEB-INF/views/tiles/top.jsp"/>
+		<put-attribute name="content" value=""/>
+		<put-attribute name="layerPopCon" value="/WEB-INF/views/tiles/layerPopCon.jsp"/>		
+	</definition>
+	
+	<!-- main -->
+	<definition name="main" extends="basicLayout">
+		<put-attribute name="content" value="/WEB-INF/views/main.jsp"></put-attribute>
+	</definition>
+	
+	<!-- project -->
+	<definition name="project" extends="basicLayout">
+		<put-attribute name="content" value="/WEB-INF/views/project.jsp"></put-attribute>
+	</definition>
+	
+	<!-- projectList -->
+	<definition name="projectList" extends="basicLayout">
+		<put-attribute name="content" value="/WEB-INF/views/group/projectList.jsp"></put-attribute>
+	</definition>
+	
+</tiles-definitions>
+
+<!--
+	kr.or.ddit.mvc.web.TilesController
+	
+	localhost:8180/tiles/main
+	
+	public String tilesMain(){
+		return "";	// tiles definition name
+	}
+-->

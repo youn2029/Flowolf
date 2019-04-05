@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="basic">
+
+	<!-- 일반 게시글 등록 -->
+	<insert id="insertBasic" parameterType="basicVo">
+		INSERT INTO basic (basic_no, basic_cont, basic_time, basic_del_chk, basic_fix_chk, pro_no, mem_id)
+		VALUES (BASIC_NO_SEQ.NEXTVAL, #{basic_cont}, sysdate, 'n', 'n', #{pro_no}, #{mem_id})
+	</insert>
+	
+	<!-- 일반 게시글 수정 -->
+	<update id="updateBasic" parameterType="basicVo">
+		UPDATE basic
+		   SET basic_cont = #{basic_cont}
+		     , basic_fix_chk = #{basic_fix_chk}
+		     , basic_fix_date = sysdate
+		 WHERE basic_no = #{basic_no}
+	</update>
+	
+	<!-- 일반 게시글 삭제처리 -->
+	<update id="deleteBasic" parameterType="int">
+		UPDATE basic
+		   SET basic_del_chk = 'y'
+		 WHERE basic_no = #{basic_no}
+	</update>
+	
+	<!-- 일반 게시글 상세조회 -->
+	<select id="getBasicDetail" parameterType="int" resultType="basicVo">
+		SELECT *
+		  FROM basic
+		 WHERE basic_no = #{basic_no}
+	</select>
+	
+	<!-- 프로젝트 일반글 조회 -->
+	<select id="getBasicProList" parameterType="int" resultType="basicVo">
+		SELECT b.*
+			 , (SELECT mem_nick
+			 	  FROM member m
+			 	 WHERE m.mem_id = b.mem_id) AS mem_nick
+		  FROM basic b
+		 WHERE pro_no = #{pro_no}
+		   AND basic_del_chk = 'n'
+	</select>
+	
+	<!-- 일반글 검색 조회 -->
+	<select id="getBasicSearchList" parameterType="map" resultType="basicVo">
+		SELECT b.*
+		     , (SELECT mem_nick 
+		     	  FROM member m 
+		     	 WHERE m.mem_id = b.mem_id) AS mem_nick
+		  FROM basic b
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+		   AND basic_del_chk = 'n'
+	</select>
+
+</mapper>

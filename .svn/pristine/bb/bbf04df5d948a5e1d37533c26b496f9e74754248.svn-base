@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ptn">
+
+	<!-- 회원파트너리스트 -->
+	<select id="getPtnMyList" parameterType="String" resultType="ptnVo">
+	 SELECT DISTINCT m.mem_id, m.mem_nick
+	  FROM (SELECT ptn_apply, ptn_accept
+	  		  FROM partner
+			 WHERE ptn_accept = #{mem_id}
+          OR ptn_apply = #{mem_id}
+		       AND ptn_chk = 'y')a
+		 , member m
+	  WHERE (m.mem_id=a.ptn_accept
+	     OR m.mem_id=a.ptn_apply)
+       AND m.mem_id not in #{mem_id}
+	</select>
+
+</mapper>

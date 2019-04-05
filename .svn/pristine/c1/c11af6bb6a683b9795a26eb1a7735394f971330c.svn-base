@@ -1,0 +1,31 @@
+package kr.or.dev.talk.facechat_user.dao;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.talk.facechat_user.model.FaceChatUserVO;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository(value="fcuDao")
+public class FaceChatUserDao implements FaceChatUserDaoInf{
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public FaceChatUserVO getFaceChatUser(int fc_no) {
+		return template.selectOne("fcUser.getFaceChatUser", fc_no);
+	}
+
+	@Override
+	public int insertFaceChatUser(FaceChatUserVO faceChatUserVo) {
+		return template.insert("fcUser.insertFaceChatUser", faceChatUserVo);
+	}
+
+	@Override
+	public int deleteFaceChatUserR(FaceChatUserVO faceChatUserVo) {
+		return template.delete("fcUser.deleteFaceChatUserR", faceChatUserVo);
+	}
+
+}

@@ -1,0 +1,28 @@
+package kr.or.dev.common;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Format {
+	
+	// yyyy-MM-dd 폼
+	public static String dateFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(date);
+	}
+	
+	// yyyy-MM-dd hh:mm 폼 
+	public static String timeFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+		return sdf.format(date);
+	}
+	
+	// MM/dd 폼
+	public static String monthFormat(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd");
+		return sdf.format(date);
+	}
+
+	
+	
+}

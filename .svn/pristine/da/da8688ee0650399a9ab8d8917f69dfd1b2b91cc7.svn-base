@@ -1,0 +1,131 @@
+package kr.or.dev.timeline.task.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.timeline.task.model.TaskVO;
+
+@Repository("taskDao")
+public class TaskDao implements TaskDaoInf {
+
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+	
+	/**
+	* Method : insertTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 등록
+	*/
+	@Override
+	public int insertTask(TaskVO taskVo) {
+		return template.insert("task.insertTask", taskVo);
+	}
+
+	/**
+	* Method : updateTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param taskVo
+	* @return
+	* Method 설명 : 업무글 수정
+	*/
+	@Override
+	public int updateTask(TaskVO taskVo) {
+		return template.update("task.updateTask", taskVo);
+	}
+
+	/**
+	* Method : deleteTask
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 삭제처리
+	*/
+	@Override
+	public int deleteTask(int task_no) {
+		return template.update("task.deleteTask", task_no);
+	}
+
+	/**
+	* Method : getTaskProList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param paramMap
+	* @return
+	* Method 설명 : 프로젝트의 업무글 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskProList(Map<String, Object> paramMap) {
+		return template.selectList("task.getTaskProList", paramMap);
+	}
+
+	/**
+	* Method : getTaskSearchList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param searchMap
+	* @return
+	* Method 설명 : 업무글 검색 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskSearchList(Map<String, String> searchMap) {
+		return template.selectList("task.getTaskSearchList", searchMap);
+	}
+
+	/**
+	* Method : getTaskDetail
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 상세 조회
+	*/
+	@Override
+	public TaskVO getTaskDetail(int task_no) {
+		return template.selectOne("task.getTaskDetail", task_no);
+	}
+
+	/**
+	* Method : getTaskMyList
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : 회원이 요청한 업무글 조회
+	*/
+	@Override
+	public List<TaskVO> getTaskMyList(String mem_id) {
+		return template.selectList("task.getTaskMyList", mem_id);
+	}
+
+	/**
+	* Method : selectAllTask
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param mem_id
+	* @return
+	* Method 설명 : 회원이 참여하고 있는 프로젝트의 모든 업무 조회
+	*/
+	@Override
+	public List<TaskVO> selectAllTask(String mem_id) {
+		return template.selectList("task.selectAllTask", mem_id);
+	}
+
+}

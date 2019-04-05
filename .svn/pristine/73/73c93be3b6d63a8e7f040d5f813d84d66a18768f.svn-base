@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rep">
+
+	<insert id="insertRep" parameterType="map">
+		INSERT INTO reply (rep_no, rep_cont, rep_time, rep_del_chk, mem_id, ${timeline_col})
+			VALUES (rep_no_seq.nextval, #{rep_cont}, sysdate, 'n', #{mem_id}, #{timeline_no})
+	</insert>
+	
+	<update id="updateRep" parameterType="repVo">
+		UPDATE reply
+		   SET rep_cont = #{rep_cont}
+		 WHERE rep_no = #{rep_no}
+	</update>
+	
+	<update id="deleteRep" parameterType="int">
+		UPDATE reply
+		   SET rep_del_chk = 'y'
+		 WHERE rep_no = #{rep_no}
+	</update>
+	
+	<select id="getRepList" parameterType="map" resultType="repVo">
+		SELECT *
+		  FROM reply
+		 WHERE ${timeline_col} = #{timeline_no}
+	</select>
+
+</mapper>

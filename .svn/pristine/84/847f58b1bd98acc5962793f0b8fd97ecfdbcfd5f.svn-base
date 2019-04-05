@@ -1,0 +1,30 @@
+/*******************************************
+* FLOWOLF aside nav 'MY FOLRDER' mouseOver&Out JS
+* 팀명 : #DEV
+* 최초작성일 : 2018-09-10
+* 작성자 : UA(Kim ji su)
+*******************************************/
+
+
+/*******************************************
+* Note : mouseOver
+* 설명 : aside navigation(메뉴) 중 'MY FOLRDER'에
+* 		각 메뉴에 mouseOver시 'edit-box' show() & hide()
+*******************************************/ 
+function navOver(nav){
+	
+	var item = $(nav);
+	
+	item.on("mouseenter", function(){
+		$(this).find("div.edit-btn").show();
+	}).on("mouseleave", function(){
+		$(this).find("div.edit-btn").hide();
+	});
+
+}
+
+
+
+
+
+

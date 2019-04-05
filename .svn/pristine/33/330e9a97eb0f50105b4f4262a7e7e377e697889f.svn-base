@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="schd">
+
+	<!-- 일정 등록 -->
+	<insert id="insertSchd" parameterType="schdVo">
+		INSERT INTO SCHEDULE(schd_no
+		      				,schd_title
+		      				,schd_loc
+		      				,schd_memo
+		      				,schd_start_time
+		      				,schd_end_time
+		      				,schd_alarm
+		      				,schd_time
+		      				,schd_del_chk
+		      				,schd_fix_chk
+		      				,schd_fix_date
+		      				,pro_no
+		      				,mem_id)
+		      		VALUES (schd_no_seq.nextval
+		      				,#{schd_title}
+		      				,#{schd_loc}
+		      				,#{schd_memo}
+		      				,#{schd_start_time}
+		      				,#{schd_end_time}
+		      				,#{schd_alarm}
+		      				,sysdate
+		      				,#{schd_del_chk}
+		      				,#{schd_fix_chk}
+		      				,sysdate
+		      				,#{pro_no}
+		      				,#{mem_id}) 
+	</insert>
+		
+	<!-- 일정 수정 -->
+	<update id="updateSchd" parameterType="schdVo">
+					 UPDATE SCHEDULE
+					   	SET  schd_title 	 =	#{schd_title}
+						    ,schd_loc 		 =	#{schd_loc}
+						    ,schd_memo 		 =	#{schd_memo}
+						    ,schd_start_time = 	#{schd_start_time}
+						    ,schd_end_time   = 	#{schd_end_time}
+						    ,schd_alarm 	 =	sysdate
+						    ,schd_time 		 =	sysdate
+						    ,schd_fix_chk 	 =	#{schd_fix_chk}
+						    ,schd_fix_date 	 = 	sysdate
+	</update>
+		
+	<!-- 일정삭제 -->
+	<update id="deleteSchd" parameterType="schdVo">
+		UPDATE SCHEDULE 
+					SET schd_del_chk = 'y'
+		   		  WHERE schd_no = #{schd_no}
+	</update>
+
+	<!-- 일정번호를 통해서 해당 schedule의 고정여부를 Update -->
+	<update id="updateFix" parameterType="schdVo">
+		UPDATE SCHEDULE 
+				    SET schd_fix_chk  = #{schd_fix_chk},
+				        schd_fix_date = #{schd_fix_date}
+				  WHERE schd_no = #{schd_no}
+	</update>
+
+	<!-- 일정상세보기 -->
+	<select id="getSchdDetail" parameterType="int" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE schd_no=#{schd_no}
+	</select>	
+	
+	<!--내용을 넣어 검색해서 나오는 일정 검색 조회 -->
+	<select id="getSchdSearchList" parameterType="Map" resultType="schdVo">
+		SELECT * FROM SCHEDULE
+		WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+	
+	<!-- 프로젝트의 일정 조회 -->
+	<select id="getSchdProList" parameterType="int" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE pro_no = #{pro_no}
+	</select>
+	
+	<!-- 회원이 등록한 일정 조회 -->
+	<select id="getSchdMyList" parameterType="String" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id = #{mem_id}
+	</select>
+	
+	<!-- 회원의 id와 프로젝트 번호를 통해서 일정조회 -->
+	<select id="getSchd_Id_Pro_no" parameterType="map" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id=#{mem_id} AND pro_no=#{pro_no}
+	</select>
+	
+	<!-- 접속한 회원의 일정 중 현재 시간과 일치하는 알림 가져오기 -->
+	<select id="getAlarmList" parameterType="map" resultType="schdVo">
+		SELECT * FROM SCHEDULE WHERE mem_id=#{mem_id} AND schd_alarm=#{schd_alarm}
+		order by schd_no
+	</select>
+
+</mapper>

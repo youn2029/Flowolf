@@ -1,0 +1,563 @@
+package kr.or.dev.timeline.task.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.files.service.FilesServiceInf;
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.timeline.task.model.TaskVO;
+import kr.or.dev.timeline.task.service.TaskServiceInf;
+import kr.or.dev.timeline.task_user.model.TaskUserVO;
+import kr.or.dev.timeline.task_user.service.TaskUserServiceInf;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+@Controller("taskController")
+@RequestMapping("/task")
+public class TaskController {
+	
+	// taskService
+	@Resource(name="taskService")
+	private TaskServiceInf taskService;
+	
+	// taskUserService
+	@Resource(name="taskUserService")
+	private TaskUserServiceInf tuService;
+	
+	// filesService
+	@Resource(name="filesService")
+	private FilesServiceInf filesService;
+	
+	/**
+	* Method : taskAllList
+	* 최초작성일 : 2018. 9. 30.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* @param mem_id
+	* @param model
+	* @return
+	* Method 설명 : 회원이 참여하고 있는 프로젝트의 모든 업무 조회
+	*/
+	@RequestMapping("/taskAll")
+	public String taskAllList(@RequestParam("mem_id") String mem_id, Model model){
+		List<TaskVO> taskList = taskService.selectAllTask(mem_id);
+		model.addAttribute("taskList", taskList);
+		
+		return "taskAll";
+	}
+	
+	/**
+	* Method : taskInsert
+	* 최초작성일 : 2018. 9. 23.
+	* 작성자 : 김지수, 윤성호
+	* 변경이력 :
+	* @param taskVo
+	* @param session
+	* @return
+	* Method 설명 : 업무글 등록
+	 * @throws IOException 
+	 * @throws IllegalStateException 
+	*/
+	@RequestMapping("/insert")
+	public String taskInsert(TaskVO taskVo
+						   , HttpSession session
+						   , @RequestParam(value="tu_mem_id", required=false)List<String> tuMemIdList
+						   , @RequestParam(value="articleFile", required=false) List<MultipartFile> fileList
+						   , @RequestParam(value="imageFile", required=false) List<MultipartFile> imgList) throws IllegalStateException, IOException{
+		
+		// 업무 시퀀스 조회
+		int task_no = taskService.getTaskSeq();
+		
+		// 시작일 & 종료일이 있을 때 yyyy-MM-dd만 나오게 자름
+		String task_start_date = taskVo.getTask_start_date();
+		String task_end_date = taskVo.getTask_end_date();
+		
+		if (!task_start_date.equals("")) {
+			task_start_date = task_start_date.substring(0,10);
+		}
+		
+		if (!task_end_date.equals("")) {
+			task_end_date = task_end_date.substring(0,10);
+		}
+		
+		taskVo.setTask_no(task_no);
+		taskVo.setTask_start_date(task_start_date);
+		taskVo.setTask_end_date(task_end_date);
+		
+		// 업무글 등록
+		int resultCnt = taskService.insertTask(taskVo);
+		
+		if (resultCnt == 1) {
+			
+			// 업무 지정자 ID List
+			if (tuMemIdList != null) {				
+				for (String tu_mem_id : tuMemIdList) {
+					TaskUserVO tuVo = new TaskUserVO();
+					tuVo.setTask_no(task_no);
+					tuVo.setTu_mem_id(tu_mem_id);
+					
+					// 업무 지정자 등록
+					tuService.insertTaskUser(tuVo);
+				}
+			}
+			
+			String files_path = "C:\\Flowolf\\files";	// 파일 경로
+			String files_name = "";
+			String files_upload = UUID.randomUUID().toString();	// 파일 업로드명
+			String files_size = "";
+			Map<String, Object> paraMap;
+			
+			DecimalFormat df = new DecimalFormat("#,###.0");
+			DecimalFormat df1 = new DecimalFormat("#,###");
+			
+			// 첨부파일 List
+			if(fileList != null) {
+				for (MultipartFile artFile : fileList) {
+					
+					if (!artFile.isEmpty()) {				
+					
+						files_name = artFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = artFile.getSize();
+						files_size = df1.format(fileSize) + " byte";				
+						
+						if (Math.round(fileSize*10)/10 >= 1024) {
+							fileSize = fileSize/1024;
+							files_size = df.format(fileSize) + " KB";
+						}
+						if (Math.round(fileSize*10)/10 >= 1024) {			
+							files_size = df.format(fileSize/1024) + " MB";
+						}
+						
+						// paraMap setting
+						paraMap = new HashMap<String, Object>();
+						paraMap.put("files_name", files_name);
+						paraMap.put("files_path", files_path);
+						paraMap.put("files_upload", files_upload);
+						paraMap.put("files_size", files_size);
+						paraMap.put("timeline_col", "task_no");
+						paraMap.put("timeline_no", task_no);
+						paraMap.put("files_kind", "fil");
+						
+						int cnt = filesService.insertFiles(paraMap);
+						
+						if (cnt == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							artFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+			
+			// ImageFile List
+			if(imgList != null) {
+				for (MultipartFile imgFile : imgList) {
+					
+					if (!imgFile.isEmpty()) {
+					
+						files_name = imgFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = imgFile.getSize()/1024.0;
+						files_size = Math.round(fileSize*10)/10.0 + " KB";
+						if (fileSize >= 1000) {
+							files_size = Math.round(fileSize/1024.0*10)/10.0 + " MB";
+						}		
+						
+						// paraMap setting
+						paraMap = new HashMap<String, Object>();
+						paraMap.put("files_name", files_name);
+						paraMap.put("files_path", files_path);
+						paraMap.put("files_upload", files_upload);
+						paraMap.put("files_size", files_size);
+						paraMap.put("timeline_col", "task_no");
+						paraMap.put("timeline_no", task_no);
+						paraMap.put("files_kind", "img");
+						
+						int cnt = filesService.insertFiles(paraMap);
+						
+						if (cnt == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							imgFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+			
+			session.setAttribute("msg", "글이 등록되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+taskVo.getPro_no();
+	}
+	
+	/**
+	* Method : taskUpdate
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param editVo
+	* @param session
+	* @param tuMemIdList
+	* @return
+	* Method 설명 : 업무글 수정
+	 * @throws IOException 
+	 * @throws IllegalStateException 
+	*/
+	@RequestMapping("/update")
+	public String taskUpdate(TaskVO editVo
+						   , HttpSession session
+						   , @RequestParam(value="tu_mem_id", required=false)List<String> tuMemIdList
+						   , @RequestParam(value="articleFile", required=false) List<MultipartFile> fileList
+						   , @RequestParam(value="imageFile", required=false) List<MultipartFile> imgList
+						   , @RequestParam(value="del_files_no", required=false) List<Integer> delFileList
+						   , @RequestParam(value="del_task_user_no", required=false)List<Integer> delTuList) throws IllegalStateException, IOException{
+		
+		// 파일 삭제
+		if (delFileList != null) {
+			for (Integer files_no : delFileList) {
+				filesService.deleteFilesR(files_no);
+			}			
+		}
+		
+		// 업무 담당자 삭제
+		if (delTuList != null) {
+			for (Integer task_user_no : delTuList) {
+				tuService.deleteTaskUserR(task_user_no);
+			}			
+		}
+		
+		// 업무글 상세조회
+		TaskVO taskVo = taskService.getTaskDetail(editVo.getTask_no());
+		
+		// 수정할 내용 
+		taskVo.setTask_title(editVo.getTask_title());	// 제목
+		taskVo.setTask_rate(editVo.getTask_rate());		// 진척도
+		
+		if(editVo.getTask_state() != null) {
+			taskVo.setTask_state(editVo.getTask_state());	// 업무상태
+		}
+		
+		// 시작일
+		if (!editVo.getTask_start_date().equals("")  && editVo.getTask_start_date() != null) { 
+			taskVo.setTask_start_date(editVo.getTask_start_date().substring(0, 10));			
+		}else { 
+			taskVo.setTask_start_date("");
+		}
+		
+		// 마감일
+		if (!editVo.getTask_end_date().equals("") && editVo.getTask_end_date() != null) {
+			taskVo.setTask_end_date(editVo.getTask_end_date().substring(0, 10));
+		}else { 
+			taskVo.setTask_end_date("");
+		}	
+			
+		// 우선순위
+		if (!editVo.getTask_priority().equals("") && editVo.getTask_priority() != null) {
+			taskVo.setTask_priority(editVo.getTask_priority());
+		}else { 			
+			taskVo.setTask_priority("");			
+		}
+		
+		// 내용
+		if(!editVo.getTask_cont().equals("") && editVo.getTask_cont() != null) {
+			taskVo.setTask_cont(editVo.getTask_cont());
+		}else {
+			taskVo.setTask_cont("");			
+		}
+		
+		// 업무글 수정
+		int resultCnt = taskService.updateTask(taskVo);
+		
+		if (resultCnt == 1) {
+			
+			// 업무 지정자 ID List
+			if(tuMemIdList != null) {
+				for (String tu_mem_id : tuMemIdList) {
+					TaskUserVO tuVo = new TaskUserVO();
+					tuVo.setTask_no(editVo.getTask_no());
+					tuVo.setTu_mem_id(tu_mem_id);
+					
+					// 업무 지정자 등록
+					tuService.insertTaskUser(tuVo);
+				}
+			}
+			
+			String files_path = "C:\\Flowolf\\files";	// 파일 경로
+			String files_name = "";
+			String files_upload = UUID.randomUUID().toString();	// 파일 업로드명
+			String files_size = "";
+			Map<String, Object> paraMap;
+			
+			DecimalFormat df = new DecimalFormat("#,###.0");
+			DecimalFormat df1 = new DecimalFormat("#,###");
+			
+			// 첨부파일 List
+			if(fileList != null) {
+				for (MultipartFile artFile : fileList) {
+					
+					if (!artFile.isEmpty()) {				
+					
+						files_name = artFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = artFile.getSize();
+						files_size = df1.format(fileSize) + " byte";				
+						
+						if (Math.round(fileSize*10)/10 >= 1024) {
+							fileSize = fileSize/1024;
+							files_size = df.format(fileSize) + " KB";
+						}
+						if (Math.round(fileSize*10)/10 >= 1024) {			
+							files_size = df.format(fileSize/1024) + " MB";
+						}
+						
+						// paraMap setting
+						paraMap = new HashMap<String, Object>();
+						paraMap.put("files_name", files_name);
+						paraMap.put("files_path", files_path);
+						paraMap.put("files_upload", files_upload);
+						paraMap.put("files_size", files_size);
+						paraMap.put("timeline_col", "task_no");
+						paraMap.put("timeline_no", taskVo.getTask_no());
+						paraMap.put("files_kind", "fil");
+						
+						int cnt = filesService.insertFiles(paraMap);
+						
+						if (cnt == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							artFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+			
+			// ImageFile List
+			if(imgList != null) {
+				for (MultipartFile imgFile : imgList) {
+					
+					if (!imgFile.isEmpty()) {
+					
+						files_name = imgFile.getOriginalFilename();		// 파일 이름
+						
+						// 파일 크기
+						double fileSize = imgFile.getSize()/1024.0;
+						files_size = Math.round(fileSize*10)/10.0 + " KB";
+						if (fileSize >= 1000) {
+							files_size = Math.round(fileSize/1024.0*10)/10.0 + " MB";
+						}		
+						
+						// paraMap setting
+						paraMap = new HashMap<String, Object>();
+						paraMap.put("files_name", files_name);
+						paraMap.put("files_path", files_path);
+						paraMap.put("files_upload", files_upload);
+						paraMap.put("files_size", files_size);
+						paraMap.put("timeline_col", "task_no");
+						paraMap.put("timeline_no", taskVo.getTask_no());
+						paraMap.put("files_kind", "img");
+						
+						int cnt = filesService.insertFiles(paraMap);
+						
+						if (cnt == 1) {					
+							// 경로에 파일 저장
+							File uploadFile = new File(files_path+File.separator+files_upload);				
+							imgFile.transferTo(uploadFile);					
+						}
+					}
+				}
+			}
+			
+			session.setAttribute("msg", "글이 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+taskVo.getPro_no();
+	}
+	
+	/**
+	* Method : taskStateUpdate
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @param task_state
+	* @param session
+	* @return
+	* Method 설명 : 업무글의 업무상태 수정
+	*/
+	@RequestMapping("/state")
+	public String taskStateUpdate(@RequestParam("task_no")int task_no
+							 , @RequestParam("task_state")String task_state
+							 , HttpSession session){
+		
+		// 업무글 상세조회
+		TaskVO taskVo = taskService.getTaskDetail(task_no);
+		taskVo.setTask_state(task_state);	// 업무상태
+		
+		if (taskVo.getTask_start_date() == null) {
+			taskVo.setTask_start_date("");
+		}
+		if (taskVo.getTask_end_date() == null) {
+			taskVo.setTask_end_date("");
+		}
+		if (taskVo.getTask_priority() == null) {
+			taskVo.setTask_priority("");
+		}
+		if (taskVo.getTask_cont() == null) {
+			taskVo.setTask_cont("");
+		}
+		
+		// 업무글 수정
+		int resultCnt = taskService.updateTask(taskVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "상태값이 변경되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+taskVo.getPro_no();
+	}
+	
+	/**
+	* Method : taskRateUpdate
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @param task_rate
+	* @param session
+	* @return
+	* Method 설명 : 업무글 진척도 수정
+	*/
+	@RequestMapping("/rate")
+	public String taskRateUpdate(@RequestParam("task_no")int task_no
+							, @RequestParam("task_rate")int task_rate
+							, HttpSession session){
+		
+		// 업무글 상세조회
+		TaskVO taskVo = taskService.getTaskDetail(task_no);		
+		taskVo.setTask_rate(task_rate);		// 진척도
+		
+		if (taskVo.getTask_start_date() == null) {
+			taskVo.setTask_start_date("");
+		}
+		if (taskVo.getTask_end_date() == null) {
+			taskVo.setTask_end_date("");
+		}
+		if (taskVo.getTask_priority() == null) {
+			taskVo.setTask_priority("");
+		}
+		if (taskVo.getTask_cont() == null) {
+			taskVo.setTask_cont("");
+		}
+		
+		// 업무글 수정
+		int resultCnt = taskService.updateTask(taskVo);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "진척도이 변경되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+taskVo.getPro_no();
+	}
+	
+	/**
+	* Method : taskFix
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param task_no
+	* @param task_fix_chk
+	* @param session
+	* @return
+	* Method 설명 : 업무글 상단 고정
+	*/
+	@RequestMapping("/fix")
+	public String taskFix(@RequestParam("timeline_no")int task_no
+					    , @RequestParam("fix_chk")String task_fix_chk
+					    , HttpSession session){
+		
+		// 업무글 정보
+		TaskVO taskVo = taskService.getTaskDetail(task_no);
+		taskVo.setTask_fix_chk(task_fix_chk);			// 고정 유무
+		
+		if (taskVo.getTask_start_date() == null) {
+			taskVo.setTask_start_date("");
+		}
+		if (taskVo.getTask_end_date() == null) {
+			taskVo.setTask_end_date("");
+		}
+		if (taskVo.getTask_priority() == null) {
+			taskVo.setTask_priority("");
+		}
+		if (taskVo.getTask_cont() == null) {
+			taskVo.setTask_cont("");
+		}
+		
+		// 일반글 수정
+		int resultCnt = taskService.updateTask(taskVo);
+		
+		if (resultCnt == 1) {			
+			if (task_fix_chk.equals("y")) {
+				session.setAttribute("msg", "상단에 고정되었습니다.");
+				session.setAttribute("className", "alert-warning");				
+			}else{
+				session.setAttribute("msg", "상단고정 해제되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+		}
+		
+		return "redirect:/pro/detail?pro_no="+taskVo.getPro_no();
+		
+	}
+	
+	/**
+	* Method : taskDelete
+	* 최초작성일 : 2018. 10. 3.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param task_no
+	* @return
+	* Method 설명 : 업무글 삭제처리
+	*/
+	@RequestMapping("/delete")
+	public String taskDelete(HttpSession session
+						   , @RequestParam("timeline_no")int task_no){
+		
+		// 프로젝트 Vo
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 일반글 삭제
+		int resultCnt = taskService.deleteTask(task_no);
+		
+		if (resultCnt == 1) {
+			
+			session.setAttribute("msg", "글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();		
+	}
+
+}

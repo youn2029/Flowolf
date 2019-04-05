@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="imp">
+	
+	<!-- 중요 프로젝트 정보 조회 -->
+	<select id="getImpProList" parameterType="String" resultType="proVo">
+		SELECT p.*
+			 , (SELECT kind_name 
+			 	  FROM kind k 
+			 	 WHERE k.kind_no = p.kind_no) AS kind_name
+		 	 , pro_user_color
+		 	 , 1 AS imp_chk
+		  FROM project p
+	         , ( SELECT *
+					   FROM project_user
+					  WHERE mem_id = #{mem_id}) pu
+	         , (SELECT *
+	            FROM important
+	            WHERE mem_id = #{mem_id}) imp
+		 WHERE p.pro_no = pu.pro_no
+	       AND p.pro_no = imp.pro_no
+	</select>
+	
+	<!-- 중요 프로젝트 등록 -->
+	<insert id="insertImp" parameterType="impVo">
+		INSERT INTO important (pro_no, mem_id, imp_date)
+			VALUES (#{pro_no}, #{mem_id}, sysdate)
+	</insert>
+	
+	<!-- 중요 프로젝트 삭제 -->
+	<delete id="deleteImpR" parameterType="impVo">
+		DELETE 
+		  FROM important
+		 WHERE pro_no = #{pro_no}
+		   AND mem_id = #{mem_id}		
+	</delete>
+	
+</mapper>

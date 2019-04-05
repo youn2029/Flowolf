@@ -1,0 +1,80 @@
+package kr.or.dev.group.project.model;
+
+import java.util.Date;
+
+public class ProjectVO {
+	
+	private int pro_no;				// 프로젝트번호
+	private String pro_name;		// 프로젝트명
+	private String pro_cont;		// 프로젝트설명
+	private String pro_del_chk;		// 삭제여부
+	private Date pro_date;			// 등록일
+	private int kind_no;			// 분류코드
+	private String mem_id;			// 개설자ID
+	private String kind_name;		// 분류명
+
+	public int getPro_no() {
+		return pro_no;
+	}
+
+	public void setPro_no(int pro_no) {
+		this.pro_no = pro_no;
+	}
+
+	public String getPro_name() {
+		return pro_name;
+	}
+
+	public void setPro_name(String pro_name) {
+		this.pro_name = pro_name;
+	}
+
+	public String getPro_cont() {
+		return pro_cont;
+	}
+
+	public void setPro_cont(String pro_cont) {
+		this.pro_cont = pro_cont;
+	}
+
+	public String getPro_del_chk() {
+		return pro_del_chk;
+	}
+
+	public void setPro_del_chk(String pro_del_chk) {
+		this.pro_del_chk = pro_del_chk;
+	}
+
+	public Date getPro_date() {
+		return pro_date;
+	}
+
+	public void setPro_date(Date pro_date) {
+		this.pro_date = pro_date;
+	}
+
+	public int getKind_no() {
+		return kind_no;
+	}
+
+	public void setKind_no(int kind_no) {
+		this.kind_no = kind_no;
+	}
+
+	public String getMem_id() {
+		return mem_id;
+	}
+
+	public void setMem_id(String mem_id) {
+		this.mem_id = mem_id;
+	}
+
+	public String getKind_name() {
+		return kind_name;
+	}
+
+	public void setKind_name(String kind_name) {
+		this.kind_name = kind_name;
+	}
+	
+}

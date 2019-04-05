@@ -1,0 +1,46 @@
+package kr.or.dev.talk.facechat_user.service;
+
+import java.util.List;
+
+import kr.or.dev.talk.facechat_user.model.FaceChatUserVO;
+
+public interface FaceChatUserServiceInf {
+
+	/**
+	* Method : getFaceChatUserList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param fc_no
+	* @return
+	* Method 설명 : 화상회의 번호를 매개변수로 받아 해당 화상회의의 참여자 리스트 반환
+	*/
+	List<FaceChatUserVO> getFaceChatUserList(int fc_no);
+	
+	/**
+	* Method : insertFaceChatUser
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param faceChatUserVo
+	* @return
+	* Method 설명 : 화상회의 참여자 객체를 매개변수로 받아 화상회의 참여자 등록
+	*/
+	int insertFaceChatUser(FaceChatUserVO faceChatUserVo);
+	
+	/**
+	* Method : deleteFaceChatUserR
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param faceChatUserVo
+	* @return
+	* Method 설명 : 화상회의 참여자 객체를 매개변수로 받아 화상회의 참여자 삭제
+	*/
+	int deleteFaceChatUserR(FaceChatUserVO faceChatUserVo);
+}
+
+
+
+
+

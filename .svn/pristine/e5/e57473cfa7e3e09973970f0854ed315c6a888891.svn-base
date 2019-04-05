@@ -1,0 +1,64 @@
+package kr.or.dev.group.project.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.project.dao.ProjectDaoInf;
+import kr.or.dev.group.project.model.ProjectVO;
+
+@Repository("proService")
+public class ProjectService implements ProjectServiceInf {
+	
+	@Resource(name="proDao")
+	private ProjectDaoInf proDao;
+
+	@Override
+	public int getProSeq() {
+		return proDao.getProSeq();
+	}
+
+	@Override
+	public int insertPro(ProjectVO proVo) {		
+		return proDao.insertPro(proVo);
+	}
+
+	@Override
+	public int updatePro(ProjectVO proVo) {
+		return proDao.updatePro(proVo);
+	}
+
+	@Override
+	public int deletePro(int pro_no) {
+		return proDao.deletePro(pro_no);
+	}
+
+	@Override
+	public ProjectVO getProDetail(int pro_no) {
+		return proDao.getProDetail(pro_no);
+	}
+	
+	@Override
+	public List<ProjectVO> getProAllList() {
+		return proDao.getProAllList();
+	}
+
+	@Override
+	public int getProKindCnt(int kind_no) {
+		return proDao.getProKindCnt(kind_no);
+	}
+
+	@Override
+	public int getProMonthCnt(int month) {
+		return proDao.getProMonthCnt(month);
+	}
+
+	@Override
+	public List<ProjectVO> getProSearchList(Map<String, String> searchMap) {
+		return proDao.getProSearchList(searchMap);
+	}
+
+}

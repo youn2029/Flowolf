@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<script src="/SE2/js/HuskyEZCreator.js"></script>	
+	<div class="container-fluid">
+		<div class="row">
+
+			
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+				<form id="frmInsert" class="form-horizontal" action="/post/insertPost" method="post" enctype="multipart/form-data">
+				
+			   	    <input type="hidden" id="post_kind" name="post_kind" value="${post_kind }">
+<!-- 					<input type="hidden" id="post_pw" name="post_pw" value="n"> -->
+<!-- 					<input type="hidden" id="post_pw_chk" name="post_pw_chk" value="n"> -->
+					<input type="hidden" id="post_del_chk" name="post_del_chk" value="n">
+					<input type="hidden" id="mem_id" name="mem_id" value="test">
+					<input type="hidden" id="mem_nick" name="mem_nick" value="test">
+					
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label">제목</label>
+						<div class="col-sm-6" name="post_title">
+							<input type="text" class="form-control" id="post_title" name="post_title">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label">내용</label>
+						<div class="col-sm-6" name="post_cont">
+							<textarea name="post_cont" id="post_cont" rows="10" cols="100" style="width:740px; height:412px;"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">첨부 파일</label>
+						<div class="col-sm-10" style="width:100px;">
+							<div name="addfile" id="addfile">
+								<input type="file" name="files" id="files">
+							</div>
+							<input type="button" name="plusfileBtn" id="plusfileBtn" value="+">
+							<input type="button" name="minusfileBtn" id="minusfileBtn" value="-">
+<!-- 							<input type="text" name="upDir" value="c:/filedir/"/> -->
+						</div>
+					</div>
+					
+					<script type="text/javascript">
+					
+						// 첨부파일 추가/삭제 버튼(editor 소스보다 위에 있어야 함)
+						$(function(){
+							
+							var a = 1;
+							
+							$("#ea").val(a);
+							$("#plusfileBtn").on("click",function(){
+								if(a < 5){
+									$("#addfile").append("<div id=\"add\"><input type=\"file\" name=\"files\" id=\"files\"></div>");
+									a++;
+									$("#ea").val(a);
+								}
+							});
+							
+							$("#minusfileBtn").on("click",function(){
+								$("div[id=add]:last").remove();
+								a--;
+							});
+							
+							// checkbox
+							$("#post_pw_chkBtn").change(function(){ // 비밀글 여부를 비공개로 누르면
+								if($(this).is(":checked")){
+									
+									var pw;
+									var pwchk;
+									var pwR = /[0-9 -()+]+$/;
+									
+									// 히든값 공개(n)를 비공개(y)로 value 값을 바꾼다.
+									$("#post_pw_chk").attr("value","y");
+									
+									alert("비밀번호를 입력해주세요");
+									$("#pw").css("display","block");
+									
+									if (pw.test("") == true) {
+										alert("숫자4자리를 입력해주세요"); 
+									} else { 
+									  //alert("비밀번호를 생성하였습니다."); 
+										pw = parseInt(pwchk);
+										document.write("비밀번호 : " + (pw) ) 	
+										
+									}
+								}
+							});
+							
+						});
+					</script>
+					
+					
+					<script type="text/javascript">
+// 					$("#post_pw_chkBtn").change(function(){
+// 						if($(this).is(":checked")){
+// 							alert("aaa");
+							
+// 						}
+// 					});
+							
+// 							if($("#post_pw_chkBtn").is(":checked")){
+// 								alert("aaa");
+								
+// 							}
+							
+// 							$("#post_pw_chkBtn").is(":checked", function(){
+// 								alert("aaa");
+// 								$("#pw").css("display","block");
+// 							});
+							
+					</script>
+					
+					<script>
+					/*  var pw;
+						var pwchk;
+			
+						pwchk = prompt("비밀번호를 입력하세요","비밀번호");
+						pw = parseInt(pwchk);
+						pwchk = prompt("4글자의 숫자로만 입력하세요","비밀번호");
+						if (condition) {
+							
+						}
+						
+						pw = parseInt(pwchk);
+						document.write("비밀번호 : " + (pw) )  */
+					</script>
+					
+					<!-- 비밀글 유무 -->
+					<input type="checkbox" name="post_pw_chk" id="post_pw_chkBtn" value="y">비밀글 
+					
+					<input type="text" id="pw" name="post_pw" style="display:none;">
+					
+								<!-- style="display:none"은 보여지는게 없다는 것.  
+								 1. 비밀번호 체크박스 클릭 
+								 2. 비밀번호 : 텍스트박스 생김
+								 3. 숫자 4개입력(정규식)
+								 4. 등록 
+								 
+								c:forEach 								 
+									 c:choose 안에
+										 c:when => if
+										 c:otehrwise => else -->
+					
+					<!-- 새글 등록 -->
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button id="savebutton" type="submit" class="btn btn-default">등록</button>
+						</div>
+					</div>
+					
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!-- navbar-con:s -->
+<nav class="navbar-con">
+
+	<div class="swiper-container">
+		<div class="swiper-scrollbar"></div>
+		<div class="swiper-wrapper">
+			<div class="swiper-slide">
+
+				<!-- aside nav list:PROJECT -->
+				<h1>PROJECT</h1>
+				<ul class="nav-list">
+					<li><a href="/pro/all"><i class="fas fa-bars color-white"></i><span>전체</span></a></li>
+					<li><a href="/imp/list"><i class="fas fa-star color-yellow"></i><span>중요</span></a></li>
+				</ul>
+			
+				<!-- aside nav list:COLLECTION MENU -->
+				<h1>COLLECTION MENU</h1>
+				<ul class="nav-list collection-nav">
+					<li><a href=""><i class="fas fa-laptop color-green-l"></i><span>전체 업무</span></a></li>
+					<li><a href=""><i class="far fa-calendar-alt color-red"></i><span>전체 일정</span></a></li>
+					<li><a href=""><i class="fas fa-download color-blue-l"></i><span>전체 파일</span></a></li>
+					<li><a href=""><i class="far fa-bookmark color-pupple"></i><span>담아둔 글</span></a></li>
+					<li><a href=""><i class="fas fa-at color-red"></i><span>나를 지정</span></a></li>
+					<li><a href=""><i class="fas fa-user-edit color-gray"></i><span>내 게시물</span></a></li>
+				</ul>
+	
+				<!-- aside nav list:MY FOLDER : open -->
+				<h1>MY FOLDER <a href="#addFolder" class="add-folder-pop-btn marleft-10 color-gray"><i class="fas fa-plus-square"></i></a></h1>
+				<ul class="nav-list nav-folder" style="padding-bottom:0;border:0">
+					<c:forEach items="${boxList }" var="boxVo">
+						<li class="nav-folder-open" onmouseover="navOver(this)">
+							<a class="folder-detail cursor-point" data-boxno="${boxVo.box_no }" data-boxname="${boxVo.box_name }"><i class="far fa-folder color-gray"></i><span>${boxVo.box_name }</span></a>
+							<div class="edit-btn">
+								<a class="folder-edit cursor-point"><i class="fas fa-pen"></i></a><!-- 수정 -->
+								<a class="folder-delete cursor-point"><i class="fas fa-trash-alt"></i></a><!-- 삭제 -->
+							</div>
+						</li>
+					</c:forEach>
+					
+					<!-- : close -->
+					<li class="nav-folder-close">
+						<a href="#folderSub" class="folder-toggle-btn"><i class="far fa-folder color-white"></i><span>보관함</span></a>
+						<ul id="folderSub" class="sub-nav-list">
+							<li class="sub-list-tit"><a href="#addFolder" class="add-folder-pop-btn"><i class="fas fa-plus-square maright-10"></i>Add Folder</a></li>
+							<c:forEach items="${boxList }" var="boxVo">
+								<li class="posi-re" onmouseover="navOver(this)">
+									<a class="folder-detail cursor-point" data-boxno="${boxVo.box_no }" data-boxname="${boxVo.box_name }"><i class="far fa-folder maright-10 color-gray"></i>${boxVo.box_name }</a>
+									<div class="edit-btn">
+										<a class="folder-edit cursor-point"><i class="fas fa-pen"></i></a><!-- 수정 -->
+										<a class="folder-delete cursor-point"><i class="fas fa-trash-alt"></i></a><!-- 삭제 -->
+									</div>
+								</li>
+							</c:forEach>
+						</ul>
+					</li>
+				</ul>
+				
+				<form id="boxDetail" action="/boxPro/list" method="get">
+					<input type="hidden" id="box_no" name="box_no">
+					<input type="hidden" id="box_name" name="box_name">
+				</form>
+				
+				<!-- aside footer
+				<div class="aside-footer">
+					&copy;Copyright 2018 #DEV.<br>
+					All Rights Reserved.
+				</div> -->
+			</div>
+		</div>
+	</div>
+	
+</nav>
+<script type="text/javascript">
+// nav scroll
+var swiper = new Swiper('.swiper-container', {
+	direction: 'vertical',
+	slidesPerView: 'auto',
+	freeMode: true,
+	scrollbar: {
+		el: '.swiper-scrollbar',
+	},
+	mousewheel: true,
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+	
+	// box project
+	$(".folder-detail").click(function(){
+		var box_no = $(this).data("boxno");
+		var box_name = $(this).data("boxname");		
+		$("#boxDetail #box_no").val(box_no);
+		$("#boxDetail #box_name").val(box_name);
+		$("#boxDetail").submit();
+	});
+	
+	// box update
+	$(".folder-edit").click(function(){
+		var box_no = $(this).parent().siblings("a").data("boxno");
+		$("#editFolder #box_no").val(box_no);
+		layer_popup("#editFolder");
+	});
+	
+	// box delete
+	$(".folder-delete").click(function(){
+		var box_no = $(this).parent().siblings("a").data("boxno");
+		$("#deleteFolder #box_no").val(box_no);
+		layer_popup("#deleteFolder");
+	});
+	
+	// my-folder toggle button (메뉴)
+	$(".folder-toggle-btn").on("click", function(){
+		if($(".sub-nav-list").css("display") == "block"){
+		    $(".sub-nav-list").slideUp();
+		} else {
+		    $(".sub-nav-list").slideDown();
+		}
+	});
+	
+	// 2차메뉴를 닫지 않고 메뉴바를 확장했을 떄
+	$(".nav-toggle-btn").on("click", function(){
+		if($(".sub-nav-list").css("display") == "block"){
+			$(".sub-nav-list").slideUp();
+		}
+	});
+	
+	// sortable을 적용한 item의 id값이 순서가 됨.
+	$('.nav-folder').sortable({
+        update: function(event, ui) {    
+           var productOrder = $(this).sortable('toArray').toString();
+           $(".test").text(productOrder);
+        }
+	});
+});
+</script>
+<!-- navbar-con:f -->

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pro">
+
+	<!-- 시퀀스 조회 -->
+	<select id="getProSeq" resultType="int">
+		SELECT pro_no_seq.nextval
+		  FROM dual
+	</select>
+	
+	<!-- 프로젝트 생성 -->
+	<insert id="insertPro" parameterType="proVo">
+		INSERT INTO project (pro_no, pro_name, pro_cont, pro_del_chk, pro_date, kind_no, mem_id)
+			VALUES (#{pro_no}, #{pro_name}, #{pro_cont}, 'n', sysdate, #{kind_no}, #{mem_id})
+	</insert>
+	
+	<!-- 프로젝트 수정 -->
+	<update id="updatePro" parameterType="proVo">
+		UPDATE project
+		   SET pro_name = #{pro_name}
+		     , pro_cont = #{pro_cont}
+		     , kind_no = #{kind_no}
+		 WHERE pro_no = #{pro_no}
+	</update>
+	
+	<!-- 프로젝트 삭제처리 -->
+	<update id="deletePro" parameterType="int">
+		UPDATE project
+		   SET pro_del_chk = 'y'
+		 WHERE pro_no = #{pro_no}
+	</update>
+	
+	<!-- 프로젝트 상세 조회 -->
+	<select id="getProDetail" parameterType="map" resultType="proVo">
+		SELECT p.*
+			 , (SELECT kind_name 
+			 	  FROM kind k 
+			 	 WHERE k.kind_no = p.kind_no) AS kind_name
+		 	 , (SELECT pro_user_color
+				  FROM project_user
+				 WHERE pro_no = #{pro_no}
+				   AND mem_id = #{mem_id}) AS pro_user_color
+		 	 , (SELECT count(*) 
+		 	 	  FROM DUAL 
+		 	 	 WHERE EXISTS(SELECT * 
+		 	 	 				FROM important imp 
+		 	 	 			   WHERE imp.pro_no = #{pro_no}
+		 	 	 			     AND imp.mem_id = #{mem_id})) AS imp_chk
+		  FROM project p
+		 WHERE p.pro_no = #{pro_no}
+		   AND p.pro_del_chk = 'n'
+	</select>
+	
+	<!-- 회원의 프로젝트 조회 -->
+	<select id="getProMyList" parameterType="String" resultType="proVo">
+		SELECT *
+		  FROM project
+		 WHERE mem_id = #{mem_id}
+	</select>
+
+	<!-- 전체 프로젝트 조회 -->
+	<select id="getProAllList" resultType="proVo">
+		SELECT *
+		  FROM project
+	</select>
+	
+	<!-- 분류별 프로젝트 갯수 조회 -->
+	<select id="getProKindCnt" parameterType="int" resultType="int">
+		SELECT count(*)
+		  FROM project
+		 WHERE kind_no = #{kind_no}
+	</select>
+	
+	<!-- 월별 프로젝트 갯수 조회 -->
+	<select id="getProMonthCnt" parameterType="int" resultType="int">
+	</select>
+	
+	<!-- 프로젝트 검색 조회 -->
+	<select id="getProSearchList" parameterType="map" resultType="proVo">
+		SELECT *
+		  FROM project
+		 WHERE ${searchField} like '%'||#{searchData}||'%'
+	</select>
+
+</mapper>

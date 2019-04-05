@@ -1,0 +1,236 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<!-- 이전화면으로 -->
+<div class="pro-right-box">
+	<a href="javascript:history.go(-1)" class="pro-prev-btn size-18 default-color">
+		<i class="fas fa-angle-left maright-15"></i> 이전화면
+	</a>
+</div>
+
+<!-- 파일함,업무,일정,할일,투표 -->
+<div class="pro-right-box martop-15">
+	<ul class="pro-gather-nav">
+		<li>
+			<a href="">
+				<i class="fas fa-download color-blue-l"></i>
+				<span class="dis-block size-14 color-gray">파일함</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-laptop colo-green-l"></i>
+				<span class="dis-block size-14 color-gray">업무</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="far fa-calendar-alt color-red"></i>
+				<span class="dis-block size-14 color-gray">일정</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-list-ul color-pupple"></i>
+				<span class="dis-block size-14 color-gray">할일</span>
+			</a>
+		</li>
+		<li>
+			<a href="">
+				<i class="fas fa-check color-orange"></i>
+				<span class="dis-block size-14 color-gray">투표</span>
+			</a>
+		</li>
+	</ul>
+</div>
+
+<!-- 초대하기 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#invitePop" class="right-link-btn invite-btn default-back-color color-white">
+		<i class="fas fa-user-plus maright-10"></i>초대하기
+	</a>
+</div>
+<!-- 초대하기 button : f -->
+
+<!-- 화상채팅 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#faceChat" class="right-link-btn face-chat-btn back-color-orange color-white">
+		<i class="fas fa-users maright-10"></i>화상회의
+	</a>
+	<script type="text/javascript">
+	$(function(){
+		$(".face-chat-btn").on("click", function(){
+			var ip = "${ip}";
+			window.open("https://" + ip + ":8443/faceChat/faceChat", "faceChat", "width=1000,height=1000,top=100,left=100");
+		});
+	});
+	</script>
+</div>
+<!-- 화상채팅 button : f -->
+
+<!-- 프로젝트 채팅 button : s -->
+<div class="pro-right-box martop-15">
+	<a href="#" class="right-link-btn back-color-green-l color-white">
+		<i class="fas fa-comments maright-10"></i>프로젝트 채팅
+	</a>
+</div>
+<!-- 프로젝트 채팅 button : f -->
+
+<!-- 프로젝트 참여자 리스트 : s -->
+<div class="pro-right-box pro-right-user-list" data-simplebar>
+	
+	<!-- 프로젝트 관리자 : s -->
+	<span class="dis-block float-left marbtm-5 padleft-15 padright-15 color-gray size-16">프로젝트 관리자</span>
+	<dl class="marbtm-0">
+		<dt class="posi-re">
+			<i class="icon-circle circle-xs cursor-point"></i>
+			<img src="" onerror="this.src='/image/user-pic-sample.png'" width="24" class="cursor-point">
+		</dt>
+		<dd>
+			<span class="size-18 color-gray cursor-point">admin</span>
+			<i class="far fa-comment size-18 cursor-point"></i>
+		</dd>
+	</dl>
+	<!-- 프로젝트 관리자 : f -->
+	
+	<!-- 프로젝트 참여자 : s -->
+	<span class="dis-block float-left martop-15 marbtm-5 padleft-15 padright-15 color-gray size-16">프로젝트 참여자(5)</span>
+	
+	<dl class="marbtm-0">
+		<dt class="posi-re">
+			<i class="icon-circle circle-xs cursor-point"></i>
+			<img src="" onerror="this.src='/image/user-pic-sample.png'" width="24" class="cursor-point">
+		</dt>
+		<dd>
+			<span class="size-18 color-gray cursor-point">SH Yoon</span>
+			<i class="far fa-comment size-18 cursor-point"></i>
+		</dd>
+	</dl>
+	<dl class="marbtm-0">
+		<dt class="posi-re">
+			<i class="icon-circle circle-xs cursor-point"></i>
+			<img src="" onerror="this.src='/image/user-pic-sample.png'" width="24" class="cursor-point">
+		</dt>
+		<dd>
+			<span class="size-18 color-gray cursor-point">송스</span>
+			<i class="far fa-comment size-18 cursor-point"></i>
+		</dd>
+	</dl>
+	<dl class="marbtm-0">
+		<dt class="posi-re">
+			<i class="icon-circle circle-xs cursor-point"></i>
+			<img src="" onerror="this.src='/image/user-pic-sample.png'" width="24" class="cursor-point">
+		</dt>
+		<dd>
+			<span class="size-18 color-gray cursor-point">송스</span>
+			<i class="far fa-comment size-18 cursor-point"></i>
+		</dd>
+	</dl>
+	<dl class="marbtm-0">
+		<dt class="posi-re">
+			<i class="icon-circle circle-xs cursor-point"></i>
+			<img src="" onerror="this.src='/image/user-pic-sample.png'" width="24" class="cursor-point">
+		</dt>
+		<dd>
+			<span class="size-18 color-gray cursor-point">송스</span>
+			<i class="far fa-comment size-18 cursor-point"></i>
+		</dd>
+	</dl>
+	<!-- 프로젝트 참여자 : f -->
+	
+</div>
+<!-- 프로젝트 참여자 리스트 : f -->
+
+
+<!-- 초대하기  layer pop up : s -->
+<div class="dim-layer">
+	<div class="dimBg"></div>
+		
+	<div id="invitePop" class="pop-layer">
+	
+   		<!-- pop header -->
+   		<header class="pop-top border-box text-center">
+   			<a href="#" class="posi-ab dis-block over-hidden icon-close btn-close">close</a>
+   			<strong class="dis-block size-28 color-black text-center">프로젝트 제목</strong>
+   		</header>
+   		
+		<!-- pop con -->
+   		<section class="pop-con border-box">
+   		
+   			<div class="invite-kind-box back-color-white cursor-point" data-id="invitePartner" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-green-l"><i class="fas fa-building size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">동료 초대</strong>
+		   				<strong class="dis-block size-18 color-gray-l">동료를 초대할 수 있습니다.</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" data-id="inviteProjectMem" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-pupple-l"><i class="fas fa-users size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">프로젝트 참여자</strong>
+		   				<strong class="dis-block size-18 color-gray-l">프로젝트를 함께 했던 사람을 초대할 수 있습니다.</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" data-id="inviteEmail" onclick="fn_subPopOpen(this)">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-orange"><i class="fas fa-envelope size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">이메일로 초대장 발송</strong>
+		   				<strong class="dis-block size-18 color-gray-l">초대장을 이메일로 발송할 수 있습니다</strong>
+   					</dd>
+   				</dl>
+   			</div>
+   			<div class="invite-kind-box back-color-white cursor-point martop-15" onclick="copyToClipboard('https://....')">
+   				<dl>
+   					<dt class="maright-20 padtop-5 back-color-red"><i class="fas fa-link size-30 color-white"></i></dt>
+   					<dd>
+		   				<strong class="dis-block size-24 color-black">초대 링크</strong>
+		   				<strong class="dis-block posi-re size-18 color-gray-l">
+		   					<span>https://....</span>
+		   					<i class="fas fa-clone cursor-point" onclick="copyToClipboard('https://....')"></i>
+		   				</strong>
+   					</dd>
+   				</dl>
+   			</div>
+		</section>
+		
+		<!-- 동료초대 :s -->
+		<div id="invitePartner" class="popup-sub-box">
+			<%@include file="/include/pop_invite_partner.jsp" %>
+		</div>
+		<!-- 동료초대 :f -->
+		
+		<!-- 프로젝트 참여자 초대 :s -->
+		<div id="inviteProjectMem" class="popup-sub-box">
+			<%@include file="/include/pop_invite_proMem.jsp" %>
+		</div>
+		<!-- 프로젝트 참여자 :f -->
+		
+		<!-- 이메일 초대 :s -->
+		<div id="inviteEmail" class="popup-sub-box">
+			<%@include file="/include/pop_invite_email.jsp" %>
+		</div>
+		<!-- 이메일 초대 :f -->
+	</div>
+	<!-- 초대하기 List pop : f -->
+	
+</div>
+<!-- 초대하기  layer pop up : f -->
+
+<script type="text/javascript">
+$(function(){
+
+	// 초대하기 
+	$(".invite-btn").click(function(){
+		var $href = $(this).attr('href');
+		layer_popup($href);
+	});
+
+});
+</script>
+

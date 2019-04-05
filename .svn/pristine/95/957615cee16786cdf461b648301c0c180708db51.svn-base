@@ -1,0 +1,44 @@
+package kr.or.dev.talk.chat_con.model;
+
+import java.util.Date;
+
+public class ChatConVO {
+	
+	private int chat_con_no;		// 채팅내용번호
+	private String chat_cont;		// 채팅내용
+	private Date chat_con_time;		// 채팅일시	
+	private int chat_no;			// 채팅방번호
+
+	public int getChat_con_no() {
+		return chat_con_no;
+	}
+
+	public void setChat_con_no(int chat_con_no) {
+		this.chat_con_no = chat_con_no;
+	}
+	
+	public String getChat_cont() {		
+		return chat_cont;
+	}
+
+	public void setChat_cont(String chat_cont) {
+		this.chat_cont = chat_cont;
+	}
+
+	public Date getChat_con_time() {
+		return chat_con_time;
+	}
+
+	public void setChat_con_time(Date chat_con_time) {
+		this.chat_con_time = chat_con_time;
+	}
+
+	public int getChat_no() {
+		return chat_no;
+	}
+
+	public void setChat_no(int chat_no) {
+		this.chat_no = chat_no;
+	}
+
+}

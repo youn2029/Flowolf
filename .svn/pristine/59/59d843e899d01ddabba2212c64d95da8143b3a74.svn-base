@@ -1,0 +1,153 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<div class="timeline-article con-schedule">
+	<div class="container">
+		<div class="schedule-header">
+			<dl>
+				<dt class="maright-15">
+					<span class="dis-block font-thin size-20 color-red text-center">${month }월</span>
+					<strong class="dis-block font-bold size-40 color-black text-center">${day }</strong>
+				</dt>
+				<dd class="font-bold size-20 color-black">${vo.schd_title }</dd>
+				<dd class="martop-10 font-bold size-16 color-black">${start } ~  ${end }</dd>
+			</dl>
+		</div>
+		
+		<!-- 위치 검색:s -->
+		<div class="input-box">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<div class="dis-block marbtm-15">${vo.schd_loc }<a href="${callback }" target="google_blank" class="marleft-15">지도보기</a></div>
+					<div id="googleMap" class="dis-block">
+						<img src="${miniMap }">
+					</div>
+				</dd>
+			</dl>
+		</div>
+		<!-- 위치 검색:f -->
+		
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					${vo.schd_memo }
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15" style="border:0">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					${minute} 전 미리알림
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+</div>
+
+
+	
+<!-- 일정 수정:s -->
+<form action="/schd/insert" class="article-edit-form">
+
+	<!-- article edit box:s -->
+	<div class="article-edit-box">
+	
+		<!-- 일정제목:s -->
+		<div class="input-box">
+			<input type="text" name="schd_title" class="font-bold size-18" placeholder="${vo.schd_title }" required="required">
+		</div>
+		<!-- 일정제목:f -->
+		
+		<!-- 일정 시간 설정:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="far fa-clock"></i></dt>
+				<dd>
+					<input type="text"
+					placeholder="${start } -  ${end }"
+					data-range="true"
+					data-multiple-dates-separator="   -   "
+					class="datepicker-here"
+					id="datetime"
+					name="datetime"
+					style="width:100%"/>
+				</dd>
+			</dl>
+		</div>
+		<!-- 일정 시간 설정:f -->
+		<script>
+		$('.datepicker-here').datepicker({
+			timepicker : true,
+			language: 'ko',
+			startMinute : 0,
+			maxMinutes : 50,
+			minutesStep :10
+		})
+		</script>
+		<!-- 위치 검색:s -->
+		<!-- 위치 검색:f -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-map-marker-alt"></i></dt>
+				<dd>
+					<input id="searchInput" name ="schd_loc" class="controls" type="text" placeholder="${vo.schd_loc }" style="width:90%">
+					<div id="map2"></div>
+					<input type="hidden" id="lat" name="lat"> 
+					<input type="hidden" id="lon" name="lon">
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-sticky-note"></i></dt>
+				<dd>
+					<textarea rows="2" cols="" name="schd_memo" placeholder="${vo.schd_memo }"></textarea>
+				</dd>
+			</dl>
+		</div>
+		<!-- 메모:f -->
+		
+		<!-- 알람:s -->
+		<div class="input-box martop-15">
+			<dl>
+				<dt class="maright-20"><i class="fas fa-bell"></i></dt>
+				<dd>
+					<select name="alert_time" onchange="getSelectValue(this.form);">
+						<option value="0">없음</option>
+						<option value="10">10분전 미리알림</option>
+						<option value="30">30분전 미리알림</option>
+						<option value="60">1시간전 미리알림</option>
+						<option value="120">2시간전 미리알림</option>
+						<option value="180">3시간전 미리알림</option>
+						<option value="1440">1일전</option>
+						<option value="2880">2일전</option>
+						<option value="10080">7일전</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+		<!-- 알람:f -->
+	</div>
+	<!-- article edit box:f -->
+	
+	<!-- article edit dn:s -->
+	<div class="article-edit-dn">		
+		<!-- submit & cancel 버튼 -->
+		<input type="submit" value="수정하기" class="article-submit-btn font-bold size-16 color-white text-center default-back-color">
+		<input type="button" value="취소" onclick="fn_editCancel(this)" 
+		class="article-submit-btn maright-10 font-bold size-16 color-gray text-center back-color-white"
+		style="border:1px solid #ddd">
+	</div>
+	<!-- article edit dn:f -->
+</form>
+
+<!-- 일정 수정:f -->

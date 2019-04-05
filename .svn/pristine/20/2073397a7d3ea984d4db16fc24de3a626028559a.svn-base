@@ -1,0 +1,54 @@
+package kr.or.dev.talk.chat.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.talk.chat.model.ChatVO;
+
+@Repository("chatDao")
+public class ChatDao implements ChatDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public List<ChatVO> getChatList(String mem_id) {
+		return template.selectList("chat.getChatList", mem_id);
+	}
+
+	@Override
+	public ChatVO getChatDetail(int chat_no) {
+		return template.selectOne("chat.getChatDetail", chat_no);
+	}
+
+	@Override
+	public int insertChat(ChatVO chatVo) {
+		return template.insert("chat.insertChat", chatVo);
+	}
+
+	@Override
+	public int updateChat(ChatVO chatVo) {
+		return template.update("chat.updateChat", chatVo);
+	}
+
+	@Override
+	public int deleteChat(int chat_no) {
+		return template.update("chat.deleteChat", chat_no);
+	}
+
+	@Override
+	public int getChatSeq() {
+		return template.selectOne("chat.getChatSeq");
+	}
+
+	@Override
+	public List<ChatVO> getChatSearchList(Map<String, String> map) {
+		return template.selectList("chat.getChatSearchList", map);
+	}
+
+}

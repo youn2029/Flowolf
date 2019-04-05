@@ -1,0 +1,38 @@
+package kr.or.dev.group.kind.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.group.kind.model.KindVO;
+
+@Repository("kindDao")
+public class KindDao implements KindDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public int insertKind(KindVO kindVo) {
+		return template.insert("kind.insertKind", kindVo);
+	}
+
+	@Override
+	public int updateKind(KindVO kindVo) {
+		return template.update("kind.updateKind", kindVo);
+	}
+
+	@Override
+	public int deleteKind(KindVO kindVo) {
+		return template.update("kind.deleteKind", kindVo);
+	}
+
+	@Override
+	public List<KindVO> getKindAllList() {
+		return template.selectList("kind.getKindAllList");
+	}
+
+}

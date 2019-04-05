@@ -1,0 +1,10 @@
+package kr.or.dev.user.member.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller("memController")
+@RequestMapping("/mem")
+public class MemberController {
+
+}

@@ -1,0 +1,205 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<section class="content project-detail">
+	<div class="project-wrap">
+		<!-- project left content:s -->
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 padleft-0">
+		
+			<!-- project title:s -->
+			<div id="proTitle" class="pro-detail-box project-title back-color-red">
+				<div class="pro-tit">
+					<i class="fas fa-star size-20 color-gray-l maright-15"></i>
+					<span class="size-20 color-white">#DEV - 최종프로젝트(45)</span>
+				</div>
+				<ul class="pro-edit-nav">
+					<li>
+						<a href="#editColor" class="edit-color-btn"><i class="fas fa-palette size-30 color-white"></i></a>
+						<div class="edit-box edit-color-box">
+							<div class="color-sample default-back-color"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-red"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pink"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-orange"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-yellow-d"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-green"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-green-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-blue-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-blue-d"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pupple"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-pupple-l"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-gray"><i class="fas fa-check-circle size-16"></i></div>
+							<div class="color-sample back-color-black"><i class="fas fa-check-circle size-16"></i></div>
+						</div>
+					</li>
+					<li>
+						<a href="#editProject" class="edit-pro-btn"><i class="fas fa-ellipsis-v size-30 color-white"></i></a>
+						<div class="edit-box edit-pro-box">
+							<h3>프로젝트 설정</h3>
+							<ul>
+								<li><a href="">프로젝트 나가기</a></li>
+								<!-- 관리자일때 -->
+								<li><a href="">프로젝트 수정</a></li>
+								<li><a href="" class="color-red">프로젝트 삭제</a></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</div>
+			
+			<script type="text/javascript">
+			$(function() {
+				
+				// 중요프로젝트 체크(icon click)
+				$(".pro-tit > i").on("click", function(){
+					if($(this).hasClass("color-gray-l")){
+						$(this).removeClass("color-gray-l");
+						$(this).addClass("color-yellow");
+					} else {
+						$(this).removeClass("color-yellow");
+						$(this).addClass("color-gray-l");
+					}
+				});
+				
+				// edit color box open & close
+				$(".edit-color-btn").on("click", function(){
+					if($(".edit-color-box").css("display") == "block"){
+						$(".edit-color-box").fadeOut();
+					} else {
+						$(".edit-pro-box").fadeOut();
+						$(".edit-color-box").fadeIn();
+					}
+				});
+				
+				
+				// edit pro box open & close
+				$(".edit-pro-btn").on("click", function(){
+					if($(".edit-pro-box").css("display") == "block"){
+						$(".edit-pro-box").fadeOut();
+					} else {
+						$(".edit-color-box").fadeOut();
+						$(".edit-pro-box").fadeIn();
+					}
+				});
+				
+				// check color : 현재 프로젝트 색상과 같은 색상리스트를 찾아 체크표시
+				var backColor = $("#proTitle").attr("class").split(' ')[1]; // 현재 적용된 색상명(클래스명)
+				$(".edit-color-box").find("div").each(function(i, e){
+					var selectColor = $(this).attr("class").split(' ')[1];
+					
+					if(backColor == selectColor) {
+						$(this).addClass("select-color");
+					}
+				});
+				
+				// 다른 색상을 선택했을 때 색상바꾸기
+				$(".edit-color-box").find("div").on("click", function(){
+					var changeColor = $(this).attr("class").split(' ')[1];
+					$("#proTitle").removeClass(backColor);
+					$("#proTitle").addClass(changeColor);
+					backColor = changeColor;
+					
+					$(this).addClass("select-color");
+					$(".edit-color-box").find("div").not(this).removeClass("select-color");
+				});
+				
+			});
+			</script>
+			<!-- project title:f -->
+			
+			<!-- project task report:s -->
+			<div class="pro-detail-box pro-task-report martop-20">
+				<h3 class="size-16 marbtm-50"><i class="fas fa-chart-pie maright-10 size-20 color-green-l"></i> 업무리포트(전체 5건)</h3>
+			</div>
+			<!-- project task report:f -->
+			
+			<!-- project write tab box:s -->
+			<div class="pro-detail-box pro-tab-box martop-20">
+				<div class="tabs-box">
+					<ul class="tabs">
+						<li data-id="tab-1" class="active"><i class="fas fa-edit maright-10"></i>글쓰기</li>
+						<li data-id="tab-2"><i class="fas fa-laptop maright-10"></i>업무</li>
+						<li data-id="tab-3"><i class="far fa-calendar-alt maright-10"></i>일정</li>
+						<li data-id="tab-4"><i class="fas fa-list maright-10"></i>할일</li>
+						<li data-id="tab-5"><i class="fas fa-check maright-10"></i>투표</li>
+					</ul>
+					<div class="tabs-container">
+						<!-- 글쓰기:s -->
+						<div id="tab-1" class="tabs-content active">
+							<form action="">
+								<div class="tab-con-box">
+									<textarea rows="" cols="" placeholder="글을 작성하세요."></textarea>
+									<!-- 첨부파일 목록이 나올부분 -->
+									<div class="upload-file-list">
+									</div>
+								</div>
+								<div class="tabs-footer">
+									<div class="tabs-upload-box">
+										<!-- 파일첨부 -->
+										<label for="article-file" class="float-left maright-20">
+											<i class="fas fa-paperclip maright-10"></i>파일첨부
+										</label>
+										<input type="file" value="파일첨부" id="article-file" class="dis-none">
+										
+										<!-- 이미지첨부 -->
+										<label for="article-img" class="float-left">
+											<i class="fas fa-camera maright-10"></i>이미지첨부
+										</label>
+										<input type="file" value="이미지첨부" id="article-img" class="dis-none" accept=".png, .jpg, .jpeg">
+										
+										<a href="#" class="test">ssss</a>
+									</div>
+								</div>
+								<script type="text/javascript">
+								$(function(){
+									
+									var fileEx = $("#article-file").val().split(".")[1];	// 파일 확장명
+									var className = "icon-file-default";	// 파일 아이콘 클래스명
+									
+									switch (fileEx) {
+									case "gif", "jpg", "jpeg" :
+										className = ""
+										break;
+
+									default:
+										break;
+									}
+								});
+								</script>
+							</form>
+						</div>
+						<!-- 글쓰기:f -->
+						<div id="tab-2" class="tabs-content">탭내용2</div>
+						<div id="tab-3" class="tabs-content">탭내용3</div>
+						<div id="tab-4" class="tabs-content">탭내용4</div>
+						<div id="tab-5" class="tabs-content">탭내용5</div>
+					</div>
+				</div>
+			</div>
+			<script type="text/javascript">
+			$(function(){
+				$("ul.tabs li").on("click", function(){
+					
+					var tab_id = $(this).attr("data-id");
+					$("ul.tabs li").removeClass("active");
+					$(".tabs-content").removeClass("active");
+					
+					$(this).addClass("active");
+					$("#"+tab_id).addClass("active");
+					
+				});
+			});
+			</script>
+			<!-- project write tab box:f -->
+		</div>
+		<!-- project left content:f -->
+		
+		<!-- project right content:s -->
+		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 padright-0">
+			<div class="back-color-white">
+				<br><br><br><br><br>
+			</div>
+		</div>
+		<!-- project right content:f -->
+		
+	</div>
+</section>

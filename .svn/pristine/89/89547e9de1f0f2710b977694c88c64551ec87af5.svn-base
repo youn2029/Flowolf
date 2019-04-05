@@ -1,0 +1,97 @@
+package kr.or.dev.group.project_user.web;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.group.project_user.model.ProjectUserVO;
+import kr.or.dev.group.project_user.service.ProjectUserServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("proUserController")
+@RequestMapping("/proUser")
+public class ProjectUserController {
+
+	// projectUserService
+	@Resource(name="proUserService")
+	private ProjectUserServiceInf proUserService;
+	
+	/**
+	* Method : proUserUpdate
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param pro_user_color
+	* @param session
+	* @return
+	* Method 설명 : 프로젝트 사용자 색상 변경
+	*/
+	@RequestMapping("/update")
+	@ResponseBody
+	public int proUserUpdate(@RequestParam("pro_user_color")String pro_user_color
+						   , HttpSession session){
+		// 회원 정보, 프로젝트 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// vo
+		ProjectUserVO proUserVo = new ProjectUserVO();
+		proUserVo.setMem_id(memVo.getMem_id());
+		proUserVo.setPro_no(proVo.getPro_no());
+		proUserVo.setPro_user_color(pro_user_color);
+		
+		return proUserService.updateProUser(proUserVo);
+	}
+	
+	/**
+	* Method : proUserDeleteR
+	* 최초작성일 : 2018. 9. 18.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param session
+	* @param pro_no
+	* @return
+	* Method 설명 : 프로젝트 나가기
+	*/
+	@RequestMapping("/deleteR")
+	public String proUserDeleteR(HttpSession session
+							, @RequestParam("pro_no")int pro_no){
+		
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		ProjectUserVO proUserVo = new ProjectUserVO();
+		proUserVo.setPro_no(pro_no);
+		proUserVo.setMem_id(memVo.getMem_id());
+		
+		// 관리자 유무 체크
+		ProjectUserVO resultVo = proUserService.getProUserDetail(proUserVo);
+		
+		if (resultVo.getPro_user_man_chk().equals("y")) {			
+			
+			session.setAttribute("msg", "프로젝트 관리자는 최소 한명이 존재해야합니다.");
+			session.setAttribute("className", "alert-danger");
+			
+			return "redirect:/pro/detail?pro_no="+pro_no;
+			
+		}else{
+			
+			// 삭제
+			int resultCnt = proUserService.deleteProUserR(proUserVo);
+			
+			// 삭제 성공
+			if (resultCnt == 1) {
+				
+				session.setAttribute("msg", "나가기 되었습니다.");
+				session.setAttribute("className", "alert-warning");
+				
+			}			
+			return "redirect:/pro/main";	
+		}
+		
+	}
+}
