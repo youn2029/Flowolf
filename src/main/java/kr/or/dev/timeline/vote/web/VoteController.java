@@ -1,0 +1,275 @@
+package kr.or.dev.timeline.vote.web;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import kr.or.dev.group.project.model.ProjectVO;
+import kr.or.dev.timeline.vote.model.VoteVO;
+import kr.or.dev.timeline.vote.service.VoteServiceInf;
+import kr.or.dev.timeline.vote_item.model.MultiVote;
+import kr.or.dev.timeline.vote_item.model.VoteItemVO;
+import kr.or.dev.timeline.vote_item.service.VoteItemServiceInf;
+import kr.or.dev.timeline.vote_item_user.model.VoteItemUserVO;
+import kr.or.dev.timeline.vote_item_user.service.VoteItemUserServiceInf;
+import kr.or.dev.user.member.model.MemberVO;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller("voteController")
+@RequestMapping("/vote")
+public class VoteController {
+
+	// voteService
+	@Resource(name="voteService")
+	private VoteServiceInf voteService;
+	
+	// voteItemService
+	@Resource(name="viService")
+	private VoteItemServiceInf viService;
+	
+	// voteItemUserService
+	@Resource(name="viuService")
+	private VoteItemUserServiceInf viuService;
+	
+	/**
+	* Method : voteInsert
+	* 최초작성일 : 2018. 10. 8.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param voteVo
+	* @param multiVote
+	* @param session
+	* @return
+	* Method 설명 : 투표글 등록
+	*/
+	@RequestMapping("/insert")
+	public String voteInsert(VoteVO voteVo
+						   , MultiVote multiVote
+						   , HttpSession session){
+		// 프로젝트 정보
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 투표 시퀀스
+		int vote_no = voteService.getVoteSeq();
+		
+		// voteVo
+		voteVo.setVote_no(vote_no);
+		voteVo.setPro_no(proVo.getPro_no());
+		voteVo.setMem_id(memVo.getMem_id());
+		
+		// 투표 등록
+		int resultCnt = voteService.insertVote(voteVo);
+		
+		if (resultCnt == 1) {
+			
+			// 투표 항목 List
+			List<VoteItemVO> viList = multiVote.getViList();
+			
+			for (VoteItemVO viVo : viList) {
+				viVo.setVote_no(vote_no);
+				
+				// 투표 항목 등록
+				viService.insertVi(viVo);
+			}
+			
+			session.setAttribute("msg", "글이 등록되었습니다.");
+			session.setAttribute("className", "alert-warning");
+			
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : voteUpdate
+	* 최초작성일 : 2018. 10. 8.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param vote_no
+	* @param vote_title
+	* @param vote_end_time
+	* @param vinoList
+	* @param multiVote
+	* @param session
+	* @return
+	* Method 설명 : 투표글, 투표항목 수정
+	*/
+	@RequestMapping("/update")
+	public String voteUpdate(@RequestParam("vote_no") int vote_no
+						   , @RequestParam("vote_title") String vote_title
+						   , @RequestParam(value="vote_end_time", required=false) String vote_end_time
+						   , @RequestParam(value="del_vi_no", required=false) List<Integer> vinoList
+						   , MultiVote multiVote
+						   , HttpSession session){
+		
+		// 투표 항목 삭제
+		if (vinoList != null) {
+			for (Integer vi_no : vinoList) {
+				viService.deleteVi(vi_no);
+			}
+		}
+		
+		// 투표 정보
+		VoteVO voteVo = voteService.getVoteDetail(vote_no);
+		
+		// 투표 종료일
+		if (!vote_end_time.equals("")) {
+			voteVo.setVote_end_time(vote_end_time);
+		}
+		
+		// 투표 제목
+		voteVo.setVote_title(vote_title);
+		
+		// 투표 수정
+		int resultCnt = voteService.updateVote(voteVo);
+		
+		if (resultCnt == 1) {
+			
+			// 투표 항목 등록 List
+			List<VoteItemVO> viList = multiVote.getViList();
+			
+			if (viList != null) {	// 투표 항목 List 존재유무
+				for (VoteItemVO viVo : viList) {
+					
+					if (viVo.getVi_cont() != null) {					
+						viVo.setVote_no(vote_no);
+						
+						// 투표 항목 등록
+						viService.insertVi(viVo);
+					}					
+				}				
+			}
+			
+			// 투표 항목 수정 List
+			List<VoteItemVO> updateViList = multiVote.getUpdateViList();
+			
+			for (VoteItemVO viVo : updateViList) {
+				
+				// 투표 항목 수정
+				viService.updateVi(viVo);
+			}
+			
+			session.setAttribute("msg", "글이 수정되었습니다.");
+			session.setAttribute("className", "alert-warning");
+			
+		}
+		
+		return "redirect:/pro/detail?pro_no="+voteVo.getPro_no();
+	}
+	
+	/**
+	* Method : voteDelete
+	* 최초작성일 : 2018. 10. 8.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param vote_no
+	* @param session
+	* @return
+	* Method 설명 : 투표 삭제
+	*/
+	@RequestMapping("/delete")
+	public String voteDelete(@RequestParam("timeline_no")int vote_no
+						   , HttpSession session){
+		// 프로젝트 Vo
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 일반글 삭제
+		int resultCnt = voteService.deleteVote(vote_no);
+		
+		if (resultCnt == 1) {			
+			
+			session.setAttribute("msg", "글이 삭제되었습니다.");
+			session.setAttribute("className", "alert-warning");
+		}
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : voting
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param voting_vi_no
+	* @param vi_no
+	* @param session
+	* @return
+	* Method 설명 : 투표하기
+	*/
+	@RequestMapping("/viu")
+	public String voting(@RequestParam(value="voting_vi_no", defaultValue="0")int voting_vi_no
+					   , @RequestParam("vi_no")int vi_no
+					   , HttpSession session){
+		
+		System.out.println("들어오니?");
+		
+		// 프로젝트 정보
+		ProjectVO proVo = (ProjectVO) session.getAttribute("proVo");
+		
+		// 회원 정보
+		MemberVO memVo = (MemberVO) session.getAttribute("memVo");
+		
+		// 투표 항목 유저 Vo
+		VoteItemUserVO viuVo = new VoteItemUserVO();
+		viuVo.setMem_id(memVo.getMem_id());
+		
+		// 투표 항목 유저 삭제
+		if (voting_vi_no != 0) {
+			viuVo.setVi_no(voting_vi_no);
+			
+			// 투표한 회원 정보 삭제
+			viuService.deleteViu(viuVo);
+		}
+		
+		viuVo.setVi_no(vi_no);
+		
+		// 투표한 회원 정보 등록
+		viuService.insertViu(viuVo);
+		
+		return "redirect:/pro/detail?pro_no="+proVo.getPro_no();
+	}
+	
+	/**
+	* Method : voteFix
+	* 최초작성일 : 2018. 10. 9.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* @param vote_no
+	* @param vote_fix_chk
+	* @param session
+	* @return
+	* Method 설명 : 투표글 상단 고정
+	*/
+	@RequestMapping("/fix")
+	public String voteFix(@RequestParam("timeline_no")int vote_no
+					    , @RequestParam("fix_chk")String vote_fix_chk
+					    , HttpSession session){
+		
+		// 투표글 정보
+		VoteVO voteVo = voteService.getVoteDetail(vote_no);
+		voteVo.setVote_fix_chk(vote_fix_chk);
+		
+		// 투표글 수정
+		int resultCnt = voteService.updateVote(voteVo);
+		
+		if (resultCnt == 1) {
+			
+			if (vote_fix_chk.equals("y")) {
+				session.setAttribute("msg", "상단에 고정되었습니다.");
+				session.setAttribute("className", "alert-warning");				
+			}else{
+				session.setAttribute("msg", "상단고정 해제되었습니다.");
+				session.setAttribute("className", "alert-warning");
+			}
+		}
+		
+		return "redirect:/pro/detail?pro_no="+voteVo.getPro_no();
+	}
+}

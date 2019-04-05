@@ -1,0 +1,63 @@
+package kr.or.dev.files.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.files.model.FilesVO;
+
+@Repository("filesDao")
+public class FilesDao implements FilesDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public int insertFiles(Map<String, Object> paramMap) {
+		return template.insert("files.insertFiles", paramMap);
+	}
+
+	@Override
+	public int deleteFilesR(int files_no) {
+		return template.delete("files.deleteFilesR", files_no);
+	}
+
+	@Override
+	public FilesVO getFilesDetail(int files_no) {
+		return template.selectOne("files.getFilesDetail", files_no);
+	}
+
+	@Override
+	public List<FilesVO> getFilesList(Map<String, Object> paramMap) {
+		return template.selectList("files.getFilesList", paramMap);
+	}
+
+	@Override
+	public List<FilesVO> getFilesSearchList(Map<String, String> searchMap) {
+		return template.selectList("files.getFilesSearchList", searchMap);
+	}
+
+	@Override
+	public List<FilesVO> getFilesBaTaAllList(Map<String, String> paramMap) {
+		return template.selectList("files.getFilesBaTaAllList", paramMap);
+	}
+
+	@Override
+	public List<FilesVO> getFilesRepAllList(Map<String, String> paramMap) {
+		return template.selectList("files.getFilesRepAllList", paramMap);
+	}
+
+	@Override
+	public List<FilesVO> getProFilesBaTaAllList(Map<String, Object> paramMap) {
+		return template.selectList("files.getProFilesBaTaAllList", paramMap);
+	}
+
+	@Override
+	public List<FilesVO> getProFilesRepAllList(Map<String, Object> paramMap) {
+		return template.selectList("files.getProFilesRepAllList", paramMap);
+	}
+}

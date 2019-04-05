@@ -1,0 +1,145 @@
+package kr.or.dev.timeline.task_user.service;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.task_user.model.TaskUserVO;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:kr/or/dev/config/spring/root-context.xml",
+								 "classpath:kr/or/dev/config/spring/datasource_test.xml",
+								 "classpath:kr/or/dev/config/spring/transaction.xml"})
+public class TaskUserServiceTest {
+	
+	@Resource(name="taskUserService")
+	private TaskUserServiceInf taskUserService;
+	
+	@Before
+	public void setUp(){
+		// populator : 스프링에서 제공
+		// datasource(db 연결정보), 초기화 스크립트
+		
+		// datasource
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		dataSource.setUrl("jdbc:oracle:thin:@112.220.114.130:1521:xe");
+		dataSource.setUsername("flowolftest");
+		dataSource.setPassword("flowolftest");
+		
+		// 초기화 스크립트(init.sql)
+		
+		// poplucator 생성
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("kr/or/dev/config/db/init.sql"));
+		
+		DatabasePopulatorUtils.execute(populator, dataSource);
+	}
+	
+	/**
+	* Method : taskUserServiceTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : taskUserService TEST
+	*/
+	@Test
+	public void taskUserServiceTest(){
+		assertNotNull(taskUserService);
+	}
+	
+	/**
+	* Method : insertTaskUser
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무 지정자 등록
+	*/
+	@Test
+	public void insertTaskUser(){
+		/***Given***/
+		TaskUserVO taskUserVo = new TaskUserVO();
+		taskUserVo.setTu_mem_id("test");
+		taskUserVo.setTask_no(10001);
+
+		/***When***/
+		int insertCnt = taskUserService.insertTaskUser(taskUserVo);
+
+		/***Then***/
+		assertEquals(1, insertCnt);
+
+	}
+	
+	/**
+	* Method : deleteTaskUserRTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무 지정자 삭제
+	*/
+	@Test
+	public void deleteTaskUserRTest(){
+		/***Given***/
+		int task_user_no = 10001;
+
+		/***When***/
+		int deleteCnt = taskUserService.deleteTaskUserR(task_user_no);
+
+		/***Then***/
+		assertEquals(1, deleteCnt);
+
+	}
+	
+	/**
+	* Method : getTaskUserListTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 업무글의 지정자 목록 조회
+	*/
+	@Test
+	public void getTaskUserListTest(){
+		/***Given***/
+		int task_no = 10001;
+
+		/***When***/
+		List<TaskUserVO> taskUserList = taskUserService.getTaskUserList(task_no);
+
+		/***Then***/
+		assertEquals(1, taskUserList.size());
+
+	}
+	
+	/**
+	* Method : getTaskUserMyListTest
+	* 최초작성일 : 2018. 9. 20.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 회원의 업무지정자 조회
+	*/
+	@Test
+	public void getTaskUserMyListTest(){
+		/***Given***/
+		String tu_mem_id = "test";
+
+		/***When***/
+		List<TaskUserVO> taskUserMyList = taskUserService.getTaskUserMyList(tu_mem_id);
+
+		/***Then***/
+		assertEquals(1, taskUserMyList.size());
+
+	}
+
+}

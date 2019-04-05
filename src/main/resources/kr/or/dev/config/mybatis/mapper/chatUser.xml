@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatUser">
+
+	<insert id="insertChatUser" parameterType="chatUserVo" >
+		INSERT INTO chat_user
+			 VALUES(#{chat_no}
+			 		,#{mem_id}
+			 		,sysdate)
+	</insert>
+	
+	<select id="getChatUserList" parameterType="Integer" resultType="chatUserVo">
+		SELECT a.mem_nick, a.mem_id
+		FROM member a,
+		     (SELECT mem_id
+		       FROM chat_user
+		       WHERE chat_no = #{chat_no}) b
+		WHERE a.mem_id = b.mem_id
+	</select>
+	
+	<delete id="deleteChatUserR" parameterType="chatUserVo">
+		DELETE chat_user 
+		 WHERE chat_no = #{chat_no}
+		   AND mem_id = #{mem_id}
+	</delete>
+	
+
+</mapper>

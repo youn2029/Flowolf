@@ -1,0 +1,39 @@
+package kr.or.dev.timeline.emoticon_user.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import kr.or.dev.timeline.emoticon_user.model.EmoticonUserVO;
+
+@Repository("emoUserDao")
+public class EmoticonUserDao implements EmoticonUserDaoInf {
+	
+	@Resource(name="sqlSessionTemplate")
+	private SqlSessionTemplate template;
+
+	@Override
+	public int insertEmoUser(Map<String, Object> paramMap) {
+		return template.insert("emoUser.insertEmoUser", paramMap);
+	}
+
+	@Override
+	public int deleteEmoUserR(int emo_user_no) {
+		return template.delete("emoUser.deleteEmoUserR", emo_user_no);
+	}
+
+	@Override
+	public List<EmoticonUserVO> getEmoUserList(Map<String, Object> paramMap) {
+		return template.selectList("emoUser.getEmoUserList", paramMap);
+	}
+
+	@Override
+	public int getEmoUserSeq() {
+		return template.selectOne("emoUser.getEmoUserSeq");
+	}
+
+}

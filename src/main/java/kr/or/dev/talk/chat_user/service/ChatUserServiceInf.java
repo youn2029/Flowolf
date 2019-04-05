@@ -1,0 +1,42 @@
+package kr.or.dev.talk.chat_user.service;
+
+import java.util.List;
+
+import kr.or.dev.talk.chat_user.model.ChatUserVO;
+
+public interface ChatUserServiceInf {
+
+	/**
+	* Method : getChatUserList
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param chat_no
+	* @return
+	* Method 설명 : 채팅방 번호를 매개변수로 받아 해당 채팅방의 참여자 리스트 반환
+	*/
+	List<ChatUserVO> getChatUserList(int chat_no);
+	
+	/**
+	* Method : insertChatUser
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param chatUserVo
+	* @return
+	* Method 설명 : 채팅방 참여자 객체를 매개변수로 받아 채팅방 참여자 등록
+	*/
+	int insertChatUser(ChatUserVO chatUserVo);
+	
+	/**
+	* Method : deleteChatUserR
+	* 최초작성일 : 2018. 8. 29.
+	* 작성자 : 김요섭
+	* 변경이력 :
+	* @param chatUserVo
+	* @return
+	* Method 설명 : 채팅방 참여자 객체를 매개변수로 받아 채팅방 참여자 삭제 
+	*/
+	int deleteChatUserR(ChatUserVO chatUserVo);
+	
+}

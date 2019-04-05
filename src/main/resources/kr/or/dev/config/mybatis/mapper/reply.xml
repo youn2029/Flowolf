@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rep">
+
+	<!-- 댓글 시퀀스 조회 -->
+	<select id="getRepSeq" resultType="int">
+		SELECT rep_no_seq.nextval
+		  FROM DUAL
+	</select>
+
+	<!-- 댓글 등록 -->
+	<insert id="insertRep" parameterType="map">
+		INSERT INTO reply (rep_no, rep_cont, rep_time, rep_del_chk, mem_id, ${timeline_col})
+			VALUES (#{rep_no}, #{rep_cont}, sysdate, 'n', #{mem_id}, #{timeline_no})
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateRep" parameterType="repVo">
+		UPDATE reply
+		   SET rep_cont = #{rep_cont}
+		 WHERE rep_no = #{rep_no}
+	</update>
+	
+	<!-- 댓글 삭제처리 -->
+	<update id="deleteRep" parameterType="int">
+		UPDATE reply
+		   SET rep_del_chk = 'y'
+		 WHERE rep_no = #{rep_no}
+	</update>
+	
+	<!-- 타임라인에 해당하는 댓글 조회 -->
+	<select id="getRepList" parameterType="map" resultType="repVo">
+		SELECT r.*
+			 , (SELECT mem_nick 
+		     	  FROM member m 
+		     	 WHERE m.mem_id = r.mem_id) AS mem_nick
+		  FROM reply r
+		 WHERE ${timeline_col} = #{timeline_no}
+		   AND r.rep_del_chk = 'n'
+	  ORDER BY r.rep_time ASC
+	</select>
+
+</mapper>

@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<header class="admin-head-top">
+	<!-- logo -->
+	<div class="col-md-2 admin-logo default-back-color">
+		ADMINISTRATOR
+	</div>
+	
+	<div class="col-md-10">
+	
+		<!-- admin top navigation -->
+		<ul class="float-right admin-top-nav">
+			<li><a href="/adm/memList"><i class="fas fa-home color-white"></i></a></li>
+			<li class="posi-re">
+				
+				<!-- manager info button -->
+				<div id="adminManagerInfo" class="manager-info-btn cursor-point" 
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<div class="posi-re dis-inblock maright-10">
+						<i class="icon-circle circle-xs-admin"></i>
+						<img src="/mem/pic?mem_id=${memVo.mem_id }" width="24">
+					</div>
+					<span class="dis-inblock size-14 color-white maright-20">${memVo.mem_nick }</span>
+					<i class="fas fa-caret-down color-white"></i>
+				</div>
+				
+				<!-- manager info box -->
+				<div class="dropdown-menu manager-info-box" aria-labelledby="adminManagerInfo">
+					<div class="posi-re manager-info-photo">
+						<i class="icon-circle circle-m"></i>
+						<img src="/mem/pic?mem_id=${memVo.mem_id }" width="60">
+					</div>
+					<ul class="dis-block martop-10 marbtm-15 padbtm-15 text-center manager-info-id" style="border-bottom:1px solid #ccc">
+						<li class="size-18 color-black">${memVo.mem_nick }</li>
+						<li class="size-16 color-gray">${memVo.mem_id }</li>
+					</ul>
+					<ul class="manager-info-nav">
+						<li><a href="/mem/admEdit"><i class="float-left maright-10 flow-icon icon-gear"></i>환경설정</a></li>
+						<li><a class="logout cursor-point"><i class="float-left maright-10 flow-icon icon-out"></i>로그아웃</a></li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+			
+	</div>
+	
+	<!-- logout form:s -->
+	<form action="/login/logout" id="logout" method="get"></form>
+	<!-- logout form:f -->
+	
+	<script type="text/javascript">
+	$(function(){
+		// logout clicked
+		$(".logout").on("click", function(){
+			$("#logout").submit();
+		});
+	});
+	</script>
+</header>

@@ -1,0 +1,249 @@
+package kr.or.dev.timeline.basic.service;
+
+import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.TimeLine;
+import kr.or.dev.timeline.basic.model.BasicVO;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:kr/or/dev/config/spring/root-context.xml",
+								 "classpath:kr/or/dev/config/spring/datasource_test.xml",
+								 "classpath:kr/or/dev/config/spring/transaction.xml"})
+public class BasicServiceTest {
+	
+	@Resource(name="basicService")
+	private BasicServiceInf basicService;
+	
+	@Before
+	public void setUp(){
+		// populator : 스프링에서 제공
+		// datasource(db 연결정보), 초기화 스크립트
+		
+		// datasource
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		dataSource.setUrl("jdbc:oracle:thin:@112.220.114.130:1521:xe");
+		dataSource.setUsername("flowolftest");
+		dataSource.setPassword("flowolftest");
+		
+		// 초기화 스크립트(init.sql)
+		
+		// poplucator 생성
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("kr/or/dev/config/db/init.sql"));
+		
+		DatabasePopulatorUtils.execute(populator, dataSource);
+	}
+
+	/**
+	* Method : basicServiceTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : basicService test
+	*/
+	@Test
+	public void basicServiceTest() {
+		assertNotNull(basicService);
+	}
+	
+	/**
+	* Method : getBasicSeqTest
+	* 최초작성일 : 2018. 10. 4.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* Method 설명 : 일반글 시퀀스 조회 Test
+	*/
+	@Test
+	public void getBasicSeqTest(){
+		/***Given***/
+		
+		/***When***/
+		int resultCnt = basicService.getBasicSeq();
+
+		/***Then***/
+		assertEquals(1, resultCnt);
+	}
+	
+	/**
+	* Method : insertBasicTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 일반글 등록 TEST
+	*/
+	@Test
+	public void insertBasicTest() {
+		/***Given***/
+		BasicVO basicVo = new BasicVO();
+		basicVo.setBasic_no(999);
+		basicVo.setBasic_cont("basic test content");
+		basicVo.setPro_no(10001);
+		basicVo.setMem_id("test");
+
+		/***When***/
+		int insertCnt = basicService.insertBasic(basicVo);
+
+		/***Then***/
+		assertEquals(1, insertCnt);
+
+	}
+	
+	/**
+	* Method : updateBasicTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 일반글 수정 TEST
+	*/
+	@Test
+	public void updateBasicTest() {
+		/***Given***/
+		BasicVO basicVo = new BasicVO();
+		basicVo.setBasic_cont("basic update test content");
+		basicVo.setBasic_fix_chk("n");
+		basicVo.setBasic_no(10001);
+
+		/***When***/
+		int updateCnt = basicService.updateBasic(basicVo);
+
+		/***Then***/
+		assertEquals(1, updateCnt);
+
+	}
+	
+	/**
+	* Method : deleteBasicTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 일반글 삭제처리 TEST
+	*/
+	@Test
+	public void deleteBasicTest() {
+		/***Given***/
+
+		/***When***/
+		int deleteCnt = basicService.deleteBasic(10001);
+
+		/***Then***/
+		assertEquals(1, deleteCnt);
+
+	}
+	
+	/**
+	* Method : getBasicDetailTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 일반글 상세조회 TEST
+	*/
+	@Test
+	public void getBasicDetailTest() {
+		/***Given***/
+
+		/***When***/
+		BasicVO basicVo = basicService.getBasicDetail(10001);
+
+		/***Then***/
+		assertEquals(10001, basicVo.getBasic_no());
+		assertEquals(10001, basicVo.getPro_no());
+		assertEquals("test", basicVo.getMem_id());
+
+	}
+	
+	/**
+	* Method : getBasicProListTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 프로젝트 일반글 조회 TEST
+	*/
+	@Test
+	public void getBasicProListTest() {
+		/***Given***/
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("pro_no", 10001);
+		paramMap.put("mem_id", "test");
+
+		/***When***/
+		List<TimeLine> basicProList = basicService.getBasicProList(paramMap);
+
+		/***Then***/
+		assertEquals(1, basicProList.size());
+
+	}
+	
+	/**
+	* Method : getBasicSearchListTest
+	* 최초작성일 : 2018. 9. 17.
+	* 작성자 : 김지수
+	* 변경이력 :
+	* Method 설명 : 일반글 검색 조회 TEST
+	*/
+	@Test
+	public void getBasicSearchListTest() {
+		/***Given***/
+		Map<String, String> searchMap = new HashMap<String, String>();
+		searchMap.put("searchField", "basic_cont");
+		searchMap.put("searchData", "basic");
+
+		/***When***/
+		List<BasicVO> searchList = basicService.getBasicSearchList(searchMap);
+
+		/***Then***/
+		assertEquals(1, searchList.size());
+	}
+	
+	/**
+	* Method : getBasicCollListTest
+	* 최초작성일 : 2018. 10. 14.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* Method 설명 : 회원의 담아둔 일반글 리스트 조회 Test
+	*/
+	@Test
+	public void getBasicCollListTest(){
+		/***Given***/		
+
+		/***When***/
+		List<TimeLine> basicCollList = basicService.getBasicCollList("test");
+
+		/***Then***/
+		assertEquals(0, basicCollList.size());
+	}
+	
+	/**
+	* Method : getMyBasicListTest
+	* 최초작성일 : 2018. 10. 14.
+	* 작성자 : 윤성호
+	* 변경이력 :
+	* Method 설명 : 회원이 작성한 일반글 리스트 조회 Test
+	*/
+	@Test
+	public void getMyBasicListTest(){
+		/***Given***/		
+
+		/***When***/
+		List<TimeLine> myBasicList = basicService.getMyBasicList("test");
+
+		/***Then***/
+		assertEquals(1, myBasicList.size());
+	}
+}

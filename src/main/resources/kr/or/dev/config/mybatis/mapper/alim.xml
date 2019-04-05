@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="alim">
+
+	<!-- 각 회원의 알림 리스트 -->
+	<select id="getAlimList" parameterType="String" resultType="alimVo">
+		SELECT a.*, (SELECT PTN_ACCEPT_DATE 
+		               FROM partner 
+		              WHERE ptn_no = a.ptn_no) AS accept_date
+		  FROM alim a
+		 WHERE mem_id = #{mem_id}
+		 ORDER BY alim_no DESC
+	</select>
+	
+	<!-- 알림 상세보기 -->
+	<select id="getAlimDetail" parameterType="Integer" resultType="alimVo">
+		SELECT * 
+		  FROM alim 
+		 WHERE alim_no = #{alim_no}
+	</select>
+	
+	<!-- 알림 등록 -->
+	<insert id="insertAlim" parameterType="map">
+		INSERT INTO alim(alim_no,
+						alim_time,
+						alim_chk,
+						alim_cont,
+						${alim_col},
+						mem_id,
+						apply)
+				  VALUES(alim_no_seq.nextval,
+						sysdate,
+						'n',
+						#{alim_cont},
+						#{alim_col_no},
+						#{mem_id},
+						#{apply})
+	</insert>
+	
+	<!-- 알림 확인 -->
+	<update id="updateAlim" parameterType="Integer">
+		UPDATE alim 
+		   SET alim_chk = 'y'
+		 WHERE alim_no = #{alim_no}
+	</update>
+	
+	<!-- 알림 삭제 -->
+	<delete id="deleteAlim" parameterType="Integer">
+		DELETE alim
+		 WHERE alim_no = #{alim_no}
+ 	</delete>
+
+</mapper>

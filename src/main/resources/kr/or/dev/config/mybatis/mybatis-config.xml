@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<properties resource="kr/or/dev/config/mybatis/db.properties"></properties>
+      
+	<typeAliases>
+		<typeAlias type="kr.or.dev.alim.model.AlimVO" alias="alimVo"/>
+		<typeAlias type="kr.or.dev.board.post.model.PostVO" alias="postVo"/>
+		<typeAlias type="kr.or.dev.board.post_reply.model.PostReplyVO" alias="postRepVo"/>
+		<typeAlias type="kr.or.dev.files.model.FilesVO" alias="filesVo"/>
+		<typeAlias type="kr.or.dev.group.box.model.BoxVO" alias="boxVo"/>
+		<typeAlias type="kr.or.dev.group.box_project.model.BoxProjectVO" alias="boxProVo"/>
+		<typeAlias type="kr.or.dev.group.important.model.ImportantVO" alias="impVo"/>
+		<typeAlias type="kr.or.dev.group.kind.model.KindVO" alias="kindVo"/>
+		<typeAlias type="kr.or.dev.group.project.model.ProjectVO" alias="proVo"/>
+		<typeAlias type="kr.or.dev.group.project_user.model.ProjectUserVO" alias="proUserVo"/>
+		<typeAlias type="kr.or.dev.talk.chat.model.ChatVO" alias="chatVo"/>
+		<typeAlias type="kr.or.dev.talk.chat_con.model.ChatConVO" alias="chatConVo"/>
+		<typeAlias type="kr.or.dev.talk.chat_file.model.ChatFileVO" alias="chatFileVo"/>
+		<typeAlias type="kr.or.dev.talk.chat_user.model.ChatUserVO" alias="chatUserVo"/>
+		<typeAlias type="kr.or.dev.talk.facechat.model.FaceChatVO" alias="fcVo"/>
+		<typeAlias type="kr.or.dev.talk.facechat_user.model.FaceChatUserVO" alias="fcUserVo"/>
+		<typeAlias type="kr.or.dev.timeline.basic.model.BasicVO" alias="basicVo"/>
+		<typeAlias type="kr.or.dev.timeline.collection.model.CollectionVO" alias="collVo"/>
+		<typeAlias type="kr.or.dev.timeline.emoticon.model.EmoticonVO" alias="emoVo"/>
+		<typeAlias type="kr.or.dev.timeline.emoticon_user.model.EmoticonUserVO" alias="emoUserVo"/>
+		<typeAlias type="kr.or.dev.timeline.pick.model.PickVO" alias="pickVo"/>
+		<typeAlias type="kr.or.dev.timeline.reply.model.ReplyVO" alias="repVo"/>
+		<typeAlias type="kr.or.dev.timeline.schedule.model.ScheduleVO" alias="schdVo"/>
+		<typeAlias type="kr.or.dev.timeline.task.model.TaskVO" alias="taskVo"/>
+		<typeAlias type="kr.or.dev.timeline.task_user.model.TaskUserVO" alias="taskUserVo"/>
+		<typeAlias type="kr.or.dev.timeline.todo.model.TodoVO" alias="todoVo"/>
+		<typeAlias type="kr.or.dev.timeline.todo_item.model.TodoItemVO" alias="tiVo"/>
+		<typeAlias type="kr.or.dev.timeline.vote.model.VoteVO" alias="voteVo"/>
+		<typeAlias type="kr.or.dev.timeline.vote_item.model.VoteItemVO" alias="viVo"/>
+		<typeAlias type="kr.or.dev.timeline.vote_item_user.model.VoteItemUserVO" alias="viuVo"/>
+		<typeAlias type="kr.or.dev.user.member.model.MemberVO" alias="memVo"/>
+		<typeAlias type="kr.or.dev.user.partner.model.PartnerVO" alias="ptnVo"/>
+	</typeAliases>   
+   
+	<mappers>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/alim.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/basic.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/box.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/boxProject.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/chat.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/chatCon.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/chatFile.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/chatUser.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/collection.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/emoticon.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/emoticonUser.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/faceChat.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/faceChatUser.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/files.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/important.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/kind.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/member.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/partner.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/pick.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/post.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/postReply.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/project.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/projectUser.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/reply.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/schedule.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/task.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/taskUser.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/todo.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/todoItem.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/vote.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/voteItem.xml"/>
+		<mapper resource="kr/or/dev/config/mybatis/mapper/voteItemUser.xml"/>
+	</mappers>
+	
+</configuration>

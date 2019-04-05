@@ -1,0 +1,209 @@
+package kr.or.dev.timeline.vote.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import kr.or.dev.timeline.TimeLine;
+import kr.or.dev.timeline.emoticon_user.model.EmoticonUserVO;
+import kr.or.dev.timeline.emoticon_user.service.EmoticonUserServiceInf;
+import kr.or.dev.timeline.reply.service.ReplyServiceInf;
+import kr.or.dev.timeline.vote.dao.VoteDaoInf;
+import kr.or.dev.timeline.vote.model.VoteVO;
+import kr.or.dev.timeline.vote_item.model.VoteItemVO;
+import kr.or.dev.timeline.vote_item.service.VoteItemServiceInf;
+import kr.or.dev.timeline.vote_item_user.dao.VoteItemUserDaoInf;
+
+import org.springframework.stereotype.Service;
+
+@Service("voteService")
+public class VoteService implements VoteServiceInf {
+	
+	// 투표
+	@Resource(name="voteDao")
+	private VoteDaoInf voteDao;
+	
+	// 투표 항목
+	@Resource(name="viService")
+	private VoteItemServiceInf viService;
+	
+	// 투표 항목을 선택한 사용자
+	@Resource(name="viuDao")
+	private VoteItemUserDaoInf viuDao;
+	
+	// 댓글
+	@Resource(name="repService")
+	private ReplyServiceInf repService;
+	
+	// 이모티콘 사용자
+	@Resource(name="emoUserService")
+	private EmoticonUserServiceInf emoUserService;
+
+	@Override
+	public int insertVote(VoteVO voteVo) {
+		return voteDao.insertVote(voteVo);
+	}
+
+	@Override
+	public int updateVote(VoteVO voteVo) {
+		return voteDao.updateVote(voteVo);
+	}
+
+	@Override
+	public int deleteVote(int vote_no) {
+		return voteDao.deleteVote(vote_no);
+	}
+
+	@Override
+	public VoteVO getVoteDetail(int vote_no) {
+		return voteDao.getVoteDetail(vote_no);
+	}
+
+	@Override
+	public List<TimeLine> getVoteProList(Map<String, Object> paramMap) {
+		
+		// timeLine List
+		List<TimeLine> tlVoteList = new ArrayList<TimeLine>();
+		
+		// 투표 List
+		List<VoteVO> voteList = voteDao.getVoteProList(paramMap);
+		
+		for (VoteVO voteVo : voteList) {
+			
+			TimeLine tl = new TimeLine();
+			
+			// paramMap
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("mem_id", paramMap.get("mem_id"));
+			paraMap.put("vote_no", voteVo.getVote_no());
+			
+			// 투표항목 List
+			List<VoteItemVO> viList = viService.getViList(paraMap);
+			
+			// paramMap
+			paraMap = new HashMap<String, Object>();
+			paraMap.put("timeline_col", "vote_no");
+			paraMap.put("timeline_no", voteVo.getVote_no());
+			
+			// 해당 글의 댓글 List
+			List<Map<String, Object>> repList = repService.getRepList(paraMap);
+			
+			// 해당 글의 이모티콘 유저 List
+			List<EmoticonUserVO> emoUserList = emoUserService.getEmoUserList(paraMap);
+						
+			tl.setVoteVo(voteVo);						// 투표 Vo
+			tl.setViList(viList);						// 투표 항목 List
+			tl.setMem_id(voteVo.getMem_id());			// 작성자ID
+			tl.setMem_nick(voteVo.getMem_nick());		// 작성자Nick
+			tl.setTime(voteVo.getVote_time());			// 작성일
+			tl.setFix_chk(voteVo.getVote_fix_chk());	// 상단고정 유무
+			tl.setColl_chk(voteVo.getColl_chk());		// 담아두기 유무
+			tl.setRepList(repList);						// 댓글 List
+			tl.setEmoUserList(emoUserList);				// 이모티콘 사용자 List	
+			
+			tlVoteList.add(tl);
+		}
+		
+		return tlVoteList;
+	}
+
+	@Override
+	public List<VoteVO> getVoteSearchList(Map<String, String> searchMap) {
+		return voteDao.getVoteSearchList(searchMap);
+	}
+
+	@Override
+	public int getVoteSeq() {
+		return voteDao.getVoteSeq();
+	}
+
+	@Override
+	public List<TimeLine> getVoteCollList(String mem_id) {
+		
+		// timeLine List
+		List<TimeLine> tlVoteList = new ArrayList<TimeLine>();
+		
+		// 투표 List
+		List<VoteVO> voteCollList = voteDao.getVoteCollList(mem_id);
+		
+		for (VoteVO voteVo : voteCollList) {
+			
+			TimeLine tl = new TimeLine();
+			
+			// paramMap
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("mem_id", mem_id);
+			paraMap.put("vote_no", voteVo.getVote_no());
+			
+			// 투표항목 List
+			List<VoteItemVO> viList = viService.getViList(paraMap);
+			
+			// paramMap
+			paraMap = new HashMap<String, Object>();
+			paraMap.put("timeline_col", "vote_no");
+			paraMap.put("timeline_no", voteVo.getVote_no());
+			
+			// 해당 글의 이모티콘 유저 List
+			List<EmoticonUserVO> emoUserList = emoUserService.getEmoUserList(paraMap);
+						
+			tl.setVoteVo(voteVo);						// 투표 Vo
+			tl.setViList(viList);						// 투표 항목 List
+			tl.setMem_id(voteVo.getMem_id());			// 작성자ID
+			tl.setMem_nick(voteVo.getMem_nick());		// 작성자Nick
+			tl.setTime(voteVo.getVote_time());			// 작성일
+			tl.setColl_chk(voteVo.getColl_chk());		// 담아두기 유무
+			tl.setEmoUserList(emoUserList);				// 이모티콘 사용자 List	
+			
+			tlVoteList.add(tl);
+		}
+		
+		return tlVoteList;
+	}
+
+	@Override
+	public List<TimeLine> getMyVoteList(String mem_id) {
+		
+		// timeLine List
+		List<TimeLine> tlVoteList = new ArrayList<TimeLine>();
+		
+		// 투표 List
+		List<VoteVO> myVoteList = voteDao.getMyVoteList(mem_id);
+		
+		for (VoteVO voteVo : myVoteList) {
+			
+			TimeLine tl = new TimeLine();
+			
+			// paramMap
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("mem_id", mem_id);
+			paraMap.put("vote_no", voteVo.getVote_no());
+			
+			// 투표항목 List
+			List<VoteItemVO> viList = viService.getViList(paraMap);
+			
+			// paramMap
+			paraMap = new HashMap<String, Object>();
+			paraMap.put("timeline_col", "vote_no");
+			paraMap.put("timeline_no", voteVo.getVote_no());
+			
+			// 해당 글의 이모티콘 유저 List
+			List<EmoticonUserVO> emoUserList = emoUserService.getEmoUserList(paraMap);
+						
+			tl.setVoteVo(voteVo);						// 투표 Vo
+			tl.setViList(viList);						// 투표 항목 List
+			tl.setMem_id(voteVo.getMem_id());			// 작성자ID
+			tl.setMem_nick(voteVo.getMem_nick());		// 작성자Nick
+			tl.setTime(voteVo.getVote_time());			// 작성일
+			tl.setColl_chk(voteVo.getColl_chk());		// 담아두기 유무
+			tl.setEmoUserList(emoUserList);				// 이모티콘 사용자 List	
+			
+			tlVoteList.add(tl);
+		}
+		
+		return tlVoteList;
+	}
+
+}
